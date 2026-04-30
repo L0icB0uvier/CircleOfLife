@@ -2,7 +2,6 @@ package Model;
 
 import Global.Configuration;
 
-import java.util.Arrays;
 import java.util.Random;
 
 public class Match extends History<Move> {
@@ -12,6 +11,9 @@ public class Match extends History<Move> {
     PlayerData[] players = new PlayerData[2];
     int currentPlayerIndex;
 
+    int[][] boardState;
+    Critter[] critters;
+
     public Match(){
         players[0] = new PlayerData();
         players[1] = new PlayerData();
@@ -20,14 +22,21 @@ public class Match extends History<Move> {
     }
 
     public void playMove(int l, int c){
-
+        if (Math.max(Math.abs(l-4), Math.abs(c-4)) > 4 || boardState[l][c] != 0){ // invalid Move
+            return;
+        }
+        else{
+            boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
+            // TODO : update list of Shapes and currentPlayer score if necessary
+            updateCritters(l, c);
+        }
     }
 
     @Override
     public void apply(Move newMove) {
         super.apply(newMove);
         if(isGameOver()){
-            Configuration.info("Player " + (currentPlayerIndex + 1) + " won!");
+            Configuration.info("Player " + currentPlayerIndex + " won!");
             players[currentPlayerIndex].score += 1;
             initMatch();
         }
@@ -43,13 +52,12 @@ public class Match extends History<Move> {
     }
 
     public boolean isGameOver(){
-        // A compléter
-        return false;
+        return (players[0].getScore() >= 20 || players[1].getScore() >= 20 || false); // TODO : add "can't play" condition
     }
 
     public void initMatch() {
         reset();
-        // Init grig here
+        boardState = new int[8][8];
         currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
         Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
     }
@@ -60,5 +68,12 @@ public class Match extends History<Move> {
 
     public PlayerData[] getPlayerData(){
         return players;
+    }
+
+    private void updateCritters(int l, int c){
+        for (Critter C : critters){
+            // TODO : 1/search for the critter the active player evolved, if none create new one of type 0
+            //        2/feed the critter in question and increase the active player's score accordingly
+        }
     }
 }
