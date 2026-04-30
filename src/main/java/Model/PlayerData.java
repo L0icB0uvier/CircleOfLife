@@ -2,9 +2,11 @@ package Model;
 
 public class PlayerData {
     int score;
+    int playableTilesNumber;
 
     public PlayerData(){
         score = 0;
+        playableTilesNumber = 61;
     }
 
     public PlayerData(int score){
@@ -17,5 +19,9 @@ public class PlayerData {
 
     public int getScore() {
         return score;
+    }
+
+    public int getPlayableTilesNumber() {
+        return playableTilesNumber;
     }
 }
