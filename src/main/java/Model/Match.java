@@ -49,7 +49,7 @@ public class Match extends History<Move> {
             }
             Critter C;
             if (!evolutionCandidates.isEmpty()) {
-                C = evolve(evolutionCandidates);
+                C = evolve(evolutionCandidates, l, c);
             }
             else{
                 C = new Critter(l, c, currentPlayerIndex);
@@ -57,6 +57,14 @@ public class Match extends History<Move> {
             critters.add(C);
             feed(C);
         }
+    }
+
+    public Critter evolve(ArrayList<Critter> evolutionCandidates, int l, int c){
+        // TODO : fuse critters (delete critters from list and add fusion with updated type)
+    }
+
+    public void feed(Critter C){
+
     }
 
     @Override

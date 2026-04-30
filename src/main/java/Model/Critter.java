@@ -21,10 +21,7 @@ public class Critter {
     }
 
     private void findNeighbors(){
-        // TODO : find neighbors for new critter and update neighbors ArrayLists
+        // TODO : find neighbors for new critter and update neighbors' ArrayLists
     }
-
-
-    public void evolve
 
 }
