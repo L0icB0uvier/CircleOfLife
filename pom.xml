@@ -14,4 +14,27 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Optionnel : empêche l'échec du build en cas d'erreurs de syntaxe dans vos commentaires Javadoc -->
+                    <doclint>none</doclint>
+                    <release>16</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
