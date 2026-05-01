@@ -23,21 +23,31 @@ public class GamePanel extends JComponent implements Observateur {
         private int tintAlpha = 160;
         private boolean previewEnabled = false;
 
+
+        int incX;
+        int incY;
+        int size;
+
         public GamePanel(Game game){
+            /* 
             this.game = game;
             this.game.ajouteObservateur(this);
 
             imgWaffle=readImage("waffle");
 
-            match = game.getMatch();
+            match = game.getMatch();*/
 
-            nbLines = match.getNbLines();
-            nbColumns = match.getNbCol();
+            //nbLines = match.getNbLines();
+            //nbColumns = match.getNbCol();
+            size=30;
+            incX=(int)Math.round(Math.cos((Math.PI/6))*size);
+            incY=(int)Math.round(Math.sin((Math.PI/6))*size)+size;
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+            /* 
             Graphics2D g2d=(Graphics2D) g;
 
             int width = getWidth();
@@ -87,6 +97,74 @@ public class GamePanel extends JComponent implements Observateur {
                     posY+=scaleY;
                 }
                 posX+=scaleX;
+            }*/
+
+            Graphics2D g2D= (Graphics2D) g;
+            int width=getSize().width;
+            int height=getSize().height;
+            int posX=width/2-4*incX;
+            int posXInit=posX;
+            int posY=10;
+
+            int nb_elem=5;
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < nb_elem; j++) {
+                    drawHexagon(g2D, posX, posY, size);
+                    posX+=2*incX;   
+                }            
+                nb_elem++;
+                posX=posXInit;
+                posX-=incX;
+                posY+=incY;
+                posXInit=posX;
+            }
+
+            for (int j = 0; j < nb_elem; j++) {
+                drawHexagon(g2D, posX, posY, size);
+                posX+=2*incX;   
+            }            
+            nb_elem--;
+            posX=posXInit;
+            posX+=incX;
+            posY+=incY;
+            posXInit=posX;
+
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < nb_elem; j++) {
+                    drawHexagon(g2D, posX, posY, size);
+                    posX+=2*incX;   
+                }            
+                nb_elem--;
+                posX=posXInit;
+                posX+=incX;
+                posY+=incY;
+                posXInit=posX;
+            }
+        }
+
+        /*
+        dessine une hexagone allant du coin haut et y revenant
+        */
+        private void drawHexagon(Graphics2D g2D, int x, int y, int size) {
+            double angle, cos, sin, vx, rx, ry;
+            int new_x=x;
+            int new_y=y;
+            for (int i = 0; i < 6; i++) {
+                angle=((i)*Math.PI/3+Math.PI/6);//on commence en dessinant depuis le coin haut (donc angle de rotation 30°)
+                cos=Math.cos(angle);
+                sin=Math.sin(angle);
+                vx=size;
+                //double vy=0;
+
+                //matrice de rotation
+                rx=cos*vx;//-sin*vy;
+                ry=sin*vx;//+cos*vy;
+                new_x+=(int)Math.round(rx);
+                new_y+=(int)Math.round(ry);
+
+                g2D.drawLine(x, y, new_x, new_y);
+                x=new_x;
+                y=new_y;
             }
         }
 
@@ -98,7 +176,7 @@ public class GamePanel extends JComponent implements Observateur {
 
             for (int i = 0; i < nbColumns; i++) {
                 posY=0;
-                nbCurrLines= match.getColumnNumber(i);
+                //nbCurrLines= match.getColumnNumber(i);
 
                 if (nbCurrLines<=0)
                     break;
@@ -107,7 +185,7 @@ public class GamePanel extends JComponent implements Observateur {
 
                 for (int j = 0; j < nbCurrLines; j++) {
                     posY+=scaleY;
-                    if (i == nbColumns-1 || match.getColumnNumber(i+1) <= j) //dernier colonne ou la case prochaine dans ce ligne deja mange
+                    //if (i == nbColumns-1 || match.getColumnNumber(i+1) <= j) //dernier colonne ou la case prochaine dans ce ligne deja mange
                         //g2d.drawLine(posX, 0, posX, posY); //ligne droite horizontale
                         g2d.drawLine(0, posY, posX, posY);
                 }
