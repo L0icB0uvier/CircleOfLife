@@ -39,9 +39,6 @@ public class GamePanel extends JComponent implements Observateur {
 
             //nbLines = match.getNbLines();
             //nbColumns = match.getNbCol();
-            size=30;
-            incX=(int)Math.round(Math.cos((Math.PI/6))*size);
-            incY=(int)Math.round(Math.sin((Math.PI/6))*size)+size;
         }
 
         @Override
@@ -102,9 +99,18 @@ public class GamePanel extends JComponent implements Observateur {
             Graphics2D g2D= (Graphics2D) g;
             int width=getSize().width;
             int height=getSize().height;
+
+            int sizeYProp=(int) (0.8*height/(12*Math.sin(Math.PI/6)+11)); //dérivée depuis hauteur_totale_plateau=0.8*height
+            int sizeXProp=(int) (0.8*width/(20*Math.cos(Math.PI/6))); //dérivée depuis longeur_totale_plateau=0.8*height
+            size=(int) Math.min(sizeYProp, sizeXProp); //(0.8*height/(12*Math.sin(Math.PI/6)+11)); //dérivée depuis hauteur_totale_plateau=0.8*height
+
+
+            incX=(int)Math.round(Math.cos((Math.PI/6))*size);
+            incY=(int)Math.round(Math.sin((Math.PI/6))*size)+size;
+
             int posX=width/2-4*incX;
             int posXInit=posX;
-            int posY=10;
+            int posY=height/2-(6*incY-size/2);
 
             int nb_elem=5;
             for (int i = 0; i < 5; i++) {
