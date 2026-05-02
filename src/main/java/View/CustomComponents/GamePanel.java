@@ -100,8 +100,8 @@ public class GamePanel extends JComponent implements Observateur {
             int width=getSize().width;
             int height=getSize().height;
 
-            int sizeYProp=(int) (0.8*height/(12*Math.sin(Math.PI/6)+11)); //dérivée depuis hauteur_totale_plateau=0.8*height
-            int sizeXProp=(int) (0.8*width/(20*Math.cos(Math.PI/6))); //dérivée depuis longeur_totale_plateau=0.8*height
+            int sizeYProp=(int) (0.9*height/(11*Math.sin(Math.PI/6)+10)); //dérivée depuis hauteur_totale_plateau=0.8*height
+            int sizeXProp=(int) (0.9*width/(18*Math.cos(Math.PI/6))); //dérivée depuis longeur_totale_plateau=0.8*height
             size=(int) Math.min(sizeYProp, sizeXProp); //(0.8*height/(12*Math.sin(Math.PI/6)+11)); //dérivée depuis hauteur_totale_plateau=0.8*height
 
 
@@ -110,10 +110,10 @@ public class GamePanel extends JComponent implements Observateur {
 
             int posX=width/2-4*incX;
             int posXInit=posX;
-            int posY=height/2-(6*incY-size/2);
+            int posY=height/2-(5*incY-size/2);
 
             int nb_elem=5;
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < nb_elem; j++) {
                     drawHexagon(g2D, posX, posY, size);
                     posX+=2*incX;   
@@ -135,7 +135,7 @@ public class GamePanel extends JComponent implements Observateur {
             posY+=incY;
             posXInit=posX;
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < nb_elem; j++) {
                     drawHexagon(g2D, posX, posY, size);
                     posX+=2*incX;   
