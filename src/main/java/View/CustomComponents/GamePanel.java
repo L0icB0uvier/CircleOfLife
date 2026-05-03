@@ -1,15 +1,20 @@
 package View.CustomComponents;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Stroke;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
+
 import Global.Configuration;
 import Model.Game;
 import Model.Match;
 import Patterns.Observateur;
-import View.Utils.UIColor;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.io.InputStream;
 
 public class GamePanel extends JComponent implements Observateur {
         Game game;
@@ -115,7 +120,7 @@ public class GamePanel extends JComponent implements Observateur {
             int nb_elem=5;
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < nb_elem; j++) {
-                    drawHexagon(g2D, posX, posY, size);
+                    drawHexagon(g2D, posX, posY, size, Color.RED);
                     posX+=2*incX;   
                 }            
                 nb_elem++;
@@ -137,7 +142,7 @@ public class GamePanel extends JComponent implements Observateur {
 
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < nb_elem; j++) {
-                    drawHexagon(g2D, posX, posY, size);
+                    drawHexagon(g2D, posX, posY, size, Color.BLUE);
                     posX+=2*incX;   
                 }            
                 nb_elem--;
@@ -152,6 +157,10 @@ public class GamePanel extends JComponent implements Observateur {
         dessine une hexagone allant du coin haut et y revenant
         */
         private void drawHexagon(Graphics2D g2D, int x, int y, int size) {
+
+            Stroke tempStroke=g2D.getStroke();
+            g2D.setStroke(new BasicStroke(5));
+
             double angle, cos, sin, vx, rx, ry;
             int new_x=x;
             int new_y=y;
@@ -172,6 +181,48 @@ public class GamePanel extends JComponent implements Observateur {
                 x=new_x;
                 y=new_y;
             }
+            g2D.setStroke(tempStroke);
+        }
+
+        /*
+        dessine une hexagone allant du coin haut et y revenant
+        */
+        private void drawHexagon(Graphics2D g2D, int x, int y, int size, Color color) {
+            double angle, cos, sin, vx, rx, ry;
+            int new_x=x;
+            int new_y=y;
+            int xs[]=new int[6];
+            int ys[]=new int[6];
+            for (int i = 0; i < 6; i++) {
+                xs[i]=x;
+                ys[i]=y;
+
+                angle=((i)*Math.PI/3+Math.PI/6);//on commence en dessinant depuis le coin haut (donc angle de rotation 30°)
+                cos=Math.cos(angle);
+                sin=Math.sin(angle);
+                vx=size;
+                //double vy=0;
+
+                //matrice de rotation
+                rx=cos*vx;//-sin*vy;
+                ry=sin*vx;//+cos*vy;
+                new_x+=(int)Math.round(rx);
+                new_y+=(int)Math.round(ry);
+
+                x=new_x;
+                y=new_y;
+            }
+            Color tempColor=g2D.getColor();
+            Stroke tempStroke=g2D.getStroke();
+
+            g2D.setColor(color);
+            g2D.fillPolygon(xs, ys, 6);
+
+            g2D.setColor(tempColor);
+            g2D.setStroke(new BasicStroke(5));
+            g2D.drawPolygon(xs, ys, 6);
+
+            g2D.setStroke(tempStroke);
         }
 
         private void drawLines(Graphics2D g2d){
