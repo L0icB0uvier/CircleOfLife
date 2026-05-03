@@ -1,7 +1,6 @@
 package Global;
 
 import Controller.IA.AILevel;
-import View.Settings;
 
 import java.io.*;
 import java.util.NoSuchElementException;

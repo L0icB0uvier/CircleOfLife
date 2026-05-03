@@ -11,10 +11,17 @@ public class PlayerData {
         this.score = score;
     }
 
+    /**
+     * Ajoute 1 au score du joueur.
+     */
     public void incrementScore(){
         score++;
     }
 
+    /**
+     * Récupère le score du joueur.
+     * @return Le score du joueur.
+     */
     public int getScore() {
         return score;
     }

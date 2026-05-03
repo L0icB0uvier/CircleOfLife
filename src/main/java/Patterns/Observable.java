@@ -4,25 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Observable {
-    List<Observateur> observateurs;
+    List<Observer> observers;
 
     public Observable() {
-        observateurs = new ArrayList<>();
+        observers = new ArrayList<>();
     }
 
-    public void ajouteObservateur(Observateur observateur) {
-        observateurs.add(observateur);
+    /**
+     * Ajoute un observateur.
+     * @param observer Observateur à ajouter.
+     */
+    public void addObserver(Observer observer) {
+        observers.add(observer);
     }
 
-    public void retireObservateur(Observateur observateur) {
-        observateurs.remove(observateur);
+    /**
+     * Retire un observateur.
+     * @param observer Observateur à retirer.
+     */
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
     }
 
+    /**
+     * Appel update sur tous les observateurs enregistrés.
+     */
     public void update() {
-        var it = observateurs.iterator();
+        var it = observers.iterator();
 
         while (it.hasNext()) {
-            Observateur o = it.next();
+            Observer o = it.next();
             o.update();
         }
     }

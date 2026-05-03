@@ -20,6 +20,12 @@ public abstract class AI {
         this.match = match;
     }
 
+    /**
+     * Méthode helper permettant de créer une instance de l'IA correpondant à la difficulté voulue.
+     * @param match Une instance de match sur laquelle l'IA doit opérer.
+     * @param aiLevel La difficulté de l'IA souhaité.
+     * @return Une instance d'une sous classe de AI de la difficulté demandée.
+     */
     public static AI createAI(Match match, AILevel aiLevel){
         AI ai = null;
 
@@ -38,6 +44,10 @@ public abstract class AI {
         return ai;
     }
 
+    /**
+     * Exécute sur un autre Thread la logique de l'IA. Simule la réflexion de l'IA à l'aide d'un scheduler puis calcule le prochain mouvement que doit faire l'IA.
+     * @return Le Move joué par l'IA.
+     */
     public CompletableFuture<Move> play() {
         futureMove = new CompletableFuture<>();
 
@@ -66,10 +76,17 @@ public abstract class AI {
         return futureMove;
     }
 
+    /**
+     * Annule le calcule du coup de l'IA en annulant le CompletableFuture qui sera géré directement dans le Thread.
+     */
     public void cancel(){
         if(futureMove != null)
             futureMove.cancel(true);
     }
 
+    /**
+     * Lance la logique de calcul du coup. A implémenter dans chaque sous classes avec la logique spécifique à l'IA souhaité.
+     * @return Le Move joué par l'IA à ce tour.
+     */
     abstract public Move findMove();
 }

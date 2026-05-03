@@ -5,7 +5,6 @@ import Model.Game;
 
 public class AIPlayer extends Player {
     AI ai;
-    Game game;
 
     public AIPlayer(Game game, AI ai){
         super();

@@ -20,6 +20,10 @@ public class Move implements Command {
         this.previousState = previousState;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getLine() {
         return line;
     }

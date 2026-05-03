@@ -1,4 +1,4 @@
-package View;
+package Global;
 
 import Controller.IA.AILevel;
 

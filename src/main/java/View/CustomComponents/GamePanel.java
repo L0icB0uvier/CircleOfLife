@@ -3,7 +3,7 @@ package View.CustomComponents;
 import Global.Configuration;
 import Model.Game;
 import Model.Match;
-import Patterns.Observateur;
+import Patterns.Observer;
 import View.Utils.UIColor;
 
 import javax.imageio.ImageIO;
@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.InputStream;
 
-public class GamePanel extends JComponent implements Observateur {
+public class GamePanel extends JComponent implements Observer {
         Game game;
         Image imgWaffle;
         Match match;
@@ -25,7 +25,7 @@ public class GamePanel extends JComponent implements Observateur {
 
         public GamePanel(Game game){
             this.game = game;
-            this.game.ajouteObservateur(this);
+            this.game.addObserver(this);
 
             imgWaffle=readImage("waffle");
 

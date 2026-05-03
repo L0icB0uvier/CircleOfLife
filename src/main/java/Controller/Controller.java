@@ -4,14 +4,14 @@ import Global.Configuration;
 import Model.Game;
 import Model.GameDataManager;
 import Model.Move;
-import Patterns.Observateur;
+import Patterns.Observer;
 import View.EventCollector;
-import View.Settings;
+import Global.Settings;
 import View.UserInterface;
 
 import java.io.FileNotFoundException;
 
-public class Controller implements EventCollector, Observateur {
+public class Controller implements EventCollector, Observer {
     Game game;
     UserInterface view;
     Player[] players;
@@ -19,23 +19,24 @@ public class Controller implements EventCollector, Observateur {
 
     public Controller(Game game){
         this.game = game;
-        game.ajouteObservateur(this);
+        game.addObserver(this);
         players = new Player[2];
     }
 
     public void handleClic(int l, int c){
-        if(currentPlayer.isAI() || !isClicValid(l, c)) return;
-        playMove(l, c);
+        if(!isClicValid(l, c)) return;
+        currentPlayer.handleClic(l, c);
     }
 
-
+    /**
+     * Vérifie que la validité du clic.
+     * @param l La ligne du clic
+     * @param c La colonne du clic
+     * @return vrai si valide, faux sinon.
+     */
     private boolean isClicValid(int l, int c){
         // A compléter
         return true;
-    }
-
-    public void playMove(int l, int c) {
-        game.playMove(new Move(game.getMatch(), l, c));
     }
 
     @Override
@@ -72,24 +73,37 @@ public class Controller implements EventCollector, Observateur {
         }
     }
 
+    /**
+     * Gère le undo.
+     */
     private void handleUndo(){
         Configuration.info("Undo");
         game.undo();
     }
 
+    /**
+     * Gère le redo
+     */
     private void handleRedo(){
         Configuration.info("Redo");
         game.redo();
     }
 
+    /**
+     * Crée une nouvelle partie à partir des settings défini dans la configuration.
+     */
     private void createNewGame() {
         view.updateSettings();
         Settings matchSettings = Configuration.getSettings();
         game.createMatch();
         players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
         players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
+        startGame();
     }
 
+    /**
+     * Charge une partie à partir des données sauvegardées du joueur.
+     */
     private void continueGame(){
         try {
             GameDataManager.loadMatch(game);
@@ -102,6 +116,9 @@ public class Controller implements EventCollector, Observateur {
         }
     }
 
+    /**
+     * Lance la partie.
+     */
     public void startGame(){
         updateCurrentPlayer();
         currentPlayer.startTurn();
@@ -120,6 +137,9 @@ public class Controller implements EventCollector, Observateur {
         currentPlayer.startTurn();
     }
 
+    /**
+     * Met à jour le joueur actif à partir des données du modèle.
+     */
     private void updateCurrentPlayer(){
         currentPlayer = players[game.getCurrentPlayerIndex()];
     }

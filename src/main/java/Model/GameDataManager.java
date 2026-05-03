@@ -1,7 +1,7 @@
 package Model;
 
 import Global.Configuration;
-import View.Settings;
+import Global.Settings;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -36,6 +36,10 @@ public class GameDataManager {
         scanner.close();
     }
 
+    /**
+     * Vérifie s'il existe des données à charger.
+     * @return Vrai s'il existe des données et faux sinon.
+     */
     public static boolean hasSaveFile(){
         Path path = Paths.get(savePath);
 

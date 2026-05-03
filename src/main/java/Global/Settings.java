@@ -1,7 +1,6 @@
-package View;
+package Global;
 
 import Controller.IA.AILevel;
-import Global.Configuration;
 
 public class Settings {
     int lines, columns;
@@ -30,24 +29,24 @@ public class Settings {
     public PlayerSettings getPlayer2Settings(){
         return player2Settings;
     }
-
-    public void setLines(int lines) {
-        this.lines = lines;
-    }
-
-    public void setColumns(int columns) {
-        this.columns = columns;
-    }
-
+    
     public void setState(int[] state){
         this.state = state;
     }
 
+    /**
+     * Mise à jour des setting du joueur 1.
+     * @param aiLevel Difficulté de l'IA. Si null, le joueur est humain.
+     */
     public void setPlayer1Settings(AILevel aiLevel) {
         if(aiLevel == null) this.player1Settings = new PlayerSettings();
         else this.player1Settings = new PlayerSettings(aiLevel);
     }
 
+    /**
+     * Mise à jour des setting du joueur 2.
+     * @param aiLevel Difficulté de l'IA. Si null, le joueur est humain.
+     */
     public void setPlayer2Settings(AILevel aiLevel) {
         if(aiLevel == null) this.player2Settings = new PlayerSettings();
         else this.player2Settings = new PlayerSettings(aiLevel);

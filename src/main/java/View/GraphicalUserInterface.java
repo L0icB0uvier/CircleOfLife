@@ -4,14 +4,14 @@ import Controller.IA.AILevel;
 import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
-import Patterns.Observateur;
+import Patterns.Observer;
 import View.Adapter.*;
 import View.CustomComponents.PopUpPanel;
 
 import javax.swing.*;
 import java.util.Objects;
 
-public class GraphicalUserInterface implements Runnable, UserInterface, Observateur {
+public class GraphicalUserInterface implements Runnable, UserInterface, Observer {
     Game game;
     EventCollector controller;
     JFrame frame;
@@ -129,7 +129,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observat
         Configuration.initSettings();
         frame.setSize(Configuration.readInt("WindowWidth"), Configuration.readInt("WindowHeight"));
 
-        game.ajouteObservateur(this);
+        game.addObserver(this);
 
         graphicalMainMenu = new GraphicalMainMenu(frame);
         graphicalNewGame = new GraphicalNewGame(frame);
