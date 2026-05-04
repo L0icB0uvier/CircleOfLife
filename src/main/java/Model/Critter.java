@@ -1,16 +1,18 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Critter {
-    ArrayList<int[]> hexagons;          // list of couples (l, c)
+    Set<Coordinate> hexagons;          // list of couples (l, c)
     int type;                           // ranges from 0 to 11
     int player;                         // player to whom the tiles belong
     ArrayList<Critter> neighbors;       // list of shapes adjacent to this one
 
     public Critter(int l, int c, int playerIndex){
-        hexagons = new ArrayList<>();
-        hexagons.add(new int[]{l, c});
+        hexagons = new HashSet<>();
+        hexagons.add(new Coordinate(l, c));
         type = 0;
         player = playerIndex + 1;
         findNeighbors();
