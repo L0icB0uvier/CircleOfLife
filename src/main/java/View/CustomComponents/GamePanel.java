@@ -105,9 +105,9 @@ public class GamePanel extends JComponent implements Observateur {
             int width=getSize().width;
             int height=getSize().height;
 
-            int sizeYProp=(int) (0.9*height/(11*Math.sin(Math.PI/6)+10)); //dérivée depuis hauteur_totale_plateau=0.8*height
-            int sizeXProp=(int) (0.9*width/(18*Math.cos(Math.PI/6))); //dérivée depuis longeur_totale_plateau=0.8*height
-            size=(int) Math.min(sizeYProp, sizeXProp); //(0.8*height/(12*Math.sin(Math.PI/6)+11)); //dérivée depuis hauteur_totale_plateau=0.8*height
+            int sizeYProp=(int) (0.9*height/(11*Math.sin(Math.PI/6)+10)); //dérivée depuis hauteur_totale_plateau=0.9*height
+            int sizeXProp=(int) (0.9*width/(18*Math.cos(Math.PI/6))); //dérivée depuis longeur_totale_plateau=0.9*width
+            size=(int) Math.min(sizeYProp, sizeXProp); //(0.8*height/(12*Math.sin(Math.PI/6)+11));
 
 
             incX=(int)Math.round(Math.cos((Math.PI/6))*size);
@@ -285,9 +285,23 @@ public class GamePanel extends JComponent implements Observateur {
             return (y-offset) / scaleY;
         }
 
-        public int xToNbColumn(int x) {
-            int offset = this.getX();
-            return (x - offset) / scaleX;
+        public int xToN(int x, int y) {
+            int x0=getWidth()/2-4*incX;
+            int y0=getHeight()/2-4*incY; //getHeight()-(5*incY-size/2) + incY-size
+            int scaleX=incX*2;
+            int scaleY=incY + incY-size; 
+            System.out.println("calculs: \n x0: " + x0 + "\n y0: " + y0);
+            x-=getX();
+            y-=getY();
+            System.out.println("x: " + (x) + "\ny: " + y);
+            return (int)Math.round(((x - x0)/scaleX + (y- y0)/scaleY/Math.sqrt(3)));
+        }
+
+        public int yToM(int y) {
+            int y0=getHeight()/2-4*incY;
+            y-=getY();
+            int scaleY=incY+incY-size; 
+            return (int) Math.round((2*(y-y0)/(scaleY*Math.sqrt(3))));
         }
 
         public void togglePreview(){

@@ -18,9 +18,11 @@ public class MouseAdapter extends java.awt.event.MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         Configuration.info("Click at " + e.getX() + ":" + e.getY());
-        int line = graphicalGame.getGamePanel().yToNbLine(e.getY());
-        int col = graphicalGame.getGamePanel().xToNbColumn(e.getX());
-        control.handleClic(line, col);
+        int n = graphicalGame.getGamePanel().xToN(e.getX(),e.getY());
+        int m = graphicalGame.getGamePanel().yToM(e.getY());
+        //control.handleClic(line, col);
+        System.out.println("index n: " + n);
+        System.out.println("index m: " + m);
     }
 
     @Override
