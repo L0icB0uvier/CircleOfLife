@@ -29,9 +29,9 @@ public class GamePanel extends JComponent implements Observateur {
         private boolean previewEnabled = false;
 
 
-        int incX;
-        int incY;
-        int size;
+        double incX;
+        double incY;
+        double size;
 
         public GamePanel(Game game){
             /* 
@@ -105,22 +105,24 @@ public class GamePanel extends JComponent implements Observateur {
             int width=getSize().width;
             int height=getSize().height;
 
-            int sizeYProp=(int) (0.9*height/(11*Math.sin(Math.PI/6)+10)); //dérivée depuis hauteur_totale_plateau=0.9*height
-            int sizeXProp=(int) (0.9*width/(18*Math.cos(Math.PI/6))); //dérivée depuis longeur_totale_plateau=0.9*width
+            double sizeYProp= (0.9*height/(10*Math.sin(Math.PI/6)+9)); //dérivée depuis hauteur_totale_plateau=0.9*height
+            double sizeXProp=(int) (0.9*width/(18*Math.cos(Math.PI/6))); //dérivée depuis longeur_totale_plateau=0.9*width
             size=(int) Math.min(sizeYProp, sizeXProp); //(0.8*height/(12*Math.sin(Math.PI/6)+11));
 
 
             incX=(int)Math.round(Math.cos((Math.PI/6))*size);
             incY=(int)Math.round(Math.sin((Math.PI/6))*size)+size;
 
-            int posX=width/2-4*incX;
+            int posX=(int) ((int)width/2-4*incX);
             int posXInit=posX;
-            int posY=height/2-(5*incY-size/2);
+            int posY=(int) (height/2-(5*incY-size/2));
+
+            
 
             int nb_elem=5;
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < nb_elem; j++) {
-                    drawHexagon(g2D, posX, posY, size, Color.RED);
+                    drawHexagon(g2D, posX, posY, (int)size, Color.RED);
                     posX+=2*incX;   
                 }            
                 nb_elem++;
@@ -131,7 +133,7 @@ public class GamePanel extends JComponent implements Observateur {
             }
 
             for (int j = 0; j < nb_elem; j++) {
-                drawHexagon(g2D, posX, posY, size);
+                drawHexagon(g2D, posX, posY, (int)size);
                 posX+=2*incX;   
             }            
             nb_elem--;
@@ -142,7 +144,7 @@ public class GamePanel extends JComponent implements Observateur {
 
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < nb_elem; j++) {
-                    drawHexagon(g2D, posX, posY, size, Color.BLUE);
+                    drawHexagon(g2D, posX, posY, (int)size, Color.BLUE);
                     posX+=2*incX;   
                 }            
                 nb_elem--;
@@ -225,32 +227,6 @@ public class GamePanel extends JComponent implements Observateur {
             g2D.setStroke(tempStroke);
         }
 
-        private void drawLines(Graphics2D g2d){
-            int posX=0, posY=0, nbCurrLines = 0;
-
-            //lignes droites separants les cases
-            g2d.setStroke(new BasicStroke(5));
-
-            for (int i = 0; i < nbColumns; i++) {
-                posY=0;
-                //nbCurrLines= match.getColumnNumber(i);
-
-                if (nbCurrLines<=0)
-                    break;
-
-                posX+=scaleX;
-
-                for (int j = 0; j < nbCurrLines; j++) {
-                    posY+=scaleY;
-                    //if (i == nbColumns-1 || match.getColumnNumber(i+1) <= j) //dernier colonne ou la case prochaine dans ce ligne deja mange
-                        //g2d.drawLine(posX, 0, posX, posY); //ligne droite horizontale
-                        g2d.drawLine(0, posY, posX, posY);
-                }
-
-                g2d.drawLine(posX, 0, posX, nbCurrLines * scaleY); //ligne droite verticale
-            }
-        }
-
         private void drawBorders(Graphics2D g2, Color c, int width, int height) {
             Stroke tempStroke = g2.getStroke();
             Color tempColor = g2.getColor();
@@ -279,29 +255,28 @@ public class GamePanel extends JComponent implements Observateur {
             repaint();
         }
 
-        public int yToNbLine(int y) { //pour convertir des coordonnees aux indices
-            int offset = this.getY();
-            if(y <= offset ||y>= offset+this.getHeight()) return -1;
-            return (y-offset) / scaleY;
-        }
 
         public int xToN(int x, int y) {
-            int x0=getWidth()/2-4*incX;
-            int y0=getHeight()/2-4*incY; //getHeight()-(5*incY-size/2) + incY-size
-            int scaleX=incX*2;
-            int scaleY=incY + incY-size; 
+            double x0=getWidth()/2-4*incX;
+            double y0=getHeight()/2-4*incY; //getHeight()-(5*incY-size/2) + incY-size
+            double scaleX=2*incX;
+            double scaleY=2*incX; //ou bien 2*Math.sin(2*Math.PI/3)*size
             System.out.println("calculs: \n x0: " + x0 + "\n y0: " + y0);
             x-=getX();
             y-=getY();
             System.out.println("x: " + (x) + "\ny: " + y);
-            return (int)Math.round(((x - x0)/scaleX + (y- y0)/scaleY/Math.sqrt(3)));
+            //System.out.println("scaling: " + scaleX + " " + scaleY);
+            System.out.println(((x - x0)/scaleX + (y- y0)/(scaleY*Math.sqrt(3))));
+            System.out.println((x-x0)/scaleX);
+            return (int) ((int)Math.round(((x - x0)/scaleX + (y- y0)/(scaleY*Math.sqrt(3)))));
         }
 
         public int yToM(int y) {
-            int y0=getHeight()/2-4*incY;
+            double y0=getHeight()/2-4*incY;
             y-=getY();
-            int scaleY=incY+incY-size; 
-            return (int) Math.round((2*(y-y0)/(scaleY*Math.sqrt(3))));
+            double scaleY=2*incX;
+            
+            return (int) ((int) Math.round((2*(y-y0)/(scaleY*Math.sqrt(3)))));
         }
 
         public void togglePreview(){
