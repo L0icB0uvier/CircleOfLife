@@ -15,6 +15,7 @@ import Global.Configuration;
 import Model.Game;
 import Model.Match;
 import Patterns.Observateur;
+import View.Utils.UIColor;
 
 public class GamePanel extends JComponent implements Observateur {
     Game game;
@@ -82,7 +83,7 @@ public class GamePanel extends JComponent implements Observateur {
         int nb_elem = 5;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < nb_elem; j++) {
-                drawHexagon(g2D, posX, posY, (int) size, Color.RED);
+                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED));
                 posX += incX;
             }
             nb_elem++;
@@ -104,7 +105,7 @@ public class GamePanel extends JComponent implements Observateur {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < nb_elem; j++) {
-                drawHexagon(g2D, posX, posY, (int) size, Color.BLUE);
+                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE));
                 posX += incX;
             }
             nb_elem--;
