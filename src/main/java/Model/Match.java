@@ -44,7 +44,7 @@ public class Match extends History<Move> {
             Coordinate newStoneCoordinate = new Coordinate(l, c);
 
             // TODO : update list of Critters and currentPlayer score if necessary
-            var neighbors = getCurrentPlayerNeighborsCritters(currentPlayerIndex, newStoneCoordinate);
+            var neighbors = getPlayerNeighborsCritters(currentPlayerIndex, newStoneCoordinate);
             Critter newCritter;
 
             if(neighbors.isEmpty()){
@@ -61,10 +61,10 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Evolue un ou plusieurs critters.
-     * @param evolutionCandidates Les critters existants à fusionner pour l'évolution.
+     * Evolue un ou plusieurs Critter.
+     * @param evolutionCandidates Les Critter existants à fusionner pour l'évolution.
      * @param newStoneCoord Coordonnées de la dernière pierre posée.
-     * @return Le critter evolué.
+     * @return Le Critter evolué.
      */
     public Critter evolve(Set<Critter> evolutionCandidates, Coordinate newStoneCoord){
         Set<Coordinate> evolutionCoords = new HashSet<>();
@@ -78,8 +78,37 @@ public class Match extends History<Move> {
         return new Critter(evolutionCoords, currentPlayerIndex);
     }
 
-    public void feed(Critter critter){
+    /**
+     * Mange un ou plusieurs Critter.
+     * @param critter Le critter à nourrir.
+     * @return L'ensemble des Critter mangés par le Critter en argument.
+     */
+    public Set<Critter> feed(Critter critter){
+        HashSet<Critter> opponentNeighbors = new HashSet<>();
+        HashSet<Critter> eatenCritters = new HashSet<>();
 
+        for (Coordinate coord : critter.hexagons){
+            opponentNeighbors.addAll(getPlayerNeighborsCritters((critter.player+1)%2, coord));
+        }
+
+        for (Critter c : opponentNeighbors){
+            if (c.type == (critter.type + 1)%12){
+                eatCritter(c);
+                eatenCritters.add(c);
+            }
+        }
+        return eatenCritters;
+    }
+
+    /**
+     * Efface un critter du plateau.
+     * @param c Le Critter à effacer.
+     */
+    private void eatCritter(Critter c) {
+        for (Coordinate coord : c.hexagons){
+            boardState[coord.line()][coord.col()] = 0;
+        }
+        critters.remove(c);
     }
 
     @Override
@@ -114,11 +143,11 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Récupère la liste de tous les critters voisins à la position appartenant au joueur.
+     * Récupère l'ensemble de tous les critters voisins à la position appartenant au joueur.
      * @param coordinate Les coordonnées de la position où chercher des critter voisins.
-     * @return Liste des tous les critters voisins appartenant au joueur.
+     * @return Set des tous les critters voisins appartenant au joueur.
      */
-    private Set<Critter> getCurrentPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
+    private Set<Critter> getPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
         Set<Critter> neighbors = new HashSet<>();
         for(Critter critter : critters){
             if(critter.player != playerIndex) continue;
