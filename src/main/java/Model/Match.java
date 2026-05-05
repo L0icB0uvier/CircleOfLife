@@ -3,6 +3,7 @@ package Model;
 import Global.Configuration;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Match extends History<Move> {
@@ -39,7 +40,11 @@ public class Match extends History<Move> {
         else{
             /// 2 - update corresponding tile
             boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
+
             /// 3 - update Critters : evolve or reproduce, then feed
+
+            Coordinate newStoneCoordinate = new Coordinate(l, c);
+
             // TODO : update list of Critters and currentPlayer score if necessary
             ArrayList<Critter> evolutionCandidates = new ArrayList<>();
             for (Critter C : critters){
@@ -47,23 +52,32 @@ public class Match extends History<Move> {
                     evolutionCandidates.add(C);
                 }
             }
+
             Critter C;
             if (!evolutionCandidates.isEmpty()) {
-                C = evolve(evolutionCandidates, l, c);
+                C = evolve(evolutionCandidates, newStoneCoordinate);
             }
             else{
                 C = new Critter(l, c, currentPlayerIndex);
             }
+
             critters.add(C);
             feed(C);
         }
     }
 
-    public Critter evolve(ArrayList<Critter> evolutionCandidates, int l, int c){
+    /**
+     * Evolue un ou plusieurs critter.
+     * @param evolutionCandidates Les critters existants à fusionner pour l'évolution.
+     * @param newStoneCoord Coordonnées de la dernière pierre posée.
+     * @return Le critter evolué.
+     */
+    public Critter evolve(List<Critter> evolutionCandidates, Coordinate newStoneCoord){
         // TODO : fuse critters (delete critters from list and add fusion with updated type)
+        return null;
     }
 
-    public void feed(Critter C){
+    public void feed(Critter critter){
 
     }
 
@@ -96,6 +110,37 @@ public class Match extends History<Move> {
 
     public PlayerData[] getPlayerData(){
         return players;
+    }
+
+    /**
+     * Récupère la liste de tous les critters voisins à la position appartenant au joueur.
+     * @param coordinate Les coordonnées de la position où chercher des critter voisins.
+     * @return Liste des tous les critters voisins appartenant au joueur.
+     */
+    private List<Critter> getCurrentPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
+        List<Critter> neighbors = new ArrayList<>();
+        for(Critter critter : critters){
+            if(critter.player != playerIndex) continue;
+            for (Coordinate stoneCoord : critter.hexagons){
+                if(isNeighbor(coordinate, stoneCoord)){
+                    neighbors.add(critter);
+                    break;
+                }
+            }
+        }
+        return neighbors;
+    }
+
+    /**
+     * Vérifie si 2 coordonnées sont voisines.
+     * @param first La première coordonnée.
+     * @param second La deuxième coordonnée.
+     * @return true si les deux coordonnées sont voisine, false sinon.
+     */
+    public boolean isNeighbor(Coordinate first, Coordinate second){
+        int deltaX = Math.abs(first.line() - second.line());
+        int deltaY = Math.abs(first.col() - second.col());
+        return deltaX <= 1 && deltaY <= 1;
     }
 
 }

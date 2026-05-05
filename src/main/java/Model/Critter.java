@@ -18,8 +18,17 @@ public class Critter {
         findNeighbors();
     }
 
+    public Critter(Set<Coordinate> stoneCoordinate, int playerIndex){
+        hexagons = stoneCoordinate;
+        var normalizedCoordinates = ShapeUtils.normalizeCoordinate(stoneCoordinate);
+        type = ShapeUtils.getShapeId(normalizedCoordinates);
+        player = playerIndex + 1;
+        findNeighbors();
+    }
+
     public boolean canEvolve(int l, int c){
         // TODO : list all possible evolution cases
+        return false;
     }
 
     private void findNeighbors(){

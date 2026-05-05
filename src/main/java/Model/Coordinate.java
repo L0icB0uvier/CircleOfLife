@@ -1,4 +1,4 @@
 package Model;
 
-public record Coordinate(int line, int col) {
+public record Coordinate(int col, int line) {
 }

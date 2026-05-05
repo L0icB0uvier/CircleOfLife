@@ -30,90 +30,16 @@ public class GamePanel extends JComponent implements Observateur {
             imgWaffle=readImage("waffle");
 
             match = game.getMatch();
-
-            nbLines = match.getNbLines();
-            nbColumns = match.getNbCol();
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            Graphics2D g2d=(Graphics2D) g;
 
-            int width = getWidth();
-            int height = getHeight();
-
-            Configuration.info(String.valueOf(width));
-            Configuration.info(String.valueOf(height));
-
-            scaleX=Math.max(width/nbColumns, 1); //scale 0 entraine une erreur lors d'appel a drawImage
-            scaleY=Math.max(height/nbLines, 1);
-
-            int posX=0;
-            int posY=0;
-
-            int nbCurrLines;
-            for (int i = 0; i < nbColumns; i++) {
-                posY=0;
-                nbCurrLines = match.getColumnNumber(i);
-
-                if (nbCurrLines<=0)
-                    break;
-
-                for (int j = 0; j < nbCurrLines; j++) {
-                    g2d.drawImage(imgWaffle,posX, posY, scaleX, scaleY, null);
-
-                    if (i==0 && j==0) { //la case empoisonnée
-                        Color temp=g2d.getColor();
-                        g2d.setColor(new Color(0,0,0,160));
-                        g2d.fillRect(posX, posY, scaleX, scaleY);
-                        g2d.setColor(temp);
-                    }
-
-                    if(previewEnabled){
-                        int columnMouse = xToNbColumn(mouseX);
-                        int lineMouse = yToNbLine(mouseY);
-
-                        if(columnMouse != -1 && lineMouse != -1 && i >= xToNbColumn(mouseX) && j >= yToNbLine(mouseY)){
-                            g2d.setComposite(AlphaComposite.SrcAtop);
-                            Color temp= g2d.getColor();
-                            Color playerColor = UIColor.getColor(game.getMatch().getCurrentPlayerIndex());
-                            Color tintColor = new Color(playerColor.getRed(), playerColor.getGreen(), playerColor.getBlue(), tintAlpha);
-                            g2d.setColor(tintColor);
-                            g2d.fillRect(posX, posY, scaleX, scaleY);
-                            g2d.setColor(temp);
-                        }
-                    }
-                    posY+=scaleY;
-                }
-                posX+=scaleX;
-            }
         }
 
         private void drawLines(Graphics2D g2d){
-            int posX=0, posY=0, nbCurrLines = 0;
 
-            //lignes droites separants les cases
-            g2d.setStroke(new BasicStroke(5));
-
-            for (int i = 0; i < nbColumns; i++) {
-                posY=0;
-                nbCurrLines= match.getColumnNumber(i);
-
-                if (nbCurrLines<=0)
-                    break;
-
-                posX+=scaleX;
-
-                for (int j = 0; j < nbCurrLines; j++) {
-                    posY+=scaleY;
-                    if (i == nbColumns-1 || match.getColumnNumber(i+1) <= j) //dernier colonne ou la case prochaine dans ce ligne deja mange
-                        //g2d.drawLine(posX, 0, posX, posY); //ligne droite horizontale
-                        g2d.drawLine(0, posY, posX, posY);
-                }
-
-                g2d.drawLine(posX, 0, posX, nbCurrLines * scaleY); //ligne droite verticale
-            }
         }
 
         private void drawBorders(Graphics2D g2, Color c, int width, int height) {
