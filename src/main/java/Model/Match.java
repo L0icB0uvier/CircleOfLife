@@ -31,17 +31,22 @@ public class Match extends History<Move> {
         Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
     }
 
+    /**
+     * Joue un pion du joueur actif sur la case de coordonnées (l, c)
+     * @param l La ligne de la case.
+     * @param c La colonne de la case.
+     */
     public void playMove(int l, int c){
-        /// 1 - check if Move is valid
+        // on vérifie si le coup est valide
         if (Math.max(Math.abs(l-4), Math.abs(c-4)) > 4 || boardState[l][c] != -(currentPlayerIndex + 1 )){ // invalid Move
             return;
         }
         else{
-            /// 2 - update corresponding tile
+            // on met la case à jour
             boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
             Coordinate newStoneCoordinate = new Coordinate(c, l);
 
-            /// 3 - evolve
+            // on fait évoluer les Critter qui le peuvent
             var neighbors = getPlayerNeighborsCritters(currentPlayerIndex, newStoneCoordinate);
             Critter newCritter;
 
@@ -54,11 +59,10 @@ public class Match extends History<Move> {
 
             critters.add(newCritter);
 
-            /// 4 - feed
-
+            // on nourrit le Critter créé si on peut
             Set<Critter> eatenCritters = feed(newCritter);
 
-            ///  5 - update tiles
+            // on fait la liste des tuiles qui peuvent avoir besoin d'être mises à jour
             Set<Coordinate> updatedTiles = new HashSet<>();
             updatedTiles.addAll(freeNeighborTiles(newCritter));
             for (Critter critter : eatenCritters){
@@ -66,22 +70,23 @@ public class Match extends History<Move> {
                 updatedTiles.addAll(critter.hexagons);
             }
 
+            // on parcourt la liste et on met les cases à jour
             for (Coordinate coordinate : updatedTiles){
                 if (boardState[coordinate.line()][coordinate.col()] <= 0){
                     int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
                     int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
-                    if (playerOneSum >= 4){
-                        if (playerTwoSum >= 4){
+                    if (playerOneSum >= 4){ // playerOne ne peut pas jouer ici
+                        if (playerTwoSum >= 4){ // playerTwo non plus
                             boardState[coordinate.line()][coordinate.col()] = -3;
                         }
-                        else {
+                        else { // playerOne ne peut pass jouer ici mais playerTwo peut
                             boardState[coordinate.line()][coordinate.col()] = -1;
                         }
                     }
-                    else if (playerTwoSum >= 4){
+                    else if (playerTwoSum >= 4){ // playerOne peut jouer ici mais playerTwo ne peut pas
                         boardState[coordinate.line()][coordinate.col()] = -2;
                     }
-                    else {
+                    else { // tout le monde peut jouer ici
                         boardState[coordinate.line()][coordinate.col()] = 0;
                     }
                 }
@@ -90,6 +95,14 @@ public class Match extends History<Move> {
         }
     }
 
+
+    /**
+     * Calcule la somme des tailles des Critter appartenant à un joueur donné et voisins d'une case donnée.
+     * @param playerIndex Le numéro du joueur.
+     * @param coordinate Les coordonnées de la case.
+     * @return La somme des tailles calculée.
+     *
+     */
     private int sumPlayerNeighborCritters(int playerIndex, Coordinate coordinate) {
         Set<Critter> critterNeighbors = getPlayerNeighborsCritters(playerIndex, coordinate);
         int result = 0;
@@ -101,6 +114,11 @@ public class Match extends History<Move> {
         return result;
     }
 
+    /**
+     * Trouve toutes les case vides (pas forcément jouables !) autour d'un critter donné.
+     * @param critter Le critter autour duquel chercher.
+     * @return Un HashSet de Coordinate contenant les coordonnées des cases voisines.
+     */
     private Set<Coordinate> freeNeighborTiles(Critter critter) {
         Set<Coordinate> result = new HashSet<>();
         for (Coordinate coordinate : critter.hexagons) {
