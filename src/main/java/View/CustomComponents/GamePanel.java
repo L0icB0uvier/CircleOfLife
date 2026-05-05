@@ -67,6 +67,14 @@ public class GamePanel extends JComponent implements Observateur {
         incX = 2 * (int) Math.round(Math.cos((Math.PI / 6)) * size); // permet d'aller au prochain coin horizontalement
         incY = (int) Math.round(Math.sin((Math.PI / 6)) * size) + size; // permet d'aller au prochain coin verticalement
 
+        drawPlateau(g2D);
+    }
+
+    private void drawPlateau(Graphics2D g2D) {
+
+        int width = getWidth();
+        int height = getHeight();
+
         int posX = (int) ((int) width / 2 - 2 * incX);
         int posXInit = posX;
         int posY = (int) (height / 2 - (5 * incY - size / 2));
