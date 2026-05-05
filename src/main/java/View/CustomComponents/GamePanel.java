@@ -26,6 +26,7 @@ public class GamePanel extends JComponent implements Observateur {
     private int nbLines;
     private int nbColumns;
     private int mouseX, mouseY;
+    private int nSelected, mSelected;
     private int tintAlpha = 160;
     private boolean previewEnabled = false;
 
@@ -45,6 +46,8 @@ public class GamePanel extends JComponent implements Observateur {
 
         // nbLines = match.getNbLines();
         // nbColumns = match.getNbCol();
+        nSelected = -1;
+        mSelected = -1;
     }
 
     @Override
@@ -76,6 +79,10 @@ public class GamePanel extends JComponent implements Observateur {
         int width = getWidth();
         int height = getHeight();
 
+        int n = 0;
+        int m = 0;
+        int xSelected = -1, ySelected = -1;
+        Color colorSelected = null;
         int posX = (int) ((int) width / 2 - 2 * incX);
         int posXInit = posX;
         int posY = (int) (height / 2 - (5 * incY - size / 2));
@@ -83,9 +90,17 @@ public class GamePanel extends JComponent implements Observateur {
         int nb_elem = 5;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < nb_elem; j++) {
-                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED));
+                if(n == nSelected && m == mSelected) {
+                    xSelected = posX;
+                    ySelected = posY;
+                    colorSelected = UIColor.getColor(UIColor.RED);
+                }
+                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+                n++;
                 posX += incX;
             }
+            m++;
+            n = 0;
             nb_elem++;
             posX = posXInit;
             posX -= incX / 2;
@@ -94,9 +109,17 @@ public class GamePanel extends JComponent implements Observateur {
         }
 
         for (int j = 0; j < nb_elem; j++) {
-            drawHexagon(g2D, posX, posY, (int) size);
+            if(n == nSelected && m == mSelected) {
+                xSelected = posX;
+                ySelected = posY;
+                colorSelected = Color.WHITE;
+            }
+            drawHexagon(g2D, posX, posY, (int) size, Color.WHITE, n, m);
             posX += incX;
+            n++;
         }
+        n = 0;
+        m++;
         nb_elem--;
         posX = posXInit;
         posX += incX / 2;
@@ -105,15 +128,24 @@ public class GamePanel extends JComponent implements Observateur {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < nb_elem; j++) {
-                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE));
+                if(n + 1 == nSelected && m == mSelected) {
+                    xSelected = posX;
+                    ySelected = posY;
+                    colorSelected = UIColor.getColor(UIColor.BLUE);
+                }
+                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n + 1, m);
                 posX += incX;
+                n++;
             }
             nb_elem--;
+            n = 8 - nb_elem;
+            m++;
             posX = posXInit;
             posX += incX / 2;
             posY += incY;
             posXInit = posX;
         }
+        if(xSelected != -1) drawHexagon(g2D, xSelected, ySelected, (int) size, colorSelected, nSelected, mSelected);
     }
 
     /*
@@ -150,7 +182,7 @@ public class GamePanel extends JComponent implements Observateur {
     /*
      * dessine une hexagone allant du coin haut et y revenant
      */
-    private void drawHexagon(Graphics2D g2D, int x, int y, int size, Color color) {
+    private void drawHexagon(Graphics2D g2D, int x, int y, int size, Color color, int n, int m) {
         double angle, cos, sin, vx, rx, ry;
         int new_x = x;
         int new_y = y;
@@ -181,10 +213,12 @@ public class GamePanel extends JComponent implements Observateur {
         g2D.setColor(color);
         g2D.fillPolygon(xs, ys, 6);
 
-        g2D.setColor(tempColor);
+        if(n == nSelected && m == mSelected) g2D.setColor(UIColor.getColor(UIColor.WAFFLE));
+        else g2D.setColor(Color.BLACK);
         g2D.setStroke(new BasicStroke(5));
         g2D.drawPolygon(xs, ys, 6);
 
+        g2D.setColor(tempColor);
         g2D.setStroke(tempStroke);
     }
 
@@ -210,10 +244,15 @@ public class GamePanel extends JComponent implements Observateur {
     }
 
     public void updateMousePosition(int x, int y) {
-        if (!previewEnabled)
-            return;
         mouseX = x;
         mouseY = y;
+        int n = xToN(mouseX, mouseY);
+        int m = yToM(mouseY);
+        if(Math.max(Math.abs(n-4), Math.abs(m-4)) <= 4 && (n != nSelected || m != mSelected)) {
+            nSelected = n;
+            mSelected = m;
+            Configuration.info("Focus sur " + n + ", " + m);
+        }
         repaint();
     }
 
@@ -222,21 +261,18 @@ public class GamePanel extends JComponent implements Observateur {
         double y0 = getHeight() / 2 - 4 * incY;
         double scaleX = incX;
         double scaleY = incX; // ou bien 2*Math.sin(2*Math.PI/3)*size
-        System.out.println("calculs: \n x0: " + x0 + "\n y0: " + y0);
-        x -= getX();
-        y -= getY();
-        System.out.println("x: " + (x) + "\ny: " + y);
+//        System.out.println("calculs: \n x0: " + x0 + "\n y0: " + y0);
+//        System.out.println("x: " + (x) + "\ny: " + y);
         // System.out.println("scaling: " + scaleX + " " + scaleY);
-        System.out.println(((x - x0) / scaleX + (y - y0) / (scaleY * Math.sqrt(3))));
-        System.out.println((x - x0) / scaleX);
+//        System.out.println(((x - x0) / scaleX + (y - y0) / (scaleY * Math.sqrt(3))));
+//        System.out.println((x - x0) / scaleX);
         return (int) (Math.round(((x - x0) / scaleX + (y - y0) / (scaleY * Math.sqrt(3)))));
     }
 
     public int yToM(int y) {
         double y0 = getHeight() / 2 - 4 * incY;
-        y -= getY();
         double scaleY = incX;
-        System.out.println((2 * (y - y0) / (scaleY * Math.sqrt(3))));
+//        System.out.println((2 * (y - y0) / (scaleY * Math.sqrt(3))));
         return (int) (Math.round((2 * (y - y0) / (scaleY * Math.sqrt(3)))));
     }
 

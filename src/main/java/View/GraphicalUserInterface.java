@@ -108,8 +108,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observat
         pua.setActionRightButton("GiveUp");
 
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
-        graphicalGame.addMouseListener(mouseAdapter);
-        graphicalGame.addMouseMotionListener(mouseAdapter);
+        graphicalGame.gamePanel.addMouseListener(mouseAdapter);
+        graphicalGame.gamePanel.addMouseMotionListener(mouseAdapter);
         Configuration.info("Changement de page vers " + graphicalGame.getClass());
         frame.setContentPane(graphicalGame);
         frame.revalidate();
