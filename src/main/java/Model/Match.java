@@ -31,6 +31,16 @@ public class Match extends History<Move> {
         Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
     }
 
+    @Override
+    public void apply(Move newMove) {
+        super.apply(newMove);
+        if(isGameOver()){
+            Configuration.info("Player " + currentPlayerIndex + " won!");
+            players[currentPlayerIndex].score += 1;
+            initMatch();
+        }
+    }
+
     /**
      * Joue un pion du joueur actif sur la case de coordonnées (l, c)
      * @param l La ligne de la case.
@@ -47,14 +57,18 @@ public class Match extends History<Move> {
             boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
             Coordinate newStoneCoordinate = new Coordinate(c, l);
 
-            /// 3 - update Critters : evolve or reproduce, then feed
+            // update Critters : evolve or reproduce
             var newCritter = updateCritters(newStoneCoordinate);
-
-            // TODO : update list of Critters and currentPlayer score if necessary
 
             // on nourrit le Critter créé si on peut
             Set<Critter> eatenCritters = feed(newCritter);
 
+            if(!eatenCritters.isEmpty()){
+                int pointsEarned = calculatePointEarned(eatenCritters);
+                updatePlayerScore(currentPlayerIndex, pointsEarned);
+            }
+
+            // mise à jour de l'état du plateau
             updateBoard(newCritter, eatenCritters);
         }
     }
@@ -88,87 +102,6 @@ public class Match extends History<Move> {
 
         critters.add(newCritter);
         return newCritter;
-    }
-
-    /**
-     * Retourne le critter aux coordonnées souhaités s'il existe.
-     * @param coord Les coordonnées où chercher un critter.
-     * @return L'instance du critter s'il existe, null sinon.
-     */
-    public Critter getCritterAtCoord(Coordinate coord){
-        for (Critter critter : critters){
-            if(critter.hexagons.contains(coord)){
-                return critter;
-            }
-        }
-        return null;
-    }
-
-    private void updateBoard(Critter newCritter, Set<Critter> eatenCritters) {
-        // on fait la liste des tuiles qui peuvent avoir besoin d'être mises à jour
-        Set<Coordinate> updatedTiles = new HashSet<>();
-        updatedTiles.addAll(freeNeighborTiles(newCritter));
-        for (Critter critter : eatenCritters){
-            updatedTiles.addAll(freeNeighborTiles(critter));
-            updatedTiles.addAll(critter.hexagons);
-        }
-
-        // on parcourt la liste et on met les cases à jour
-        for (Coordinate coordinate : updatedTiles) {
-            if (boardState[coordinate.line()][coordinate.col()] <= 0) {
-                int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
-                int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
-                if (playerOneSum >= 4) { // playerOne ne peut pas jouer ici
-                    if (playerTwoSum >= 4) { // playerTwo non plus
-                        boardState[coordinate.line()][coordinate.col()] = -3;
-                    } else { // playerOne ne peut pass jouer ici mais playerTwo peut
-                        boardState[coordinate.line()][coordinate.col()] = -1;
-                    }
-                } else if (playerTwoSum >= 4) { // playerOne peut jouer ici mais playerTwo ne peut pas
-                    boardState[coordinate.line()][coordinate.col()] = -2;
-                } else { // tout le monde peut jouer ici
-                    boardState[coordinate.line()][coordinate.col()] = 0;
-                }
-            }
-        }
-    }
-
-    /**
-     * Calcule la somme des tailles des Critter appartenant à un joueur donné et voisins d'une case donnée.
-     * @param playerIndex Le numéro du joueur.
-     * @param coordinate Les coordonnées de la case.
-     * @return La somme des tailles calculée.
-     *
-     */
-    private int sumPlayerNeighborCritters(int playerIndex, Coordinate coordinate) {
-        Set<Critter> critterNeighbors = getPlayerNeighborsCritters(playerIndex, coordinate);
-        int result = 0;
-        for (Critter critter : critterNeighbors){
-            if (playerIndex == critter.player){
-                result += critter.hexagons.size();
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Trouve toutes les case vides (pas forcément jouables !) autour d'un critter donné.
-     * @param critter Le critter autour duquel chercher.
-     * @return Un HashSet de Coordinate contenant les coordonnées des cases voisines.
-     */
-    private Set<Coordinate> freeNeighborTiles(Critter critter) {
-        Set<Coordinate> result = new HashSet<>();
-        for (Coordinate coordinate : critter.hexagons) {
-            for (int[] delta : new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}}) {
-                int x = coordinate.line() + delta[0];
-                int y = coordinate.col() + delta[1];
-                if (boardState[x][y] <= 0){
-                    result.add(new Coordinate(y,x));
-                }
-            }
-
-        }
-        return result;
     }
 
     /**
@@ -223,12 +156,78 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Met à jour le score du joueur correspondant.
-     * @param playerIndex L'index du joueur pour lequel il faut mettre à jour le score.
-     * @param increaseAmount Le nombre de points à ajouter à son score.
+     * Mise à jour des cases du plateau qui ont été affecté par le Move.
+     * @param newCritter Le nouveau critter ajouté pendant ce tour.
+     * @param eatenCritters Les critters mangé pendant ce tour.
      */
-    public void updatePlayerScore(int playerIndex, int increaseAmount){
-        players[playerIndex].increaseScore(increaseAmount);
+    private void updateBoard(Critter newCritter, Set<Critter> eatenCritters) {
+        // on fait la liste des tuiles qui peuvent avoir besoin d'être mises à jour
+        Set<Coordinate> updatedTiles = new HashSet<>();
+        updatedTiles.addAll(freeNeighborTiles(newCritter));
+
+        if(!eatenCritters.isEmpty()){
+            for (Critter critter : eatenCritters){
+                updatedTiles.addAll(freeNeighborTiles(critter));
+                updatedTiles.addAll(critter.hexagons);
+            }
+        }
+
+        // on parcourt la liste et on met les cases à jour
+        for (Coordinate coordinate : updatedTiles) {
+            if (boardState[coordinate.line()][coordinate.col()] <= 0) {
+                int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
+                int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
+                if (playerOneSum >= 4) { // playerOne ne peut pas jouer ici
+                    if (playerTwoSum >= 4) { // playerTwo non plus
+                        boardState[coordinate.line()][coordinate.col()] = -3;
+                    } else { // playerOne ne peut pass jouer ici mais playerTwo peut
+                        boardState[coordinate.line()][coordinate.col()] = -1;
+                    }
+                } else if (playerTwoSum >= 4) { // playerOne peut jouer ici mais playerTwo ne peut pas
+                    boardState[coordinate.line()][coordinate.col()] = -2;
+                } else { // tout le monde peut jouer ici
+                    boardState[coordinate.line()][coordinate.col()] = 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * Trouve toutes les case vides (pas forcément jouables !) autour d'un critter donné.
+     * @param critter Le critter autour duquel chercher.
+     * @return Un HashSet de Coordinate contenant les coordonnées des cases voisines.
+     */
+    private Set<Coordinate> freeNeighborTiles(Critter critter) {
+        Set<Coordinate> result = new HashSet<>();
+        for (Coordinate coordinate : critter.hexagons) {
+            for (int[] delta : new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}}) {
+                int x = coordinate.line() + delta[0];
+                int y = coordinate.col() + delta[1];
+                if (boardState[x][y] <= 0){
+                    result.add(new Coordinate(y,x));
+                }
+            }
+
+        }
+        return result;
+    }
+
+    /**
+     * Calcule la somme des tailles des Critter appartenant à un joueur donné et voisins d'une case donnée.
+     * @param playerIndex Le numéro du joueur.
+     * @param coordinate Les coordonnées de la case.
+     * @return La somme des tailles calculée.
+     *
+     */
+    private int sumPlayerNeighborCritters(int playerIndex, Coordinate coordinate) {
+        Set<Critter> critterNeighbors = getPlayerNeighborsCritters(playerIndex, coordinate);
+        int result = 0;
+        for (Critter critter : critterNeighbors){
+            if (playerIndex == critter.player){
+                result += critter.hexagons.size();
+            }
+        }
+        return result;
     }
 
     /**
@@ -243,14 +242,13 @@ public class Match extends History<Move> {
         return score;
     }
 
-    @Override
-    public void apply(Move newMove) {
-        super.apply(newMove);
-        if(isGameOver()){
-            Configuration.info("Player " + currentPlayerIndex + " won!");
-            players[currentPlayerIndex].score += 1;
-            initMatch();
-        }
+    /**
+     * Met à jour le score du joueur correspondant.
+     * @param playerIndex L'index du joueur pour lequel il faut mettre à jour le score.
+     * @param increaseAmount Le nombre de points à ajouter à son score.
+     */
+    public void updatePlayerScore(int playerIndex, int increaseAmount){
+        players[playerIndex].increaseScore(increaseAmount);
     }
 
     public void restoreState(int[] state){
@@ -274,18 +272,6 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Retourne l'index du joueur actif.
-     * @return L'index du joueur actif.
-     */
-    public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
-    }
-
-    public PlayerData[] getPlayerData(){
-        return players;
-    }
-
-    /**
      * Récupère l'ensemble de tous les critters voisins à la position appartenant au joueur.
      * @param coordinate Les coordonnées de la position où chercher des critter voisins.
      * @return Set des tous les critters voisins appartenant au joueur.
@@ -296,7 +282,7 @@ public class Match extends History<Move> {
         for(Critter critter : critters){
             if(critter.player != playerIndex) continue;
             for (Coordinate stoneCoord : critter.hexagons){
-                if(isNeighbor(coordinate, stoneCoord)){
+                if(CoordinateUtils.isNeighbor(coordinate, stoneCoord)){
                     neighbors.add(critter);
                     break;
                 }
@@ -306,22 +292,36 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Vérifie si 2 coordonnées sont voisines.
-     * @param first La première coordonnée.
-     * @param second La deuxième coordonnée.
-     * @return true si les deux coordonnées sont voisines, false sinon.
-     */
-    public boolean isNeighbor(Coordinate first, Coordinate second){
-        int deltaX = Math.abs(first.line() - second.line());
-        int deltaY = Math.abs(first.col() - second.col());
-        return deltaX <= 1 && deltaY <= 1;
-    }
-
-    /**
      * Récupère le nombre de critters actuellement présent sur le plateau.
      * @return Le nombre de critters sur le palteau.
      */
     public int getNumberOfCritters(){
         return critters.size();
+    }
+
+    /**
+     * Retourne le critter aux coordonnées souhaités s'il existe.
+     * @param coord Les coordonnées où chercher un critter.
+     * @return L'instance du critter s'il existe, null sinon.
+     */
+    public Critter getCritterAtCoord(Coordinate coord){
+        for (Critter critter : critters){
+            if(critter.hexagons.contains(coord)){
+                return critter;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retourne l'index du joueur actif.
+     * @return L'index du joueur actif.
+     */
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+
+    public PlayerData[] getPlayerData(){
+        return players;
     }
 }
