@@ -13,8 +13,8 @@ public class PlayerData {
         this.score = score;
     }
 
-    public void incrementScore(){
-        score++;
+    public void increaseScore(int increaseAmount){
+        score += increaseAmount;
     }
 
     public int getScore() {

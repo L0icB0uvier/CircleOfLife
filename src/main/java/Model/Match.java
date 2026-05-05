@@ -1,7 +1,6 @@
 package Model;
 
 import Global.Configuration;
-import org.w3c.dom.css.CSSImportRule;
 
 import java.util.*;
 
@@ -27,6 +26,7 @@ public class Match extends History<Move> {
     public void initMatch() {
         reset();
         boardState = new int[8][8];
+        critters = new HashSet<>();
         currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
         Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
     }
@@ -37,8 +37,9 @@ public class Match extends History<Move> {
      * @param c La colonne de la case.
      */
     public void playMove(int l, int c){
-        // on vérifie si le coup est valide
-        if (Math.max(Math.abs(l-4), Math.abs(c-4)) > 4 || boardState[l][c] != -(currentPlayerIndex + 1 )){ // invalid Move
+        /// 1 - check if Move is valid
+        if (isMoveInvalid(l, c)){ // invalid Move
+            Configuration.warning("Impossible de jouer à la case " + c + ":" + l);
             return;
         }
         else{
@@ -46,24 +47,61 @@ public class Match extends History<Move> {
             boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
             Coordinate newStoneCoordinate = new Coordinate(c, l);
 
-            // on fait évoluer les Critter qui le peuvent
-            var neighbors = getPlayerNeighborsCritters(currentPlayerIndex, newStoneCoordinate);
-            Critter newCritter;
+            /// 3 - update Critters : evolve or reproduce, then feed
+            var newCritter = updateCritters(newStoneCoordinate);
 
-            if(neighbors.isEmpty()){
-                newCritter = new Critter(newStoneCoordinate, currentPlayerIndex);
-            }
-            else{
-                newCritter = evolve(neighbors, newStoneCoordinate);
-            }
-
-            critters.add(newCritter);
+            // TODO : update list of Critters and currentPlayer score if necessary
 
             // on nourrit le Critter créé si on peut
             Set<Critter> eatenCritters = feed(newCritter);
 
             updateBoard(newCritter, eatenCritters);
         }
+    }
+
+    /**
+     * Vérifie si la position du Move est invalide.
+     * @param l La ligne du move.
+     * @param c La colonne du move.
+     * @return true si la position est invalide, faux sinon.
+     */
+    private boolean isMoveInvalid(int l, int c) {
+        return Math.max(Math.abs(l - 4), Math.abs(c - 4)) > 4 || boardState[l][c] > 0 || boardState[l][c] == -(currentPlayerIndex + 1);
+    }
+
+    /**
+     * Met à jour les critters du joueur actif après la pose d'une nouvelle pierre.
+     * Crée un nouveau critter s'il la pierre n'a pas de voisins ou évolu les critters voisins de la pierre.
+     * @param coord Les coordonnées de la nouvelle pierre posée.
+     * @return Le nouveau critter obtenu soit par création soit par évolution.
+     */
+    public Critter updateCritters(Coordinate coord){
+        var neighbors = getPlayerNeighborsCritters(currentPlayerIndex, coord);
+        Critter newCritter;
+
+        if(neighbors.isEmpty()){
+            newCritter = new Critter(coord, currentPlayerIndex);
+        }
+        else{
+            newCritter = evolve(neighbors, coord);
+        }
+
+        critters.add(newCritter);
+        return newCritter;
+    }
+
+    /**
+     * Retourne le critter aux coordonnées souhaités s'il existe.
+     * @param coord Les coordonnées où chercher un critter.
+     * @return L'instance du critter s'il existe, null sinon.
+     */
+    public Critter getCritterAtCoord(Coordinate coord){
+        for (Critter critter : critters){
+            if(critter.hexagons.contains(coord)){
+                return critter;
+            }
+        }
+        return null;
     }
 
     private void updateBoard(Critter newCritter, Set<Critter> eatenCritters) {
@@ -184,6 +222,27 @@ public class Match extends History<Move> {
         critters.remove(c);
     }
 
+    /**
+     * Met à jour le score du joueur correspondant.
+     * @param playerIndex L'index du joueur pour lequel il faut mettre à jour le score.
+     * @param increaseAmount Le nombre de points à ajouter à son score.
+     */
+    public void updatePlayerScore(int playerIndex, int increaseAmount){
+        players[playerIndex].increaseScore(increaseAmount);
+    }
+
+    /**
+     * Calcule le nombre de points gagné en mangeant des critters.
+     * @param eatenCritters La liste des critters mangés.
+     * @return Le nombre de points gagnés.
+     */
+    public int calculatePointEarned(Set<Critter> eatenCritters){
+        int score = 0;
+        for (Critter critter : eatenCritters)
+            score += critter.hexagons.size();
+        return score;
+    }
+
     @Override
     public void apply(Move newMove) {
         super.apply(newMove);
@@ -198,15 +257,26 @@ public class Match extends History<Move> {
         toggleCurrentPlayer();
     }
 
+    /**
+     * Change le joueur actif.
+     */
     private void toggleCurrentPlayer(){
         currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
         Configuration.info("Player " + (currentPlayerIndex + 1) + " turn");
     }
 
+    /**
+     * Vérifie si la partie est terminée.
+     * @return true si les condition de victoires sont remplies, faux sinon.
+     */
     public boolean isGameOver(){
         return (players[currentPlayerIndex].getScore() >= 20 || players[currentPlayerIndex].getPlayableTilesNumber() == 0);
     }
 
+    /**
+     * Retourne l'index du joueur actif.
+     * @return L'index du joueur actif.
+     */
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
@@ -221,6 +291,7 @@ public class Match extends History<Move> {
      * @return Set des tous les critters voisins appartenant au joueur.
      */
     private Set<Critter> getPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
+        if(critters.isEmpty()) return Collections.emptySet();
         Set<Critter> neighbors = new HashSet<>();
         for(Critter critter : critters){
             if(critter.player != playerIndex) continue;
@@ -246,4 +317,11 @@ public class Match extends History<Move> {
         return deltaX <= 1 && deltaY <= 1;
     }
 
+    /**
+     * Récupère le nombre de critters actuellement présent sur le plateau.
+     * @return Le nombre de critters sur le palteau.
+     */
+    public int getNumberOfCritters(){
+        return critters.size();
+    }
 }
