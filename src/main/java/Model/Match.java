@@ -2,9 +2,7 @@ package Model;
 
 import Global.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Match extends History<Move> {
     public final static int playerOneIndex=0;
@@ -16,7 +14,7 @@ public class Match extends History<Move> {
     int[][] boardState; // 0 tile can be played, -1 can't be played by PayerOne, -2 can't be played by playerTwo
                         // 1 is occupied by playerOne, 2 by playerTwo
 
-    ArrayList<Critter> critters;
+    Set<Critter> critters;
 
     public Match(){
         players[0] = new PlayerData();
@@ -34,7 +32,7 @@ public class Match extends History<Move> {
 
     public void playMove(int l, int c){
         /// 1 - check if Move is valid
-        if (Math.max(Math.abs(l-4), Math.abs(c-4)) > 4 || boardState[l][c] != 0 ){ // invalid Move
+        if (Math.max(Math.abs(l-4), Math.abs(c-4)) > 4 || boardState[l][c] != -(currentPlayerIndex + 1 )){ // invalid Move
             return;
         }
         else{
@@ -46,35 +44,38 @@ public class Match extends History<Move> {
             Coordinate newStoneCoordinate = new Coordinate(l, c);
 
             // TODO : update list of Critters and currentPlayer score if necessary
-            ArrayList<Critter> evolutionCandidates = new ArrayList<>();
-            for (Critter C : critters){
-                if (C.canEvolve(l, c)){
-                    evolutionCandidates.add(C);
-                }
-            }
+            var neighbors = getCurrentPlayerNeighborsCritters(currentPlayerIndex, newStoneCoordinate);
+            Critter newCritter;
 
-            Critter C;
-            if (!evolutionCandidates.isEmpty()) {
-                C = evolve(evolutionCandidates, newStoneCoordinate);
+            if(neighbors.isEmpty()){
+                newCritter = new Critter(newStoneCoordinate, currentPlayerIndex);
             }
             else{
-                C = new Critter(l, c, currentPlayerIndex);
+                newCritter = evolve(neighbors, newStoneCoordinate);
             }
 
-            critters.add(C);
-            feed(C);
+            critters.add(newCritter);
+
+            feed(newCritter);
         }
     }
 
     /**
-     * Evolue un ou plusieurs critter.
+     * Evolue un ou plusieurs critters.
      * @param evolutionCandidates Les critters existants à fusionner pour l'évolution.
      * @param newStoneCoord Coordonnées de la dernière pierre posée.
      * @return Le critter evolué.
      */
-    public Critter evolve(List<Critter> evolutionCandidates, Coordinate newStoneCoord){
-        // TODO : fuse critters (delete critters from list and add fusion with updated type)
-        return null;
+    public Critter evolve(Set<Critter> evolutionCandidates, Coordinate newStoneCoord){
+        Set<Coordinate> evolutionCoords = new HashSet<>();
+        for (Critter critter : evolutionCandidates){
+            evolutionCoords.addAll(critter.hexagons);
+        }
+
+        critters.removeAll(evolutionCandidates);
+        evolutionCoords.add(newStoneCoord);
+
+        return new Critter(evolutionCoords, currentPlayerIndex);
     }
 
     public void feed(Critter critter){
@@ -117,8 +118,8 @@ public class Match extends History<Move> {
      * @param coordinate Les coordonnées de la position où chercher des critter voisins.
      * @return Liste des tous les critters voisins appartenant au joueur.
      */
-    private List<Critter> getCurrentPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
-        List<Critter> neighbors = new ArrayList<>();
+    private Set<Critter> getCurrentPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
+        Set<Critter> neighbors = new HashSet<>();
         for(Critter critter : critters){
             if(critter.player != playerIndex) continue;
             for (Coordinate stoneCoord : critter.hexagons){

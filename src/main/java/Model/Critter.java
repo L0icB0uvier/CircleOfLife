@@ -10,18 +10,17 @@ public class Critter {
     int player;                         // player to whom the tiles belong
     ArrayList<Critter> neighbors;       // list of shapes adjacent to this one
 
-    public Critter(int l, int c, int playerIndex){
+    public Critter(Coordinate stoneCoordinate, int playerIndex){
         hexagons = new HashSet<>();
-        hexagons.add(new Coordinate(l, c));
+        hexagons.add(stoneCoordinate);
         type = 0;
         player = playerIndex + 1;
         findNeighbors();
     }
 
-    public Critter(Set<Coordinate> stoneCoordinate, int playerIndex){
-        hexagons = stoneCoordinate;
-        var normalizedCoordinates = ShapeUtils.normalizeCoordinate(stoneCoordinate);
-        type = ShapeUtils.getShapeId(normalizedCoordinates);
+    public Critter(Set<Coordinate> stoneCoordinates, int playerIndex){
+        hexagons = stoneCoordinates;
+        type = ShapeUtils.getShapeId(stoneCoordinates);
         player = playerIndex + 1;
         findNeighbors();
     }

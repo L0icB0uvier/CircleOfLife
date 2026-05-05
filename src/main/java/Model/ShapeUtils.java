@@ -95,11 +95,11 @@ public class ShapeUtils {
 
     /**
      * Récupère le type de forme.
-     * @param normalizedGroup Un Set de coordonnées normalisées décrivant la forme.
+     * @param boardCoordinates Un Set de coordonnées sur le plateau décrivant la forme.
      * @return Le type de forme.
      */
-    public static Integer getShapeId(Set<Coordinate> normalizedGroup) {
-        return shapes.getOrDefault(normalizedGroup, -1);
+    public static Integer getShapeId(Set<Coordinate> boardCoordinates) {
+        return shapes.getOrDefault(normalizeCoordinate(boardCoordinates), -1);
     }
 
     /**
