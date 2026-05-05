@@ -14,14 +14,14 @@ public class Critter {
         hexagons = new HashSet<>();
         hexagons.add(stoneCoordinate);
         type = 0;
-        player = playerIndex + 1;
+        player = playerIndex;
         findNeighbors();
     }
 
     public Critter(Set<Coordinate> stoneCoordinates, int playerIndex){
         hexagons = stoneCoordinates;
         type = ShapeUtils.getShapeId(stoneCoordinates);
-        player = playerIndex + 1;
+        player = playerIndex;
         findNeighbors();
     }
 
