@@ -1,6 +1,7 @@
 package Model;
 
 import Global.Configuration;
+import org.w3c.dom.css.CSSImportRule;
 
 import java.util.*;
 
@@ -38,12 +39,9 @@ public class Match extends History<Move> {
         else{
             /// 2 - update corresponding tile
             boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
+            Coordinate newStoneCoordinate = new Coordinate(c, l);
 
-            /// 3 - update Critters : evolve or reproduce, then feed
-
-            Coordinate newStoneCoordinate = new Coordinate(l, c);
-
-            // TODO : update list of Critters and currentPlayer score if necessary
+            /// 3 - evolve
             var neighbors = getPlayerNeighborsCritters(currentPlayerIndex, newStoneCoordinate);
             Critter newCritter;
 
@@ -56,8 +54,66 @@ public class Match extends History<Move> {
 
             critters.add(newCritter);
 
-            feed(newCritter);
+            /// 4 - feed
+
+            Set<Critter> eatenCritters = feed(newCritter);
+
+            ///  5 - update tiles
+            Set<Coordinate> updatedTiles = new HashSet<>();
+            updatedTiles.addAll(freeNeighborTiles(newCritter));
+            for (Critter critter : eatenCritters){
+                updatedTiles.addAll(freeNeighborTiles(critter));
+                updatedTiles.addAll(critter.hexagons);
+            }
+
+            for (Coordinate coordinate : updatedTiles){
+                if (boardState[coordinate.line()][coordinate.col()] <= 0){
+                    int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
+                    int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
+                    if (playerOneSum >= 4){
+                        if (playerTwoSum >= 4){
+                            boardState[coordinate.line()][coordinate.col()] = -3;
+                        }
+                        else {
+                            boardState[coordinate.line()][coordinate.col()] = -1;
+                        }
+                    }
+                    else if (playerTwoSum >= 4){
+                        boardState[coordinate.line()][coordinate.col()] = -2;
+                    }
+                    else {
+                        boardState[coordinate.line()][coordinate.col()] = 0;
+                    }
+                }
+            }
+
         }
+    }
+
+    private int sumPlayerNeighborCritters(int playerIndex, Coordinate coordinate) {
+        Set<Critter> critterNeighbors = getPlayerNeighborsCritters(playerIndex, coordinate);
+        int result = 0;
+        for (Critter critter : critterNeighbors){
+            if (playerIndex == critter.player){
+                result += critter.hexagons.size();
+            }
+        }
+        return result;
+    }
+
+    private Set<Coordinate> freeNeighborTiles(Critter critter) {
+        Set<Coordinate> result = new HashSet<>();
+        for (Coordinate coordinate : critter.hexagons) {
+            for (int[] delta : new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}}) {
+                int x = coordinate.line() + delta[0];
+                int y = coordinate.col() + delta[1];
+                if (boardState[x][y] <= 0){
+                    result.add(new Coordinate(y,x));
+                }
+            }
+
+        }
+        return result;
     }
 
     /**
@@ -165,7 +221,7 @@ public class Match extends History<Move> {
      * Vérifie si 2 coordonnées sont voisines.
      * @param first La première coordonnée.
      * @param second La deuxième coordonnée.
-     * @return true si les deux coordonnées sont voisine, false sinon.
+     * @return true si les deux coordonnées sont voisines, false sinon.
      */
     public boolean isNeighbor(Coordinate first, Coordinate second){
         int deltaX = Math.abs(first.line() - second.line());
