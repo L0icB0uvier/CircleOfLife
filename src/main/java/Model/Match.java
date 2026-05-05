@@ -62,39 +62,38 @@ public class Match extends History<Move> {
             // on nourrit le Critter créé si on peut
             Set<Critter> eatenCritters = feed(newCritter);
 
-            // on fait la liste des tuiles qui peuvent avoir besoin d'être mises à jour
-            Set<Coordinate> updatedTiles = new HashSet<>();
-            updatedTiles.addAll(freeNeighborTiles(newCritter));
-            for (Critter critter : eatenCritters){
-                updatedTiles.addAll(freeNeighborTiles(critter));
-                updatedTiles.addAll(critter.hexagons);
-            }
-
-            // on parcourt la liste et on met les cases à jour
-            for (Coordinate coordinate : updatedTiles){
-                if (boardState[coordinate.line()][coordinate.col()] <= 0){
-                    int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
-                    int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
-                    if (playerOneSum >= 4){ // playerOne ne peut pas jouer ici
-                        if (playerTwoSum >= 4){ // playerTwo non plus
-                            boardState[coordinate.line()][coordinate.col()] = -3;
-                        }
-                        else { // playerOne ne peut pass jouer ici mais playerTwo peut
-                            boardState[coordinate.line()][coordinate.col()] = -1;
-                        }
-                    }
-                    else if (playerTwoSum >= 4){ // playerOne peut jouer ici mais playerTwo ne peut pas
-                        boardState[coordinate.line()][coordinate.col()] = -2;
-                    }
-                    else { // tout le monde peut jouer ici
-                        boardState[coordinate.line()][coordinate.col()] = 0;
-                    }
-                }
-            }
-
+            updateBoard(newCritter, eatenCritters);
         }
     }
 
+    private void updateBoard(Critter newCritter, Set<Critter> eatenCritters) {
+        // on fait la liste des tuiles qui peuvent avoir besoin d'être mises à jour
+        Set<Coordinate> updatedTiles = new HashSet<>();
+        updatedTiles.addAll(freeNeighborTiles(newCritter));
+        for (Critter critter : eatenCritters){
+            updatedTiles.addAll(freeNeighborTiles(critter));
+            updatedTiles.addAll(critter.hexagons);
+        }
+
+        // on parcourt la liste et on met les cases à jour
+        for (Coordinate coordinate : updatedTiles) {
+            if (boardState[coordinate.line()][coordinate.col()] <= 0) {
+                int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
+                int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
+                if (playerOneSum >= 4) { // playerOne ne peut pas jouer ici
+                    if (playerTwoSum >= 4) { // playerTwo non plus
+                        boardState[coordinate.line()][coordinate.col()] = -3;
+                    } else { // playerOne ne peut pass jouer ici mais playerTwo peut
+                        boardState[coordinate.line()][coordinate.col()] = -1;
+                    }
+                } else if (playerTwoSum >= 4) { // playerOne peut jouer ici mais playerTwo ne peut pas
+                    boardState[coordinate.line()][coordinate.col()] = -2;
+                } else { // tout le monde peut jouer ici
+                    boardState[coordinate.line()][coordinate.col()] = 0;
+                }
+            }
+        }
+    }
 
     /**
      * Calcule la somme des tailles des Critter appartenant à un joueur donné et voisins d'une case donnée.
