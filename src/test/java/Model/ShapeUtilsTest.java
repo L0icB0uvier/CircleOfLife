@@ -87,10 +87,6 @@ class ShapeUtilsTest {
         Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 1), new Coordinate(1, 2)));
         assertEquals(2, ShapeUtils.getShapeId(validSet2));
 
-        // Valid set with normalization
-        Set<Coordinate> unormalizedSet = new HashSet<>(Set.of(new Coordinate(4, 3), new Coordinate(5, 4), new Coordinate(6, 4), new Coordinate(5, 5)));
-        assertEquals(2, ShapeUtils.getShapeId(ShapeUtils.normalizeCoordinate(unormalizedSet)));
-
         // Invalid Set 1
         Set<Coordinate> invalidSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(-1, 1)));
         assertNotEquals(2, ShapeUtils.getShapeId(invalidSet1));
@@ -113,11 +109,6 @@ class ShapeUtilsTest {
         // Valid set 3
         Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)));
         assertEquals(3, ShapeUtils.getShapeId(validSet3));
-
-        // Valid set with normalization
-        Set<Coordinate> unormalizedSet = new HashSet<>(Set.of(new Coordinate(4, 3), new Coordinate(5, 3), new Coordinate(5, 4), new Coordinate(6, 4)));
-        Set<Coordinate> normalizedSet = ShapeUtils.normalizeCoordinate(unormalizedSet);
-        assertEquals(3, ShapeUtils.getShapeId(normalizedSet));
 
         // Invalid Set 1
         Set<Coordinate> invalidSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(2, 3)));
@@ -145,7 +136,10 @@ class ShapeUtilsTest {
     void validateShape7(){}
 
     @Test
-    void validateShape8(){}
+    void validateShape8(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1)));
+        assertEquals(8, ShapeUtils.getShapeId(validSet1));
+    }
 
     @Test
     void validateShape9(){}

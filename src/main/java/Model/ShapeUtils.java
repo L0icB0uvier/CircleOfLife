@@ -99,7 +99,8 @@ public class ShapeUtils {
      * @return Le type de forme.
      */
     public static Integer getShapeId(Set<Coordinate> boardCoordinates) {
-        return shapes.getOrDefault(normalizeCoordinate(boardCoordinates), -1);
+        var normalizedCoord = normalizeCoordinate(boardCoordinates);
+        return shapes.getOrDefault(normalizedCoord, -1);
     }
 
     /**
@@ -124,7 +125,7 @@ public class ShapeUtils {
         for(Coordinate coord : boardCoordinate){
             int normalizedLine = coord.line() - minLine;
             int normalizedCol = coord.col() - minCol;
-            normalized.add(new Coordinate(normalizedLine, normalizedCol));
+            normalized.add(new Coordinate(normalizedCol, normalizedLine));
         }
 
         return normalized;

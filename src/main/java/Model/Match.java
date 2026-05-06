@@ -39,6 +39,9 @@ public class Match extends History<Move> {
             players[currentPlayerIndex].score += 1;
             initMatch();
         }
+        else{
+            toggleCurrentPlayer();
+        }
     }
 
     /**
@@ -46,13 +49,14 @@ public class Match extends History<Move> {
      * @param l La ligne de la case.
      * @param c La colonne de la case.
      */
-    public void playMove(int l, int c){
+    public boolean playMove(int l, int c){
         /// 1 - check if Move is valid
         if (isMoveInvalid(l, c)){ // invalid Move
             Configuration.warning("Impossible de jouer à la case " + c + ":" + l);
-            return;
+            return false;
         }
         else{
+            Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
             // on met la case à jour
             boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
             Coordinate newStoneCoordinate = new Coordinate(c, l);
@@ -70,6 +74,7 @@ public class Match extends History<Move> {
 
             // mise à jour de l'état du plateau
             updateBoard(newCritter, eatenCritters);
+            return true;
         }
     }
 
@@ -95,9 +100,16 @@ public class Match extends History<Move> {
 
         if(neighbors.isEmpty()){
             newCritter = new Critter(coord, currentPlayerIndex);
+            Configuration.info(String.format("Création d'un nouveau critter de type %d", newCritter.type));
         }
         else{
             newCritter = evolve(neighbors, coord);
+            if(neighbors.size() == 1){
+                Configuration.info(String.format("Evolution d'un critter de type %d en critter de type %d", neighbors.iterator().next().type, newCritter.type));
+            }
+            else{
+                Configuration.info(String.format("Evolution de plusieurs critters en critter de type %d", newCritter.type));
+            }
         }
 
         critters.add(newCritter);
@@ -149,6 +161,7 @@ public class Match extends History<Move> {
      * @param c Le Critter à effacer.
      */
     private void eatCritter(Critter c) {
+        Configuration.info(String.format("Player %d eats critter of type %d", currentPlayerIndex + 1, c.type));
         for (Coordinate coord : c.hexagons){
             boardState[coord.line()][coord.col()] = 0;
         }
@@ -172,7 +185,7 @@ public class Match extends History<Move> {
             }
         }
 
-        // on parcourt la liste et on met les cases à jour
+        // on parcour la liste et on met les cases à jour
         for (Coordinate coordinate : updatedTiles) {
             if (boardState[coordinate.line()][coordinate.col()] <= 0) {
                 int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
@@ -203,6 +216,8 @@ public class Match extends History<Move> {
             for (int[] delta : new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}}) {
                 int x = coordinate.line() + delta[0];
                 int y = coordinate.col() + delta[1];
+
+                //TODO Rajouter un check de bounds pour ne pas lire en dehors des cases du plateau.
                 if (boardState[x][y] <= 0){
                     result.add(new Coordinate(y,x));
                 }

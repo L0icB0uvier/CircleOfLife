@@ -14,10 +14,10 @@ import javax.swing.JComponent;
 import Global.Configuration;
 import Model.Game;
 import Model.Match;
-import Patterns.Observateur;
+import Patterns.Observer;
 import View.Utils.UIColor;
 
-public class GamePanel extends JComponent implements Observateur {
+public class GamePanel extends JComponent implements Observer {
     Game game;
     Image imgWaffle;
     Match match;
@@ -251,7 +251,7 @@ public class GamePanel extends JComponent implements Observateur {
         if(Math.max(Math.abs(n-4), Math.abs(m-4)) <= 4 && (n != nSelected || m != mSelected)) {
             nSelected = n;
             mSelected = m;
-            Configuration.info("Focus sur " + n + ", " + m);
+            //Configuration.info("Focus sur " + n + ", " + m);
         }
         repaint();
     }

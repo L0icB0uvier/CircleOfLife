@@ -1,5 +1,6 @@
 package Model;
 
+import Global.Configuration;
 import Patterns.Command;
 
 public class Move implements Command {
@@ -35,6 +36,7 @@ public class Move implements Command {
     @Override
     public void execute() {
         // sauvegarder l'état du plateau;
+        Configuration.info(String.format("Exécution du move %d:%d", column, line));
         match.playMove(line, column);
     }
 
