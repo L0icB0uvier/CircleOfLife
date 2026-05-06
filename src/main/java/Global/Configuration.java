@@ -5,6 +5,7 @@ import Controller.IA.AILevel;
 import java.io.*;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -127,9 +128,31 @@ public class Configuration {
      */
     public Logger logger() {
         if (logger == null) {
-            System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s : %5$s%n");
-            logger = Logger.getLogger("Sokoban.Logger");
-            logger.setLevel(Level.parse(read("LogLevel")));
+            logger = Logger.getLogger("CircleOfLife.Logger");
+
+            // 1. On empêche la remontée vers le parent pour éviter les doublons
+            logger.setUseParentHandlers(false);
+
+            // Lecture du niveau avec une valeur de secours (INFO) au cas où
+            String levelString = read("LogLevel");
+            Level selectedLevel;
+            try {
+                selectedLevel = Level.parse(levelString.trim().toUpperCase());
+            } catch (Exception e) {
+                System.err.println("Niveau de log invalide '" + levelString + "', passage en INFO par défaut.");
+                selectedLevel = Level.INFO;
+            }
+            logger.setLevel(selectedLevel);
+
+            // 3. Ajout de votre handler personnalisé
+            ConsoleHandler handler = new ConsoleHandler();
+            handler.setFormatter(new ColorFormatter());
+            handler.setLevel(selectedLevel);
+
+            logger.addHandler(handler);
+
+            System.out.println("Niveau du Logger : " + logger.getLevel());
+            System.out.println("Niveau du Handler : " + logger.getHandlers()[0].getLevel());
         }
         return logger;
     }
