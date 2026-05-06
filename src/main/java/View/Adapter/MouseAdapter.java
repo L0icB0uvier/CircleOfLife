@@ -20,9 +20,8 @@ public class MouseAdapter extends java.awt.event.MouseAdapter {
         Configuration.info("Click at " + e.getX() + ":" + e.getY());
         int n = graphicalGame.getGamePanel().xToN(e.getX(),e.getY());
         int m = graphicalGame.getGamePanel().yToM(e.getY());
-        //control.handleClic(line, col);
-        System.out.println("index n: " + n);
-        System.out.println("index m: " + m);
+        Configuration.info(String.format("Clic souris sur case %d:%d", m, n));
+        control.handleClic(m, n);
     }
 
     @Override

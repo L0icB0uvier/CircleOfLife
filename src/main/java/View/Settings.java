@@ -9,8 +9,6 @@ public class Settings {
     PlayerSettings player1Settings, player2Settings;
 
     public Settings(){
-        lines = Configuration.readInt("DefaultWaffleLines");
-        columns = Configuration.readInt("DefaultWaffleColumns");
         player1Settings = new PlayerSettings();
         player2Settings = new PlayerSettings();
         player2Settings.isAI = true;
