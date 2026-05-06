@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Stroke;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
@@ -19,6 +20,7 @@ import View.Utils.UIColor;
 
 public class GamePanel extends JComponent implements Observer {
     Game game;
+    BufferedImage imgPlateau;
     Image imgWaffle;
     Match match;
     private int scaleX;
@@ -34,6 +36,8 @@ public class GamePanel extends JComponent implements Observer {
     double incY;
     double size;
 
+    double alpha = 0.95;
+
     public GamePanel(Game game) {
         /*
          * this.game = game;
@@ -48,30 +52,43 @@ public class GamePanel extends JComponent implements Observer {
         // nbColumns = match.getNbCol();
         nSelected = -1;
         mSelected = -1;
+        imgPlateau=(BufferedImage) readImage("Plateau_fleches");
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        super.paintComponent(g);
+
         Graphics2D g2D = (Graphics2D) g;
         int width = getSize().width;
         int height = getSize().height;
 
-        double sizeYProp = (0.9 * height / (10 * Math.sin(Math.PI / 6) + 9)); // dérivée depuis
-                                                                              // hauteur_totale_plateau=0.9*height cad
-                                                                              // 9*incY + incY - size=0.9*height cad
-                                                                              // 10*incY-size=0-9*height
+        int imgSrcHeight = imgPlateau.getHeight();
+        int imgSrcWidth = imgPlateau.getWidth();
+        int x, y, imageWidth, imageHeight;
+        double oneMinusAlpha = 1 - alpha;
 
-        double sizeXProp = (int) (0.9 * width / (18 * Math.cos(Math.PI / 6))); // dérivée depuis
-                                                                               // longeur_totale_plateau=0.9*width cad
-                                                                               // 9*incX=0.9*width
-        size = (int) Math.min(sizeYProp, sizeXProp);
+        if(width > height){
+            x = (int) ((width - ((alpha * height * imgSrcWidth) / imgSrcHeight))) / 2;
+            y = (int) ((oneMinusAlpha) / 2 * height);
+            imageWidth = (int) Math.round(alpha * height * imgSrcWidth) / imgSrcHeight;
+            imageHeight = (int) Math.round(alpha * height);
+            size = imageHeight * (92. / (double)imgSrcHeight);
+        }
+        else{
+            x = (int) ((oneMinusAlpha) / 2) * width;
+            y = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
+            imageWidth = (int) Math.round(alpha * width);
+            imageHeight = (int) Math.round((alpha * width * imgSrcHeight) / imgSrcWidth);
+            size = imageWidth * (92. / (double)imgSrcWidth);
+        }
 
         incX = 2 * (int) Math.round(Math.cos((Math.PI / 6)) * size); // permet d'aller au prochain coin horizontalement
         incY = (int) Math.round(Math.sin((Math.PI / 6)) * size) + size; // permet d'aller au prochain coin verticalement
 
-        drawPlateau(g2D);
+        g2D.drawImage(imgPlateau, x, y, imageWidth, imageHeight, null);
     }
 
     private void drawPlateau(Graphics2D g2D) {
