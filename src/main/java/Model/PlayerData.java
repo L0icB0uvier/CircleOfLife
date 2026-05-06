@@ -2,27 +2,26 @@ package Model;
 
 public class PlayerData {
     int score;
+    int playableTilesNumber;
 
     public PlayerData(){
         score = 0;
+        playableTilesNumber = 61;
     }
 
     public PlayerData(int score){
         this.score = score;
     }
 
-    /**
-     * Ajoute 1 au score du joueur.
-     */
-    public void incrementScore(){
-        score++;
+    public void increaseScore(int increaseAmount){
+        score += increaseAmount;
     }
 
-    /**
-     * Récupère le score du joueur.
-     * @return Le score du joueur.
-     */
     public int getScore() {
         return score;
+    }
+
+    public int getPlayableTilesNumber() {
+        return playableTilesNumber;
     }
 }
