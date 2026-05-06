@@ -50,6 +50,8 @@ public class GamePanel extends JComponent implements Observer {
 
         // nbLines = match.getNbLines();
         // nbColumns = match.getNbCol();
+        this.game=game;
+        match=game.getMatch();
         nSelected = -1;
         mSelected = -1;
         imgPlateau=(BufferedImage) readImage("Plateau_fleches");
@@ -59,8 +61,8 @@ public class GamePanel extends JComponent implements Observer {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        super.paintComponent(g);
-
+        
+        
         Graphics2D g2D = (Graphics2D) g;
         int width = getSize().width;
         int height = getSize().height;
@@ -75,20 +77,21 @@ public class GamePanel extends JComponent implements Observer {
             y = (int) ((oneMinusAlpha) / 2 * height);
             imageWidth = (int) Math.round(alpha * height * imgSrcWidth) / imgSrcHeight;
             imageHeight = (int) Math.round(alpha * height);
-            size = imageHeight * (92. / (double)imgSrcHeight);
+            size = imageHeight * (89 / (double)imgSrcHeight);
         }
         else{
             x = (int) ((oneMinusAlpha) / 2) * width;
             y = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
             imageWidth = (int) Math.round(alpha * width);
             imageHeight = (int) Math.round((alpha * width * imgSrcHeight) / imgSrcWidth);
-            size = imageWidth * (92. / (double)imgSrcWidth);
+            size = imageWidth * (89. / (double)imgSrcWidth);
         }
-
+        
         incX = 2 * (int) Math.round(Math.cos((Math.PI / 6)) * size); // permet d'aller au prochain coin horizontalement
         incY = (int) Math.round(Math.sin((Math.PI / 6)) * size) + size; // permet d'aller au prochain coin verticalement
 
         g2D.drawImage(imgPlateau, x, y, imageWidth, imageHeight, null);
+        drawPlateau(g2D);
     }
 
     private void drawPlateau(Graphics2D g2D) {
@@ -100,6 +103,15 @@ public class GamePanel extends JComponent implements Observer {
         int m = 0;
         int xSelected = -1, ySelected = -1;
         Color colorSelected = null;
+        switch (game.getCurrentPlayerIndex()) {
+            case 0:
+                colorSelected=UIColor.getColor(UIColor.BLUE);
+                break;
+        
+            case 1:
+                colorSelected=UIColor.getColor(UIColor.RED);
+                break;
+        }
         int posX = (int) ((int) width / 2 - 2 * incX);
         int posXInit = posX;
         int posY = (int) (height / 2 - (5 * incY - size / 2));
@@ -110,9 +122,21 @@ public class GamePanel extends JComponent implements Observer {
                 if(n == nSelected && m == mSelected) {
                     xSelected = posX;
                     ySelected = posY;
-                    colorSelected = UIColor.getColor(UIColor.RED);
                 }
-                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+                switch (match.getCase(n, m)) {
+                    case 1:
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
+                        break;
+
+                    case 2:
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+                        break;
+
+                    default:
+                        drawHexagon(g2D, posX, posY, (int) size, Color.WHITE, n, m);
+                        break;
+                }
+               // drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
                 n++;
                 posX += incX;
             }
@@ -129,9 +153,20 @@ public class GamePanel extends JComponent implements Observer {
             if(n == nSelected && m == mSelected) {
                 xSelected = posX;
                 ySelected = posY;
-                colorSelected = Color.WHITE;
             }
-            drawHexagon(g2D, posX, posY, (int) size, Color.WHITE, n, m);
+            switch (match.getCase(n, m)) {
+                    case 1:
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
+                        break;
+
+                    case 2:
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+                        break;
+
+                    default:
+                        drawHexagon(g2D, posX, posY, (int) size, Color.WHITE, n, m);
+                        break;
+            }
             posX += incX;
             n++;
         }
@@ -145,12 +180,23 @@ public class GamePanel extends JComponent implements Observer {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < nb_elem; j++) {
-                if(n + 1 == nSelected && m == mSelected) {
+                if(n+1 == nSelected && m == mSelected) {
                     xSelected = posX;
                     ySelected = posY;
-                    colorSelected = UIColor.getColor(UIColor.BLUE);
                 }
-                drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n + 1, m);
+                switch (match.getCase(n+1, m)) {
+                    case 1:
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n+1, m);
+                        break;
+
+                    case 2:
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n+1, m);
+                        break;
+                    
+                    default:
+                        drawHexagon(g2D, posX, posY, (int) size, Color.WHITE, n, m);
+                        break;
+                }
                 posX += incX;
                 n++;
             }
@@ -271,6 +317,20 @@ public class GamePanel extends JComponent implements Observer {
             //Configuration.info("Focus sur " + n + ", " + m);
         }
         repaint();
+    }
+
+    public int nToX(int n, int y) {
+        double x0 = getWidth() / 2 - 2 * incX;
+        double y0 = getHeight() / 2 - 4 * incY;
+        double scaleX = incX;
+        double scaleY = incX;
+        return (int) (scaleX*(n-(y-y0)/(Math.sqrt(3)*scaleY))+x0);
+    }
+
+    public int mToY(int m) {
+        double y0 = getHeight() / 2 - 4 * incY;
+        double scaleY = incX; 
+        return (int) Math.round(m*scaleY*Math.sqrt(3)/2-y0);
     }
 
     public int xToN(int x, int y) {

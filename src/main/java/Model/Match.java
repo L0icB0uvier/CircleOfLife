@@ -358,4 +358,8 @@ public class Match extends History<Move> {
     public PlayerData[] getPlayerData(){
         return players;
     }
+
+    public int getCase(int n, int m) {
+        return boardState[m][n];
+    }
 }
