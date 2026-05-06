@@ -36,6 +36,8 @@ public class GamePanel extends JComponent implements Observer {
     double incY;
     double size;
 
+    double alpha = 0.95;
+
     public GamePanel(Game game) {
         /*
          * this.game = game;
@@ -61,49 +63,31 @@ public class GamePanel extends JComponent implements Observer {
         int width = getSize().width;
         int height = getSize().height;
 
-        /* 
-        double sizeYProp = (0.9 * height / (10 * Math.sin(Math.PI / 6) + 9)); // dérivée depuis
-                                                                              // hauteur_totale_plateau=0.9*height cad
-                                                                              // 9*incY + incY - size=0.9*height cad
-                                                                              // 10*incY-size=0-9*height
-        
-        double sizeXProp = (int) (0.9 * width / (18 * Math.cos(Math.PI / 6))); // dérivée depuis
-        */                                                                       // longeur_totale_plateau=0.9*width cad
-                                                         // 9*incX=0.9*width
-        int heightImg=imgPlateau.getHeight();
-        int heightOriginImage=heightImg;
-        int widthImg=imgPlateau.getWidth();
-        int widthOriginImage=widthImg;
-        double scale=widthImg/heightImg;
-        double globalScale=0.95;
+        int imgSrcHeight = imgPlateau.getHeight();
+        int imgSrcWidth = imgPlateau.getWidth();
+        int x, y, imageWidth, imageHeight;
+        double oneMinusAlpha = 1 - alpha;
 
-        
-
-        if (width<height) {
-            widthImg=(int) (globalScale*width);
-            heightImg=(int) (globalScale*(width/scale));
-            g2D.drawImage(imgPlateau, (int)((1-globalScale)/2*width), height/2-heightImg/2, widthImg, heightImg, null);
-        } else {
-            heightImg=(int) (globalScale*height);
-            widthImg=(int) (globalScale*(height*scale));
-            g2D.drawImage(imgPlateau, width/2-widthImg/2, (int)((1-globalScale)/2*height), widthImg, heightImg, null);
+        if(width > height){
+            x = (int) ((width - ((alpha * height * imgSrcWidth) / imgSrcHeight))) / 2;
+            y = (int) ((oneMinusAlpha) / 2 * height);
+            imageWidth = (int) Math.round(alpha * height * imgSrcWidth) / imgSrcHeight;
+            imageHeight = (int) Math.round(alpha * height);
+            size = imageHeight * (92. / (double)imgSrcHeight);
         }
-        double sizeYProp=heightImg*(86./(double)heightOriginImage);
-        
-        
-        
-        
-        size = (int) sizeYProp;
-
-        //g2D.drawLine(width/2, height/2, width/2+10 ,height/2);
+        else{
+            x = (int) ((oneMinusAlpha) / 2) * width;
+            y = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
+            imageWidth = (int) Math.round(alpha * width);
+            imageHeight = (int) Math.round((alpha * width * imgSrcHeight) / imgSrcWidth);
+            size = imageWidth * (92. / (double)imgSrcWidth);
+        }
 
         incX = 2 * (int) Math.round(Math.cos((Math.PI / 6)) * size); // permet d'aller au prochain coin horizontalement
         incY = (int) Math.round(Math.sin((Math.PI / 6)) * size) + size; // permet d'aller au prochain coin verticalement
 
-        
-        
-        
-        drawPlateau(g2D);
+        g2D.drawImage(imgPlateau, x, y, imageWidth, imageHeight, null);
+        //drawPlateau(g2D);
     }
 
     private void drawPlateau(Graphics2D g2D) {
