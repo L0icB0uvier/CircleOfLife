@@ -8,8 +8,10 @@ public class CoordinateUtils {
      * @return true si les deux coordonnées sont voisines, false sinon.
      */
     public static boolean isNeighbor(Coordinate first, Coordinate second){
-        int deltaX = Math.abs(first.line() - second.line());
-        int deltaY = Math.abs(first.col() - second.col());
-        return deltaX <= 1 && deltaY <= 1;
+        int deltaX = first.line() - second.line();
+        int deltaY = first.col() - second.col();
+        return Math.abs(deltaX) <= 1 && Math.abs(deltaY) <= 1 && Math.abs(deltaX - deltaY) <= 1;
     }
+
+
 }

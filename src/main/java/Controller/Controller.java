@@ -36,7 +36,7 @@ public class Controller implements EventCollector, Observer {
      */
     private boolean isClicValid(int l, int c){
         // A compléter
-        return true;
+        return Math.max(Math.abs(l - 4), Math.abs(c - 4)) <= 4;
     }
 
     @Override

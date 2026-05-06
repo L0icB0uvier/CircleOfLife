@@ -22,15 +22,14 @@ public class GamePanel extends JComponent implements Observer {
     Game game;
     BufferedImage imgPlateau;
     Image imgWaffle;
+    int imgSrcHeight, imgSrcWidth;
     Match match;
-    private int scaleX;
-    private int scaleY;
-    private int nbLines;
-    private int nbColumns;
-    private int mouseX, mouseY;
-    private int nSelected, mSelected;
-    private int tintAlpha = 160;
-    private boolean previewEnabled = false;
+    int scaleX, scaleY;
+    int nbLines, nbColumns;
+    int mouseX, mouseY;
+    int nSelected, mSelected;
+    int tintAlpha = 160;
+    boolean previewEnabled = false;
 
     double incX;
     double incY;
@@ -55,20 +54,18 @@ public class GamePanel extends JComponent implements Observer {
         nSelected = -1;
         mSelected = -1;
         imgPlateau=(BufferedImage) readImage("Plateau_fleches");
+        imgSrcHeight = imgPlateau.getHeight();
+        imgSrcWidth = imgPlateau.getWidth();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        
-        
         Graphics2D g2D = (Graphics2D) g;
         int width = getSize().width;
         int height = getSize().height;
 
-        int imgSrcHeight = imgPlateau.getHeight();
-        int imgSrcWidth = imgPlateau.getWidth();
         int x, y, imageWidth, imageHeight;
         double oneMinusAlpha = 1 - alpha;
 
@@ -102,19 +99,10 @@ public class GamePanel extends JComponent implements Observer {
         int n = 0;
         int m = 0;
         int xSelected = -1, ySelected = -1;
-        Color colorSelected = null;
-        switch (game.getCurrentPlayerIndex()) {
-            case 0:
-                colorSelected=UIColor.getColor(UIColor.BLUE);
-                break;
-        
-            case 1:
-                colorSelected=UIColor.getColor(UIColor.RED);
-                break;
-        }
-        int posX = (int) ((int) width / 2 - 2 * incX);
+        Color colorSelected = UIColor.getColor(game.getCurrentPlayerIndex() == 0 ? UIColor.BLUE: UIColor.RED);
+        int posX = (int) (width / 2.0 - 2 * incX);
         int posXInit = posX;
-        int posY = (int) (height / 2 - (5 * incY - size / 2));
+        int posY = (int) (height / 2.0 - (5 * incY - size / 2));
 
         int nb_elem = 5;
         for (int i = 0; i < 4; i++) {
@@ -180,17 +168,17 @@ public class GamePanel extends JComponent implements Observer {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < nb_elem; j++) {
-                if(n+1 == nSelected && m == mSelected) {
+                if(n == nSelected && m == mSelected) {
                     xSelected = posX;
                     ySelected = posY;
                 }
-                switch (match.getCase(n+1, m)) {
+                switch (match.getCase(n, m)) {
                     case 1:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n+1, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
                         break;
 
                     case 2:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n+1, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
                         break;
                     
                     default:
@@ -201,7 +189,7 @@ public class GamePanel extends JComponent implements Observer {
                 n++;
             }
             nb_elem--;
-            n = 8 - nb_elem;
+            n = 9 - nb_elem;
             m++;
             posX = posXInit;
             posX += incX / 2;
@@ -212,38 +200,7 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     /*
-     * dessine une hexagone allant du coin haut et y revenant
-     */
-    private void drawHexagon(Graphics2D g2D, int x, int y, int size) {
-
-        Stroke tempStroke = g2D.getStroke();
-        g2D.setStroke(new BasicStroke(5));
-
-        double angle, cos, sin, vx, rx, ry;
-        int new_x = x;
-        int new_y = y;
-        for (int i = 0; i < 6; i++) {
-            angle = ((i) * Math.PI / 3 + Math.PI / 6);// on commence en dessinant depuis le coin haut (donc angle de
-                                                      // rotation 30°)
-            cos = Math.cos(angle);
-            sin = Math.sin(angle);
-            vx = size;
-
-            // matrice de rotation
-            rx = cos * vx;
-            ry = sin * vx;
-            new_x += (int) Math.round(rx);
-            new_y += (int) Math.round(ry);
-
-            g2D.drawLine(x, y, new_x, new_y);
-            x = new_x;
-            y = new_y;
-        }
-        g2D.setStroke(tempStroke);
-    }
-
-    /*
-     * dessine une hexagone allant du coin haut et y revenant
+     * dessine un hexagone allant du coin haut et y revenant
      */
     private void drawHexagon(Graphics2D g2D, int x, int y, int size, Color color, int n, int m) {
         double angle, cos, sin, vx, rx, ry;
@@ -278,7 +235,7 @@ public class GamePanel extends JComponent implements Observer {
 
         if(n == nSelected && m == mSelected) g2D.setColor(UIColor.getColor(UIColor.WAFFLE));
         else g2D.setColor(Color.BLACK);
-        g2D.setStroke(new BasicStroke(5));
+        g2D.setStroke(new BasicStroke(size/9.0f));
         g2D.drawPolygon(xs, ys, 6);
 
         g2D.setColor(tempColor);
@@ -317,6 +274,14 @@ public class GamePanel extends JComponent implements Observer {
             //Configuration.info("Focus sur " + n + ", " + m);
         }
         repaint();
+    }
+
+    public int getnSelected() {
+        return nSelected;
+    }
+
+    public int getmSelected() {
+        return mSelected;
     }
 
     public int nToX(int n, int y) {

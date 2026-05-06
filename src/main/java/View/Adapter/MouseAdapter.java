@@ -17,8 +17,8 @@ public class MouseAdapter extends java.awt.event.MouseAdapter {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        int n = graphicalGame.getGamePanel().xToN(e.getX(),e.getY());
-        int m = graphicalGame.getGamePanel().yToM(e.getY());
+        int n = graphicalGame.getGamePanel().getnSelected();
+        int m = graphicalGame.getGamePanel().getmSelected();
         Configuration.info(String.format("Clic souris aux coordonnées %d:%d - Correspond à la case %d:%d du plateau", e.getX(), e.getY(), n, m));
         control.handleClic(m, n);
     }
