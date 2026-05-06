@@ -18,8 +18,8 @@ public class UIColor {
 
     static Map<Integer, Color> colors = new HashMap<>();
     static {
-        colors.put(0,new Color(0,0,145));
-        colors.put(1,new Color(255,0,15));
+        colors.put(0,new Color(15,0,225));
+        colors.put(1,new Color(225,0,15));
         colors.put(2,new Color(181,126,63));
         colors.put(3,new Color(255,249,240));
         colors.put(4,new Color(244,126,82));
