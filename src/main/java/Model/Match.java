@@ -16,6 +16,8 @@ public class Match extends History<Move> {
 
     Set<Critter> critters;
 
+    private final int boardSize = 9;
+
     public Match(){
         players[0] = new PlayerData();
         players[1] = new PlayerData();
@@ -25,7 +27,7 @@ public class Match extends History<Move> {
 
     public void initMatch() {
         reset();
-        boardState = new int[8][8];
+        boardState = new int[boardSize][boardSize];
         critters = new HashSet<>();
         currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
         Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
@@ -33,7 +35,12 @@ public class Match extends History<Move> {
 
     @Override
     public void apply(Move newMove) {
+        if (!isMoveValid(newMove.line, newMove.column)){ // invalid Move
+            return;
+        }
+
         super.apply(newMove);
+
         if(isGameOver()){
             Configuration.info("Player " + currentPlayerIndex + " won!");
             players[currentPlayerIndex].score += 1;
@@ -45,48 +52,57 @@ public class Match extends History<Move> {
     }
 
     /**
+     * Vérifie si la position du Move est valide.
+     * @param l La ligne du move.
+     * @param c La colonne du move.
+     * @return true si la position est valide, faux sinon.
+     */
+    private boolean isMoveValid(int l, int c) {
+        if(Math.max(Math.abs(l - 4), Math.abs(c - 4)) > 4 ){
+            Configuration.warning(String.format("Move impossible en %d:%d - en dehors du plateau.", c, l));
+            return false;
+        }
+        if(boardState[l][c] > 0){
+            Configuration.warning(String.format("Move impossible en %d:%d - case occupée.", c, l));
+            return false;
+        }
+
+        if(boardState[l][c] == -(currentPlayerIndex + 1)){
+            Configuration.warning(String.format("Move impossible %d:%d en - case interdite pour le joueur actif.", c, l));
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Joue un pion du joueur actif sur la case de coordonnées (l, c)
      * @param l La ligne de la case.
      * @param c La colonne de la case.
      */
     public boolean playMove(int l, int c){
-        /// 1 - check if Move is valid
-        if (isMoveInvalid(l, c)){ // invalid Move
-            Configuration.warning("Impossible de jouer à la case " + c + ":" + l);
-            return false;
+        Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
+        // on met la case à jour
+        boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
+        Coordinate newStoneCoordinate = new Coordinate(c, l);
+
+        // update Critters : evolve or reproduce
+        var newCritter = updateCritters(newStoneCoordinate);
+
+        // on nourrit le Critter créé si on peut
+        Set<Critter> eatenCritters = feed(newCritter);
+
+        if(!eatenCritters.isEmpty()){
+            int pointsEarned = calculatePointEarned(eatenCritters);
+            updatePlayerScore(currentPlayerIndex, pointsEarned);
         }
-        else{
-            Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
-            // on met la case à jour
-            boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
-            Coordinate newStoneCoordinate = new Coordinate(c, l);
 
-            // update Critters : evolve or reproduce
-            var newCritter = updateCritters(newStoneCoordinate);
-
-            // on nourrit le Critter créé si on peut
-            Set<Critter> eatenCritters = feed(newCritter);
-
-            if(!eatenCritters.isEmpty()){
-                int pointsEarned = calculatePointEarned(eatenCritters);
-                updatePlayerScore(currentPlayerIndex, pointsEarned);
-            }
-
-            // mise à jour de l'état du plateau
-            updateBoard(newCritter, eatenCritters);
-            return true;
-        }
+        // mise à jour de l'état du plateau
+        updateBoard(newCritter, eatenCritters);
+        return true;
     }
 
-    /**
-     * Vérifie si la position du Move est invalide.
-     * @param l La ligne du move.
-     * @param c La colonne du move.
-     * @return true si la position est invalide, faux sinon.
-     */
-    private boolean isMoveInvalid(int l, int c) {
-        return Math.max(Math.abs(l - 4), Math.abs(c - 4)) > 4 || boardState[l][c] > 0 || boardState[l][c] == -(currentPlayerIndex + 1);
-    }
+
 
     /**
      * Met à jour les critters du joueur actif après la pose d'une nouvelle pierre.
@@ -218,6 +234,9 @@ public class Match extends History<Move> {
                 int y = coordinate.col() + delta[1];
 
                 //TODO Rajouter un check de bounds pour ne pas lire en dehors des cases du plateau.
+                if(x >= boardState.length || x < 0 || y >= boardState[0].length || y < 0)
+                    continue;
+
                 if (boardState[x][y] <= 0){
                     result.add(new Coordinate(y,x));
                 }
