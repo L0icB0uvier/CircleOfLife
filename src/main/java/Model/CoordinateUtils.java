@@ -22,8 +22,8 @@ public class CoordinateUtils {
      * @return la distance de Manhattan hexagonale entre les deux coordonnées.
      */
     public static int hexagonalManhattanDistance(Coordinate first, Coordinate second){
-        int deltaX = second.line() - first.line();
-        int deltaY =  second.col() - first.col();
+        int deltaX = second.col() - first.col();
+        int deltaY =  second.line() - first.line();
         int deltaZ = deltaX - deltaY;
         return Math.max(Math.max(Math.abs(deltaX), Math.abs(deltaY)), Math.abs(deltaZ));
     }
