@@ -90,10 +90,11 @@ public class Match extends History<Move> {
 
     /**
      * Joue un pion du joueur actif sur la case de coordonnées (l, c)
+     *
      * @param l La ligne de la case.
      * @param c La colonne de la case.
      */
-    public boolean playMove(int l, int c){
+    public void playMove(int l, int c){
         // on met la case à jour
         boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
         Coordinate newStoneCoordinate = new Coordinate(c, l);
@@ -112,7 +113,6 @@ public class Match extends History<Move> {
 
         // mise à jour de l'état du plateau
         updateBoard(newCritter, eatenCritters);
-        return true;
     }
 
 
@@ -204,8 +204,7 @@ public class Match extends History<Move> {
      */
     private void updateBoard(Critter newCritter, Set<Critter> eatenCritters) {
         // on fait la liste des tuiles qui peuvent avoir besoin d'être mises à jour
-        Set<Coordinate> updatedTiles = new HashSet<>();
-        updatedTiles.addAll(freeNeighborTiles(newCritter));
+        Set<Coordinate> updatedTiles = new HashSet<>(freeNeighborTiles(newCritter));
 
         if(!eatenCritters.isEmpty()){
             for (Critter critter : eatenCritters){
@@ -214,7 +213,7 @@ public class Match extends History<Move> {
             }
         }
 
-        // on parcour la liste et on met les cases à jour
+        // on parcoure la liste et on met les cases à jour
         for (Coordinate coordinate : updatedTiles) {
             if (boardState[coordinate.line()][coordinate.col()] <= 0) {
                 boardState[coordinate.line()][coordinate.col()] = 0;
