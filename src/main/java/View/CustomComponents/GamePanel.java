@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.text.Position;
 
 import Global.Configuration;
 import Model.Coordinate;
@@ -25,7 +26,6 @@ public class GamePanel extends JComponent implements Observer {
             imgStonePlayer2,
             imgStonePlayer1Preview,
             imgStonePlayer2Preview,
-            imgEatenStone,
             imgStoneDisabled;
 
     int imgSrcHeight, imgSrcWidth;
@@ -33,6 +33,7 @@ public class GamePanel extends JComponent implements Observer {
     int nSelected, mSelected;
 
     boolean previewEnabled = false;
+    boolean drawCenter = true;
 
     double alpha = 1;
     double oneMinusAlpha;
@@ -80,19 +81,20 @@ public class GamePanel extends JComponent implements Observer {
         int width = getSize().width;
         int height = getSize().height;
 
-        int x, y, imageWidth, imageHeight;
+        int x, y;
+        double imageWidth, imageHeight;
 
         if(width > height){
             x = (int) ((width - ((alpha * height * imgSrcWidth) / imgSrcHeight))) / 2;
             y = (int) ((oneMinusAlpha) / 2 * height);
-            imageWidth = (int) Math.round(alpha * height * imgSrcWidth) / imgSrcHeight;
-            imageHeight = (int) Math.round(alpha * height);
+            imageWidth = (alpha * height * imgSrcWidth) / imgSrcHeight;
+            imageHeight = alpha * height;
         }
         else{
             x = (int) (((oneMinusAlpha) / 2) * width);
             y = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
-            imageWidth = (int) Math.round(alpha * width);
-            imageHeight = (int) Math.round((alpha * width * imgSrcHeight) / imgSrcWidth);
+            imageWidth = alpha * width;
+            imageHeight = (alpha * width * imgSrcHeight) / imgSrcWidth;
         }
 
         // Calcul du centre de la case 0:0 du plateau
@@ -103,7 +105,7 @@ public class GamePanel extends JComponent implements Observer {
         // Calcule taille de l'image des pierres
         stoneImageSize = (int) Math.round(hexagonHeightRatio * imageHeight);
 
-        g2d.drawImage(imgPlateau, x, y, imageWidth, imageHeight, null);
+        g2d.drawImage(imgPlateau, x, y, (int) Math.round(imageWidth), (int) Math.round(imageHeight), null);
     }
 
     /**
@@ -116,33 +118,42 @@ public class GamePanel extends JComponent implements Observer {
             for (int n = 0; n < boardSize; n++) {
 
                 int contentType = match.getContentAt(m, n);
+
+                if(drawCenter && contentType != Integer.MAX_VALUE)
+                    drawCaseCenter(g2d, n, m);
+
                 if(contentType == 0 || contentType == Integer.MAX_VALUE)
                     continue;
 
-                int x = nToX(n, m) - Math.round((float) stoneImageSize / 2);
-                int y = mToY(m) - Math.round((float) stoneImageSize / 2);
+                Point drawPos = getStoneDrawPositions(n, m);
 
                 switch (contentType){
                     case 1:
-                        drawStone(g2d, imgStonePlayer1, x, y, stoneImageSize);
+                        drawStone(g2d, imgStonePlayer1, drawPos.x, drawPos.y, stoneImageSize);
                         break;
                     case 2:
-                        drawStone(g2d, imgStonePlayer2, x, y, stoneImageSize);
+                        drawStone(g2d, imgStonePlayer2, drawPos.x, drawPos.y, stoneImageSize);
                         break;
                     case -1:
                         if(match.getCurrentPlayerIndex() == 1)
                             continue;
-                        drawStone(g2d, imgStoneDisabled, x, y, stoneImageSize);
+                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, stoneImageSize);
                         break;
                     case -2:
                         if(match.getCurrentPlayerIndex() == 0)
                             continue;
-                        drawStone(g2d, imgStoneDisabled, x, y, stoneImageSize);
+                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, stoneImageSize);
                     case -3:
-                        drawStone(g2d, imgStoneDisabled, x, y, stoneImageSize);
+                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, stoneImageSize);
                 }
             }
         }
+    }
+
+    private void drawCaseCenter(Graphics2D g2d, int n, int m){
+        int x = nToX(n, m);
+        int y = mToY(m);
+        g2d.drawRect(x - 1, y - 1, 2, 2);
     }
 
     /**
@@ -157,24 +168,29 @@ public class GamePanel extends JComponent implements Observer {
         if(contentType > 0)
             return;
 
-        int x = nToX(n, m) - (stoneImageSize / 2);
-        int y = mToY(m) - (stoneImageSize / 2);
+        Point drawPos = getStoneDrawPositions(n, m);
 
         switch (contentType){
             case 0:
-                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, x, y, stoneImageSize);
+                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
             case -1:
                 if(match.getCurrentPlayerIndex() == 0)
                     return;
-                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, x, y, stoneImageSize);
+                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
             case -2:
                 if(match.getCurrentPlayerIndex() == 1)
                     return;
-                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, x, y, stoneImageSize);
+                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
         }
+    }
+
+    private Point getStoneDrawPositions(int n, int m){
+        int x = nToX(n, m) - Math.round((float) stoneImageSize / 2);
+        int y = mToY(m) - Math.round((float) stoneImageSize / 2);
+        return new Point(x, y);
     }
 
     /**
@@ -187,31 +203,15 @@ public class GamePanel extends JComponent implements Observer {
             if(coord.col() == nSelected && coord.line() == mSelected)
                 continue;
 
-            int x = nToX(coord.col(), coord.line());
-            int y = mToY(coord.line());
+            Point drawPos = getStoneDrawPositions(coord.col(), coord.line());
 
-            drawStone(g2d, imgEatenStone, x, y, stoneImageSize);
+            BufferedImage imgEatenStone = match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview;
+            drawStone(g2d, imgEatenStone, drawPos.x, drawPos.y, stoneImageSize);
         }
     }
 
     private void drawStone(Graphics2D g2d, Image img, int x, int y, int size){
         g2d.drawImage(img, x, y, size, size, null);
-    }
-
-    private void drawBorders(Graphics2D g2, Color c, int width, int height) {
-        Stroke tempStroke = g2.getStroke();
-        Color tempColor = g2.getColor();
-
-        g2.setStroke(new BasicStroke(20));
-        g2.setColor(c);
-
-        g2.drawLine(0, 0, width, 0);// haut
-        g2.drawLine(0, 0, 0, height);// gauche
-        g2.drawLine(0, height, width, height);// bas
-        g2.drawLine(width, 0, width, height);// droite
-
-        g2.setStroke(tempStroke);
-        g2.setColor(tempColor);
     }
 
     @Override
@@ -248,11 +248,11 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     public int nToX(int n, int m) {
-        return (int) (x0 + distance * (n - ((double) m / 2)));
+        return (int) Math.round(x0 + (distance * ((double) n - ((double) m / 2))));
     }
 
     public int mToY(int m) {
-        return (int) (y0 + ((m * Math.sqrt(3) * distance) / 2));
+        return (int) Math.round(y0 + ((m * Math.sqrt(3) * distance) / 2));
     }
 
     public int xToN(int x, int y) {
