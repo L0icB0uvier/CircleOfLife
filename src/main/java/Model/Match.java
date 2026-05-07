@@ -47,7 +47,7 @@ public class Match extends History<Move> {
 
     @Override
     public void apply(Move newMove) {
-        if (!isMoveValid(newMove.line, newMove.column)){ // invalid Move
+        if (!isMoveValid(currentPlayerIndex, newMove.line, newMove.column)){ // invalid Move
             return;
         }
 
@@ -70,7 +70,7 @@ public class Match extends History<Move> {
      * @param c La colonne du move.
      * @return true si la position est valide, faux sinon.
      */
-    private boolean isMoveValid(int l, int c) {
+    private boolean isMoveValid(int playerIndex, int l, int c) {
         if(!CoordinateUtils.isInsideBoard(new Coordinate(l, c))){
             Configuration.warning(String.format("Move impossible en %s - en dehors du plateau.", new Coordinate(c, l)));
             return false;
@@ -80,7 +80,7 @@ public class Match extends History<Move> {
             return false;
         }
 
-        if(boardState[l][c] == -(currentPlayerIndex + 1)){
+        if(boardState[l][c] == -(playerIndex + 1)){
             Configuration.warning(String.format("Move impossible %s en - case interdite pour le joueur actif.", new Coordinate(c, l)));
             return false;
         }
@@ -391,4 +391,29 @@ public class Match extends History<Move> {
 
         return eatenCrittersCoordinates;
     }
+
+    /**
+     * Récupère la liste de tous les Moves jouables par le joueur actif.
+     * @return Liste des Moves jouable par le joueur actif.
+     */
+    public List<Coordinate> getCurrentPlayerPlayableMoves(){
+        return getPlayerPlayableMoves(currentPlayerIndex);
+    }
+
+    /**
+     * Récupère la liste de tous les Moves jouable par un joueur donné.
+     * @param playerIndex L'index du joueur.
+     * @return Liste des Moves jouables par le joueur.
+     */
+    public List<Coordinate> getPlayerPlayableMoves(int playerIndex){
+        List<Coordinate> playableMoves = new ArrayList<>();
+        for (int l = 0; l < boardSize; l++) {
+            for (int c = 0; c < boardSize; c++) {
+                if(isMoveValid(playerIndex ,l, c)){
+                    playableMoves.add(new Coordinate(c, l));
+                }
+            }
+        }
+        return playableMoves;
+    } 
 }
