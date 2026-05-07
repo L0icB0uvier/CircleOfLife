@@ -38,7 +38,7 @@ public class GamePanel extends JComponent implements Observer {
     double oneMinusAlpha;
 
     double x0Ratio = 0.35505, y0Ratio = 0.24893;
-    double ratioDistanceX = 0.07329;
+    double ratioDistanceX = 0.07248;
     double hexagonHeightRatio = 0.08461;
     double distance;
     int stoneImageSize;
