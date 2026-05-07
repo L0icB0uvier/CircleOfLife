@@ -16,6 +16,8 @@ public class Match extends History<Move> {
 
     Set<Critter> critters;
 
+    List<Critter> previouslyEatenCritters;
+
     private final int boardSize = 9;
 
     public Match(){
@@ -27,6 +29,7 @@ public class Match extends History<Move> {
 
     public void initMatch() {
         reset();
+        previouslyEatenCritters = new ArrayList<>();
         InitializeBoard();
         critters = new HashSet<>();
         currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
@@ -48,6 +51,7 @@ public class Match extends History<Move> {
             return;
         }
 
+        previouslyEatenCritters.clear();
         super.apply(newMove);
 
         if(isGameOver()){
@@ -90,7 +94,6 @@ public class Match extends History<Move> {
 
     /**
      * Joue un pion du joueur actif sur la case de coordonnées (l, c)
-     *
      * @param l La ligne de la case.
      * @param c La colonne de la case.
      */
@@ -98,13 +101,14 @@ public class Match extends History<Move> {
         // on met la case à jour
         boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
         Coordinate newStoneCoordinate = new Coordinate(c, l);
-        Configuration.info(String.format("Joueur %d joue sur la case %s", currentPlayerIndex + 1, newStoneCoordinate));
+        Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
 
         // update Critters : evolve or reproduce
         var newCritter = updateCritters(newStoneCoordinate);
 
         // on nourrit le Critter créé si on peut
         Set<Critter> eatenCritters = feed(newCritter);
+        previouslyEatenCritters.addAll(eatenCritters);
 
         if(!eatenCritters.isEmpty()){
             int pointsEarned = calculatePointEarned(eatenCritters);
@@ -114,8 +118,6 @@ public class Match extends History<Move> {
         // mise à jour de l'état du plateau
         updateBoard(newCritter, eatenCritters);
     }
-
-
 
     /**
      * Met à jour les critters du joueur actif après la pose d'une nouvelle pierre.
@@ -372,6 +374,21 @@ public class Match extends History<Move> {
     }
 
     public int getContentAt(int l, int c) {
+        if(isOutsideBoard(l, c))
+            return Integer.MAX_VALUE;
         return boardState[l][c];
+    }
+
+    public List<Coordinate> getPreviouslyEatenCrittersCoordinates(){
+        if(previouslyEatenCritters.isEmpty())
+            return Collections.emptyList();
+
+        List<Coordinate> eatenCrittersCoordinates = new ArrayList<>();
+
+        for (Critter critter : previouslyEatenCritters){
+            eatenCrittersCoordinates.addAll(critter.hexagons);
+        }
+
+        return eatenCrittersCoordinates;
     }
 }
