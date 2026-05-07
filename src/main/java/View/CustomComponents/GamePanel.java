@@ -111,7 +111,7 @@ public class GamePanel extends JComponent implements Observer {
                     xSelected = posX;
                     ySelected = posY;
                 }
-                switch (match.getCase(n, m)) {
+                switch (match.getContentAt(m, n)) {
                     case 1:
                         drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
                         break;
@@ -142,7 +142,7 @@ public class GamePanel extends JComponent implements Observer {
                 xSelected = posX;
                 ySelected = posY;
             }
-            switch (match.getCase(n, m)) {
+            switch (match.getContentAt(m, n)) {
                     case 1:
                         drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
                         break;
@@ -158,7 +158,7 @@ public class GamePanel extends JComponent implements Observer {
             posX += incX;
             n++;
         }
-        n = 0;
+        n = 1;
         m++;
         nb_elem--;
         posX = posXInit;
@@ -172,7 +172,7 @@ public class GamePanel extends JComponent implements Observer {
                     xSelected = posX;
                     ySelected = posY;
                 }
-                switch (match.getCase(n, m)) {
+                switch (match.getContentAt(m, n)) {
                     case 1:
                         drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
                         break;
