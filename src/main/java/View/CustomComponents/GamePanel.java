@@ -8,11 +8,13 @@ import java.awt.Image;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import Global.Configuration;
+import Model.Coordinate;
 import Model.Game;
 import Model.Match;
 import Patterns.Observer;
@@ -20,75 +22,166 @@ import View.Utils.UIColor;
 
 public class GamePanel extends JComponent implements Observer {
     Game game;
-    BufferedImage imgPlateau;
-    Image imgWaffle;
-    int imgSrcHeight, imgSrcWidth;
+    BufferedImage imgPlateau, imgStonePlayer1, imgStonePlayer2, imgEatenStone;
     Match match;
-    int scaleX, scaleY;
-    int nbLines, nbColumns;
+
+    int imgSrcHeight, imgSrcWidth;
     int mouseX, mouseY;
     int nSelected, mSelected;
-    int tintAlpha = 160;
+
     boolean previewEnabled = false;
 
     double incX;
     double incY;
     double size;
+    int stoneImageSize;
 
-    double alpha = 0.95;
+    int previewAlpha = 150, defaultAlpha = 255;
+
+    double alpha = 1;
+    double oneMinusAlpha;
+    double magicNumber = 92;
+
+    double x0Ratio = 0.35505, y0Ratio = 0.24893;
+    double ratioDistanceX = 0.07329;
+    double hexagonHeightRatio = 0.08461;
+
+    int x0, y0, distance;
 
     public GamePanel(Game game) {
-        /*
-         * this.game = game;
-         * this.game.ajouteObservateur(this);
-         * 
-         * imgWaffle=readImage("waffle");
-         * 
-         * match = game.getMatch();
-         */
-
-        // nbLines = match.getNbLines();
-        // nbColumns = match.getNbCol();
-        this.game=game;
+        this.game = game;
+        game.addObserver(this);
         match=game.getMatch();
         nSelected = -1;
         mSelected = -1;
+        oneMinusAlpha = 1 - alpha;
+
         imgPlateau=(BufferedImage) readImage("Plateau_fleches");
+        imgStonePlayer1 = (BufferedImage) readImage("Blue_Stone");
+        imgStonePlayer2 = (BufferedImage) readImage("Red_Stone");
+
         imgSrcHeight = imgPlateau.getHeight();
         imgSrcWidth = imgPlateau.getWidth();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        drawBoard(g2d);
+        drawStones(g2d);
+        drawSelected(g2d);
+        //drawEaten(g2d);
+    }
 
-        Graphics2D g2D = (Graphics2D) g;
+    private void drawBoard(Graphics2D g2d){
         int width = getSize().width;
         int height = getSize().height;
 
         int x, y, imageWidth, imageHeight;
-        double oneMinusAlpha = 1 - alpha;
 
         if(width > height){
             x = (int) ((width - ((alpha * height * imgSrcWidth) / imgSrcHeight))) / 2;
             y = (int) ((oneMinusAlpha) / 2 * height);
             imageWidth = (int) Math.round(alpha * height * imgSrcWidth) / imgSrcHeight;
             imageHeight = (int) Math.round(alpha * height);
-            size = imageHeight * (89 / (double)imgSrcHeight);
+            size = imageHeight * (magicNumber / (double)imgSrcHeight);
         }
         else{
-            x = (int) ((oneMinusAlpha) / 2) * width;
+            x = (int) (((oneMinusAlpha) / 2) * width);
             y = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
             imageWidth = (int) Math.round(alpha * width);
             imageHeight = (int) Math.round((alpha * width * imgSrcHeight) / imgSrcWidth);
-            size = imageWidth * (89. / (double)imgSrcWidth);
+            size = imageHeight * (magicNumber / (double)imgSrcHeight);
         }
-        
+
+        // Calcul du centre de la case 0:0 du plateau
+        x0 = (int) Math.round(x + (x0Ratio * imageWidth));
+        y0 = (int) Math.round(y + (y0Ratio * imageHeight));
+        distance = (int) Math.round(ratioDistanceX * imageWidth);
+
+        // Calcule taille de l'image des pierres
+        stoneImageSize = (int) Math.round(hexagonHeightRatio * imageHeight);
+
         incX = 2 * (int) Math.round(Math.cos((Math.PI / 6)) * size); // permet d'aller au prochain coin horizontalement
         incY = (int) Math.round(Math.sin((Math.PI / 6)) * size) + size; // permet d'aller au prochain coin verticalement
 
-        g2D.drawImage(imgPlateau, x, y, imageWidth, imageHeight, null);
-        drawPlateau(g2D);
+        g2d.drawImage(imgPlateau, x, y, imageWidth, imageHeight, null);
+    }
+
+    /**
+     * Dessine les pierres sur le plateau.
+     * @param g2d Le Graphic à utiliser pour dessiner.
+     */
+    private void drawStones(Graphics2D g2d){
+        int boardSize = match.getBoardSize();
+        for (int m = 0; m < boardSize; m++) {
+            for (int n = 0; n < boardSize; n++) {
+
+                int contentType = match.getContentAt(m, n);
+                if(contentType == 0 || contentType == Integer.MAX_VALUE)
+                    continue;
+
+                int x = nToX(n, m) - (stoneImageSize / 2);
+                int y = mToY(m) - (stoneImageSize / 2);
+
+                switch (contentType){
+                    case 1:
+                        drawStone(g2d, imgStonePlayer1, 255, x, y, stoneImageSize);
+                        break;
+                    case 2:
+                        drawStone(g2d, imgStonePlayer2, defaultAlpha, x, y, stoneImageSize);
+                        break;
+                    case -1:
+
+                }
+            }
+        }
+    }
+
+    /**
+     * Dessine la pierre sous le curseur du joueur actif.
+     * @param g2d
+     */
+    private void drawSelected(Graphics2D g2d){
+        int m = getmSelected();
+        int n = getnSelected();
+        int contentType = match.getContentAt(m, n);
+        switch (contentType){
+            case 0:
+                int x = nToX(n, m) - (stoneImageSize / 2);
+                int y = mToY(m) - (stoneImageSize / 2);
+                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1 : imgStonePlayer2, previewAlpha, x, y, stoneImageSize);
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case -1:
+                break;
+            case -2:
+                break;
+
+        }
+    }
+
+    private void drawEaten(Graphics2D g2d){
+        List<Coordinate> coordinates = match.getPreviouslyEatenCrittersCoordinates();
+        for (Coordinate coord : coordinates){
+            if(coord.col() == nSelected && coord.line() == mSelected)
+                continue;
+
+            int x = nToX(coord.col(), coord.line());
+            int y = mToY(coord.line());
+
+            drawStone(g2d, imgEatenStone, previewAlpha, x, y, stoneImageSize);
+        }
+    }
+
+    private void drawStone(Graphics2D g2d, Image img, int alpha, int x, int y, int size){
+        Color previousColor = g2d.getColor();
+        g2d.setColor(new Color(previousColor.getRed(), previousColor.getGreen() ,previousColor.getBlue() , alpha));
+        g2d.drawImage(img, x, y, size, size, null);
+        g2d.setColor(previousColor);
     }
 
     private void drawPlateau(Graphics2D g2D) {
@@ -111,7 +204,7 @@ public class GamePanel extends JComponent implements Observer {
                     xSelected = posX;
                     ySelected = posY;
                 }
-                switch (match.getCase(n, m)) {
+                switch (match.getContentAt(m, n)) {
                     case 1:
                         drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
                         break;
@@ -142,7 +235,7 @@ public class GamePanel extends JComponent implements Observer {
                 xSelected = posX;
                 ySelected = posY;
             }
-            switch (match.getCase(n, m)) {
+            switch (match.getContentAt(m, n)) {
                     case 1:
                         drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
                         break;
@@ -172,7 +265,7 @@ public class GamePanel extends JComponent implements Observer {
                     xSelected = posX;
                     ySelected = posY;
                 }
-                switch (match.getCase(n, m)) {
+                switch (match.getContentAt(m, n)) {
                     case 1:
                         drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
                         break;
@@ -268,6 +361,8 @@ public class GamePanel extends JComponent implements Observer {
         mouseY = y;
         int n = xToN(mouseX, mouseY);
         int m = yToM(mouseY);
+
+        Configuration.info(String.format("Mouse at %d:%d", x, y));
         if(Math.max(Math.abs(n-4), Math.abs(m-4)) <= 4 && (n != nSelected || m != mSelected)) {
             nSelected = n;
             mSelected = m;
@@ -284,38 +379,20 @@ public class GamePanel extends JComponent implements Observer {
         return mSelected;
     }
 
-    public int nToX(int n, int y) {
-        double x0 = getWidth() / 2 - 2 * incX;
-        double y0 = getHeight() / 2 - 4 * incY;
-        double scaleX = incX;
-        double scaleY = incX;
-        return (int) (scaleX*(n-(y-y0)/(Math.sqrt(3)*scaleY))+x0);
+    public int nToX(int n, int m) {
+        return (x0 + distance * (n - (m / 2)));
     }
 
     public int mToY(int m) {
-        double y0 = getHeight() / 2 - 4 * incY;
-        double scaleY = incX; 
-        return (int) Math.round(m*scaleY*Math.sqrt(3)/2-y0);
+        return (int) (y0 + ((m * Math.sqrt(3) * distance) / 2));
     }
 
     public int xToN(int x, int y) {
-        double x0 = getWidth() / 2 - 2 * incX;
-        double y0 = getHeight() / 2 - 4 * incY;
-        double scaleX = incX;
-        double scaleY = incX; // ou bien 2*Math.sin(2*Math.PI/3)*size
-//        System.out.println("calculs: \n x0: " + x0 + "\n y0: " + y0);
-//        System.out.println("x: " + (x) + "\ny: " + y);
-        // System.out.println("scaling: " + scaleX + " " + scaleY);
-//        System.out.println(((x - x0) / scaleX + (y - y0) / (scaleY * Math.sqrt(3))));
-//        System.out.println((x - x0) / scaleX);
-        return (int) (Math.round(((x - x0) / scaleX + (y - y0) / (scaleY * Math.sqrt(3)))));
+        return (int) (Math.round(((double) (x - x0) / distance) + ((1 / Math.sqrt(3) * ((double) (y - y0) / distance)))));
     }
 
     public int yToM(int y) {
-        double y0 = getHeight() / 2 - 4 * incY;
-        double scaleY = incX;
-//        System.out.println((2 * (y - y0) / (scaleY * Math.sqrt(3))));
-        return (int) (Math.round((2 * (y - y0) / (scaleY * Math.sqrt(3)))));
+        return (int) (Math.round((2 * (y - y0) / (distance * Math.sqrt(3)))));
     }
 
     public void togglePreview() {
