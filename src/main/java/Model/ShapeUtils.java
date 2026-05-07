@@ -71,6 +71,7 @@ public class ShapeUtils {
 
         // ID 8
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1)), 8); // 1
+        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1)), 8); // 1
 
         // ID 9
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)), 9); // 1

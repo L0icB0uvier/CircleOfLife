@@ -27,10 +27,19 @@ public class Match extends History<Move> {
 
     public void initMatch() {
         reset();
-        boardState = new int[boardSize][boardSize];
+        InitializeBoard();
         critters = new HashSet<>();
         currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
         Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
+    }
+
+    private void InitializeBoard() {
+        boardState = new int[boardSize][boardSize];
+        for (int l = 0; l < boardSize; l++) {
+            for (int c = 0; c < boardSize; c++) {
+                boardState[l][c] = isOutsideBoard(l, c)? Integer.MAX_VALUE : 0;
+            }
+        }
     }
 
     @Override
@@ -58,7 +67,7 @@ public class Match extends History<Move> {
      * @return true si la position est valide, faux sinon.
      */
     private boolean isMoveValid(int l, int c) {
-        if(Math.max(Math.abs(l - 4), Math.abs(c - 4)) > 4 ){
+        if(isOutsideBoard(l, c)){
             Configuration.warning(String.format("Move impossible en %d:%d - en dehors du plateau.", c, l));
             return false;
         }
@@ -73,6 +82,10 @@ public class Match extends History<Move> {
         }
 
         return true;
+    }
+
+    private static boolean isOutsideBoard(int l, int c) {
+        return Math.max(Math.abs(l - 4), Math.abs(c - 4)) > 4;
     }
 
     /**
@@ -127,12 +140,7 @@ public class Match extends History<Move> {
                 Configuration.info(String.format("Evolution de plusieurs critters en critter de type %d", newCritter.type));
             }
         }
-        StringBuilder s = new StringBuilder("hexagones du critter formé :");
-        for(Coordinate coordCritter: newCritter.hexagons) {
-            s.append(" ").append(coordCritter).append(",");
-        }
-        s.deleteCharAt(s.length() - 1);
-        Configuration.info(s.toString());
+
         critters.add(newCritter);
         return newCritter;
     }
@@ -209,14 +217,18 @@ public class Match extends History<Move> {
         // on parcour la liste et on met les cases à jour
         for (Coordinate coordinate : updatedTiles) {
             if (boardState[coordinate.line()][coordinate.col()] <= 0) {
-                boardState[coordinate.line()][coordinate.col()] = 0;
                 int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
                 int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
                 if (playerOneSum >= 4) { // playerOne ne peut pas jouer ici
-                    boardState[coordinate.line()][coordinate.col()] -= 1;
-                }
-                if (playerTwoSum >= 4) { // playerTwo ne peut pas jouer ici
-                    boardState[coordinate.line()][coordinate.col()] -= 2;
+                    if (playerTwoSum >= 4) { // playerTwo non plus
+                        boardState[coordinate.line()][coordinate.col()] = -3;
+                    } else { // playerOne ne peut pass jouer ici mais playerTwo peut
+                        boardState[coordinate.line()][coordinate.col()] = -1;
+                    }
+                } else if (playerTwoSum >= 4) { // playerOne peut jouer ici mais playerTwo ne peut pas
+                    boardState[coordinate.line()][coordinate.col()] = -2;
+                } else { // tout le monde peut jouer ici
+                    boardState[coordinate.line()][coordinate.col()] = 0;
                 }
             }
         }
@@ -360,7 +372,11 @@ public class Match extends History<Move> {
         return players;
     }
 
-    public int getCase(int n, int m) {
-        return boardState[m][n];
+    public int getBoardSize(){
+        return boardSize;
+    }
+
+    public int getContentAt(int l, int c) {
+        return boardState[l][c];
     }
 }
