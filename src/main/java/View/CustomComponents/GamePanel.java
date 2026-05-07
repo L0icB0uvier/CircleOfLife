@@ -152,6 +152,7 @@ public class GamePanel extends JComponent implements Observer {
     private void drawSelected(Graphics2D g2d){
         int m = getmSelected();
         int n = getnSelected();
+        if (n==-1 || m==-1) return;
         int contentType = match.getContentAt(m, n);
         if(contentType > 0)
             return;
@@ -224,11 +225,16 @@ public class GamePanel extends JComponent implements Observer {
         int n = xToN(mouseX, mouseY);
         int m = yToM(mouseY);
 
+        if (CoordinateUtils.isInsideBoard(new Coordinate(m, n))) {
         //Configuration.info(String.format("Mouse at %d:%d", x, y));
-        if(CoordinateUtils.isInsideBoard(new Coordinate(m, n)) && (n != nSelected || m != mSelected)) {
-            nSelected = n;
-            mSelected = m;
-            //Configuration.info("Focus sur " + n + ", " + m);
+            if((n != nSelected || m != mSelected)) {
+                nSelected = n;
+                mSelected = m;
+                //Configuration.info("Focus sur " + n + ", " + m);
+            } 
+        } else {
+            nSelected = -1;
+            mSelected = -1;
         }
         repaint();
     }
