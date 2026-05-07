@@ -11,6 +11,10 @@ public class CoordinateUtils {
         return hexagonalManhattanDistance(first, second) == 1;
     }
 
+    public static boolean isInsideBoard(Coordinate coord) {
+        return CoordinateUtils.hexagonalManhattanDistance(coord, new Coordinate(4, 4)) <= 4;
+    }
+
     /**
      * Calcule la distance Manhattan hexagonale entre deux Cases.
      * @param first La coordonnée de la première case.
@@ -21,8 +25,6 @@ public class CoordinateUtils {
         int deltaX = second.line() - first.line();
         int deltaY =  second.col() - first.col();
         int deltaZ = deltaX - deltaY;
-        return Math.max(Math.max(Math.abs(deltaX), Math.abs(deltaY)),Math.max(Math.abs(deltaZ), Math.abs(deltaY)));
+        return Math.max(Math.max(Math.abs(deltaX), Math.abs(deltaY)), Math.abs(deltaZ));
     }
-
-
 }

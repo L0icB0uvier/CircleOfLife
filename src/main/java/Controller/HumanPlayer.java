@@ -16,7 +16,7 @@ public class HumanPlayer extends Player {
      * @param c Colonne du clic.
      */
     @Override
-    public void handleClic(int l, int c) {
+    public void handleClick(int l, int c) {
         game.playMove(new Move(game.getMatch(), l, c));
     }
 }

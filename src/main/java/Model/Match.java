@@ -37,7 +37,7 @@ public class Match extends History<Move> {
         boardState = new int[boardSize][boardSize];
         for (int l = 0; l < boardSize; l++) {
             for (int c = 0; c < boardSize; c++) {
-                boardState[l][c] = isOutsideBoard(l, c)? Integer.MAX_VALUE : 0;
+                boardState[l][c] = CoordinateUtils.isInsideBoard(new Coordinate(l, c))? 0 : Integer.MAX_VALUE;
             }
         }
     }
@@ -67,17 +67,17 @@ public class Match extends History<Move> {
      * @return true si la position est valide, faux sinon.
      */
     private boolean isMoveValid(int l, int c) {
-        if(isOutsideBoard(l, c)){
-            Configuration.warning(String.format("Move impossible en %d:%d - en dehors du plateau.", c, l));
+        if(!CoordinateUtils.isInsideBoard(new Coordinate(l, c))){
+            Configuration.warning(String.format("Move impossible en %s - en dehors du plateau.", new Coordinate(c, l)));
             return false;
         }
         if(boardState[l][c] > 0){
-            Configuration.warning(String.format("Move impossible en %d:%d - case occupée.", c, l));
+            Configuration.warning(String.format("Move impossible en %s - case occupée.", new Coordinate(c, l)));
             return false;
         }
 
         if(boardState[l][c] == -(currentPlayerIndex + 1)){
-            Configuration.warning(String.format("Move impossible %d:%d en - case interdite pour le joueur actif.", c, l));
+            Configuration.warning(String.format("Move impossible %s en - case interdite pour le joueur actif.", new Coordinate(c, l)));
             return false;
         }
 
@@ -85,7 +85,7 @@ public class Match extends History<Move> {
     }
 
     private static boolean isOutsideBoard(int l, int c) {
-        return Math.max(Math.abs(l - 4), Math.abs(c - 4)) > 4;
+        return CoordinateUtils.hexagonalManhattanDistance(new Coordinate(l, c), new Coordinate(4, 4)) > 4;
     }
 
     /**
@@ -94,10 +94,10 @@ public class Match extends History<Move> {
      * @param c La colonne de la case.
      */
     public boolean playMove(int l, int c){
-        Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
         // on met la case à jour
         boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
         Coordinate newStoneCoordinate = new Coordinate(c, l);
+        Configuration.info(String.format("Joueur %d joue sur la case %s", currentPlayerIndex + 1, newStoneCoordinate));
 
         // update Critters : evolve or reproduce
         var newCritter = updateCritters(newStoneCoordinate);
@@ -119,9 +119,9 @@ public class Match extends History<Move> {
 
     /**
      * Met à jour les critters du joueur actif après la pose d'une nouvelle pierre.
-     * Crée un nouveau critter s'il la pierre n'a pas de voisins ou évolu les critters voisins de la pierre.
+     * Crée un nouveau critter si la pierre n'a pas de voisins, ou évolue les critters voisins de la pierre.
      * @param coord Les coordonnées de la nouvelle pierre posée.
-     * @return Le nouveau critter obtenu soit par création soit par évolution.
+     * @return Le nouveau critter obtenu soit par création, soit par évolution.
      */
     public Critter updateCritters(Coordinate coord){
         var neighbors = getPlayerNeighborsCritters(currentPlayerIndex, coord);
@@ -217,18 +217,14 @@ public class Match extends History<Move> {
         // on parcour la liste et on met les cases à jour
         for (Coordinate coordinate : updatedTiles) {
             if (boardState[coordinate.line()][coordinate.col()] <= 0) {
+                boardState[coordinate.line()][coordinate.col()] = 0;
                 int playerOneSum = sumPlayerNeighborCritters(playerOneIndex, coordinate);
                 int playerTwoSum = sumPlayerNeighborCritters(playerTwoIndex, coordinate);
                 if (playerOneSum >= 4) { // playerOne ne peut pas jouer ici
-                    if (playerTwoSum >= 4) { // playerTwo non plus
-                        boardState[coordinate.line()][coordinate.col()] = -3;
-                    } else { // playerOne ne peut pass jouer ici mais playerTwo peut
-                        boardState[coordinate.line()][coordinate.col()] = -1;
-                    }
-                } else if (playerTwoSum >= 4) { // playerOne peut jouer ici mais playerTwo ne peut pas
-                    boardState[coordinate.line()][coordinate.col()] = -2;
-                } else { // tout le monde peut jouer ici
-                    boardState[coordinate.line()][coordinate.col()] = 0;
+                    boardState[coordinate.line()][coordinate.col()] -= 1;
+                }
+                if (playerTwoSum >= 4) { // playerTwo ne peut pas jouer ici
+                    boardState[coordinate.line()][coordinate.col()] -= 2;
                 }
             }
         }
@@ -312,7 +308,7 @@ public class Match extends History<Move> {
 
     /**
      * Vérifie si la partie est terminée.
-     * @return true si les condition de victoires sont remplies, faux sinon.
+     * @return true si les conditions de victoires sont remplies, faux sinon.
      */
     public boolean isGameOver(){
         return (players[currentPlayerIndex].getScore() >= 20 || players[currentPlayerIndex].getPlayableTilesNumber() == 0);

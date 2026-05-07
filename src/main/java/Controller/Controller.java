@@ -1,9 +1,7 @@
 package Controller;
 
 import Global.Configuration;
-import Model.Game;
-import Model.GameDataManager;
-import Model.Move;
+import Model.*;
 import Patterns.Observer;
 import View.EventCollector;
 import Global.Settings;
@@ -23,20 +21,8 @@ public class Controller implements EventCollector, Observer {
         players = new Player[2];
     }
 
-    public void handleClic(int l, int c){
-        if(!isClicValid(l, c)) return;
-        currentPlayer.handleClic(l, c);
-    }
-
-    /**
-     * Vérifie que la validité du clic.
-     * @param l La ligne du clic
-     * @param c La colonne du clic
-     * @return vrai si valide, faux sinon.
-     */
-    private boolean isClicValid(int l, int c){
-        // A compléter
-        return Math.max(Math.abs(l - 4), Math.abs(c - 4)) <= 4;
+    public void handleClick(int l, int c){
+        currentPlayer.handleClick(l, c);
     }
 
     @Override

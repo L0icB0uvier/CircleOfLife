@@ -1,6 +1,7 @@
 package View.Adapter;
 
 import Global.Configuration;
+import Model.Coordinate;
 import View.EventCollector;
 import View.GraphicalGame;
 
@@ -19,8 +20,8 @@ public class MouseAdapter extends java.awt.event.MouseAdapter {
     public void mousePressed(MouseEvent e) {
         int n = graphicalGame.getGamePanel().getnSelected();
         int m = graphicalGame.getGamePanel().getmSelected();
-        Configuration.info(String.format("Clic souris aux coordonnées %d:%d - Correspond à la case %d:%d du plateau", e.getX(), e.getY(), n, m));
-        control.handleClic(m, n);
+        Configuration.info(String.format("Clic souris aux coordonnées %d:%d - Correspond à la case %s du plateau", e.getX(), e.getY(), new Coordinate(n, m)));
+        control.handleClick(m, n);
     }
 
     @Override

@@ -2,7 +2,6 @@ package Controller;
 
 import Controller.IA.AI;
 import Model.Game;
-import Model.PlayerData;
 import Global.PlayerSettings;
 
 public class Player {
@@ -47,7 +46,7 @@ public class Player {
      * @param l Ligne du clic.
      * @param c Colonne du clic.
      */
-    public void handleClic(int l, int c){
+    public void handleClick(int l, int c){
 
     }
 }
