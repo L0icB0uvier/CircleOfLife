@@ -13,7 +13,9 @@ public class CoordinateUtilsTest {
     Coordinate center = new Coordinate(4, 4);
     static Set<Coordinate> coordinates = new HashSet<>();
 
-    /// On initialise l'ensemble des cases testées
+    /**
+     * Initialise la liste des tuiles sur lesquelles les tests seront effectués (contient le plateau).
+     */
     @BeforeAll
     public static void initialize() {
         for (int i = 0; i < 9; i++) {
@@ -25,7 +27,9 @@ public class CoordinateUtilsTest {
         }
     }
 
-
+    /**
+     * Vérifie que hexagonalManhattanDistance() renvoie bien une distance au sens mathématique.
+      */
     @Test
     void testDistanceDefinition() {
         // construction de table des distances
@@ -59,6 +63,9 @@ public class CoordinateUtilsTest {
     }
 
 
+    /**
+     * Vérifie que isInsideBoard() suit sa spécification.
+     */
     @Test
     void testIsInsideBoard() {
         for (int col = 0; col < 9; col++) {
@@ -71,7 +78,9 @@ public class CoordinateUtilsTest {
         }
     }
 
-
+    /**
+     * Vérifie que isNeighbor() suit sa spécification.
+     */
     @Test
     void checkFirstNeighbors() {
         for (Coordinate tileA : coordinates) {
@@ -79,7 +88,7 @@ public class CoordinateUtilsTest {
                     Set<Coordinate> computedFirstNeighbors = new HashSet<>();
 
                     for (Coordinate tileB : coordinates) {
-                            if (hexagonalManhattanDistance(tileA, tileB) == 1 && isInsideBoard(tileB)) {
+                            if (isNeighbor(tileA, tileB) && isInsideBoard(tileB)) {
                                 computedFirstNeighbors.add(tileB);
                             }
                     }
@@ -90,6 +99,11 @@ public class CoordinateUtilsTest {
         }
     }
 
+    /**
+     * Calcule à la main les premiers voisins dans le plateau d'une case de coordonnées données.
+     * @param tile un Coordinate contenant les coordonnées de la case.
+     * @return l'ensemble des premiers voisins de la case donnée en argument.
+     */
     private static Set<Coordinate> expectedFirstNeighbors(Coordinate tile) {
         int col = tile.col();
         int line = tile.line();
