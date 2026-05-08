@@ -11,7 +11,7 @@ public class Match extends History<Move> {
     PlayerData[] players = new PlayerData[2];
     int currentPlayerIndex;
 
-    int[][] boardState; // 0 tile can be played, -1 can't be played by PayerOne, -2 can't be played by playerTwo
+    byte[][] boardState; // 0 tile can be played, -1 can't be played by PayerOne, -2 can't be played by playerTwo
                         // 1 is occupied by playerOne, 2 by playerTwo
 
     Set<Critter> critters;
@@ -37,10 +37,10 @@ public class Match extends History<Move> {
     }
 
     private void InitializeBoard() {
-        boardState = new int[boardSize][boardSize];
+        boardState = new byte[boardSize][boardSize];
         for (int l = 0; l < boardSize; l++) {
             for (int c = 0; c < boardSize; c++) {
-                boardState[l][c] = CoordinateUtils.isInsideBoard(new Coordinate(l, c))? 0 : Integer.MAX_VALUE;
+                boardState[l][c] = CoordinateUtils.isInsideBoard(new Coordinate(l, c))? 0 : Byte.MAX_VALUE;
             }
         }
     }
@@ -99,7 +99,7 @@ public class Match extends History<Move> {
      */
     public void playMove(int l, int c){
         // on met la case à jour
-        boardState[l][c] = currentPlayerIndex + 1; // playerOne <-> 1 ; playerTwo <-> 2
+        boardState[l][c] = (byte) (currentPlayerIndex + 1); // playerOne <-> 1 ; playerTwo <-> 2
         Coordinate newStoneCoordinate = new Coordinate(c, l);
         Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
 
