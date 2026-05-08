@@ -17,28 +17,28 @@ class MatchTest {
     void evolve() {
         Coordinate firstCoord = new Coordinate(5, 5);
         match.updateCritters(firstCoord);
-        assertEquals(0 ,match.getCritterAtCoord(firstCoord).type);
+        assertEquals(0 ,match.getCritterAtCoord(firstCoord).type());
         assertEquals(1, match.getNumberOfCritters());
 
         Coordinate secondCoord = new Coordinate(6, 5);
         match.updateCritters(secondCoord);
-        assertEquals(11, match.getCritterAtCoord(firstCoord).type);
-        assertEquals(11 , match.getCritterAtCoord(secondCoord).type);
+        assertEquals(11, match.getCritterAtCoord(firstCoord).type());
+        assertEquals(11 , match.getCritterAtCoord(secondCoord).type());
         assertEquals(1, match.getNumberOfCritters());
 
         Coordinate thirdCoord = new Coordinate(6, 6);
         match.updateCritters(thirdCoord);
-        assertEquals(8, match.getCritterAtCoord(firstCoord).type);
-        assertEquals(8, match.getCritterAtCoord(secondCoord).type);
-        assertEquals(8, match.getCritterAtCoord(thirdCoord).type);
+        assertEquals(8, match.getCritterAtCoord(firstCoord).type());
+        assertEquals(8, match.getCritterAtCoord(secondCoord).type());
+        assertEquals(8, match.getCritterAtCoord(thirdCoord).type());
         assertEquals(1, match.getNumberOfCritters());
 
         Coordinate fourthCoord = new Coordinate(7, 5);
         match.updateCritters(fourthCoord);
-        assertEquals(7, match.getCritterAtCoord(firstCoord).type);
-        assertEquals(7, match.getCritterAtCoord(secondCoord).type);
-        assertEquals(7, match.getCritterAtCoord(thirdCoord).type);
-        assertEquals(7, match.getCritterAtCoord(fourthCoord).type);
+        assertEquals(7, match.getCritterAtCoord(firstCoord).type());
+        assertEquals(7, match.getCritterAtCoord(secondCoord).type());
+        assertEquals(7, match.getCritterAtCoord(thirdCoord).type());
+        assertEquals(7, match.getCritterAtCoord(fourthCoord).type());
         assertEquals(1, match.getNumberOfCritters());
     }
 

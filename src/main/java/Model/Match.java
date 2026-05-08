@@ -5,8 +5,8 @@ import Global.Configuration;
 import java.util.*;
 
 public class Match extends History<Move> {
-    public final static int playerOneIndex=0;
-    public final static int playerTwoIndex=1;
+    public final static int playerOneIndex = 0;
+    public final static int playerTwoIndex = 1;
 
     PlayerData[] players = new PlayerData[2];
     int currentPlayerIndex;
@@ -130,16 +130,16 @@ public class Match extends History<Move> {
         Critter newCritter;
 
         if(neighbors.isEmpty()){
-            newCritter = new Critter(coord, currentPlayerIndex);
-            Configuration.info(String.format("Création d'un nouveau critter de type %d", newCritter.type));
+            newCritter = new Critter(Set.of(coord), currentPlayerIndex);
+            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
         }
         else{
             newCritter = evolve(neighbors, coord);
             if(neighbors.size() == 1){
-                Configuration.info(String.format("Evolution d'un critter de type %d en critter de type %d", neighbors.iterator().next().type, newCritter.type));
+                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
             }
             else{
-                Configuration.info(String.format("Evolution de plusieurs critters en critter de type %d", newCritter.type));
+                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
             }
         }
 
@@ -156,7 +156,7 @@ public class Match extends History<Move> {
     public Critter evolve(Set<Critter> evolutionCandidates, Coordinate newStoneCoord){
         Set<Coordinate> evolutionCoords = new HashSet<>();
         for (Critter critter : evolutionCandidates){
-            evolutionCoords.addAll(critter.hexagons);
+            evolutionCoords.addAll(critter.stonesCoordinates());
         }
 
         critters.removeAll(evolutionCandidates);
@@ -174,12 +174,12 @@ public class Match extends History<Move> {
         HashSet<Critter> opponentNeighbors = new HashSet<>();
         HashSet<Critter> eatenCritters = new HashSet<>();
 
-        for (Coordinate coord : critter.hexagons){
-            opponentNeighbors.addAll(getPlayerNeighborsCritters((critter.player+1)%2, coord));
+        for (Coordinate coord : critter.stonesCoordinates()){
+            opponentNeighbors.addAll(getPlayerNeighborsCritters((critter.player()+1)%2, coord));
         }
 
         for (Critter c : opponentNeighbors){
-            if (c.type == (critter.type + 1)%12){
+            if (c.type() == (critter.type() + 1)%12){
                 eatCritter(c);
                 eatenCritters.add(c);
             }
@@ -192,8 +192,8 @@ public class Match extends History<Move> {
      * @param c Le Critter à effacer.
      */
     private void eatCritter(Critter c) {
-        Configuration.info(String.format("Player %d eats critter of type %d", currentPlayerIndex + 1, c.type));
-        for (Coordinate coord : c.hexagons){
+        Configuration.info(String.format("Player %d eats critter of type() %d", currentPlayerIndex + 1, c.type()));
+        for (Coordinate coord : c.stonesCoordinates()){
             boardState[coord.line()][coord.col()] = 0;
         }
         critters.remove(c);
@@ -211,7 +211,7 @@ public class Match extends History<Move> {
         if(!eatenCritters.isEmpty()){
             for (Critter critter : eatenCritters){
                 updatedTiles.addAll(freeNeighborTiles(critter));
-                updatedTiles.addAll(critter.hexagons);
+                updatedTiles.addAll(critter.stonesCoordinates());
             }
         }
 
@@ -238,7 +238,7 @@ public class Match extends History<Move> {
      */
     private Set<Coordinate> freeNeighborTiles(Critter critter) {
         Set<Coordinate> result = new HashSet<>();
-        for (Coordinate coordinate : critter.hexagons) {
+        for (Coordinate coordinate : critter.stonesCoordinates()) {
             for (int[] delta : new int[][]{{1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}}) {
                 int x = coordinate.line() + delta[0];
                 int y = coordinate.col() + delta[1];
@@ -267,8 +267,8 @@ public class Match extends History<Move> {
         Set<Critter> critterNeighbors = getPlayerNeighborsCritters(playerIndex, coordinate);
         int result = 0;
         for (Critter critter : critterNeighbors){
-            if (playerIndex == critter.player){
-                result += critter.hexagons.size();
+            if (playerIndex == critter.player()){
+                result += critter.stonesCoordinates().size();
             }
         }
         return result;
@@ -282,7 +282,7 @@ public class Match extends History<Move> {
     public int calculatePointEarned(Set<Critter> eatenCritters){
         int score = 0;
         for (Critter critter : eatenCritters)
-            score += critter.hexagons.size();
+            score += critter.stonesCoordinates().size();
         return score;
     }
 
@@ -324,8 +324,8 @@ public class Match extends History<Move> {
         if(critters.isEmpty()) return Collections.emptySet();
         Set<Critter> neighbors = new HashSet<>();
         for(Critter critter : critters){
-            if(critter.player != playerIndex) continue;
-            for (Coordinate stoneCoord : critter.hexagons){
+            if(critter.player() != playerIndex) continue;
+            for (Coordinate stoneCoord : critter.stonesCoordinates()){
                 if(CoordinateUtils.isNeighbor(coordinate, stoneCoord)){
                     neighbors.add(critter);
                     break;
@@ -350,7 +350,7 @@ public class Match extends History<Move> {
      */
     public Critter getCritterAtCoord(Coordinate coord){
         for (Critter critter : critters){
-            if(critter.hexagons.contains(coord)){
+            if(critter.stonesCoordinates().contains(coord)){
                 return critter;
             }
         }
@@ -386,7 +386,7 @@ public class Match extends History<Move> {
         List<Coordinate> eatenCrittersCoordinates = new ArrayList<>();
 
         for (Critter critter : previouslyEatenCritters){
-            eatenCrittersCoordinates.addAll(critter.hexagons);
+            eatenCrittersCoordinates.addAll(critter.stonesCoordinates());
         }
 
         return eatenCrittersCoordinates;
