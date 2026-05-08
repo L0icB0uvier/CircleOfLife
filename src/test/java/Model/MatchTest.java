@@ -59,14 +59,14 @@ class MatchTest {
         Coordinate coord9 = new Coordinate(0, 0);
         Coordinate coord10 = new Coordinate(0, 2);
 
-        assertTrue(CoordinateUtils.isNeighbor(coord1, coord2));
-        assertTrue(CoordinateUtils.isNeighbor(coord1, coord3));
-        assertTrue(CoordinateUtils.isNeighbor(coord1, coord4));
-        assertTrue(CoordinateUtils.isNeighbor(coord1, coord5));
-        assertTrue(CoordinateUtils.isNeighbor(coord1, coord6));
-        assertTrue(CoordinateUtils.isNeighbor(coord1, coord7));
-        assertFalse(CoordinateUtils.isNeighbor(coord1, coord8));
-        assertFalse(CoordinateUtils.isNeighbor(coord1, coord9));
-        assertFalse(CoordinateUtils.isNeighbor(coord1, coord10));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord2));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord3));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord4));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord5));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord6));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord7));
+        assertFalse(MatchUtils.isNeighbor(coord1, coord8));
+        assertFalse(MatchUtils.isNeighbor(coord1, coord9));
+        assertFalse(MatchUtils.isNeighbor(coord1, coord10));
     }
 }

@@ -1,6 +1,6 @@
 package Model;
 
-public class CoordinateUtils {
+public class MatchUtils {
     /**
      * Vérifie si 2 coordonnées sont voisines.
      * @param first La première coordonnée.
@@ -12,7 +12,7 @@ public class CoordinateUtils {
     }
 
     public static boolean isInsideBoard(Coordinate coord) {
-        return CoordinateUtils.hexagonalManhattanDistance(coord, new Coordinate(4, 4)) <= 4;
+        return MatchUtils.hexagonalManhattanDistance(coord, new Coordinate(4, 4)) <= 4;
     }
 
     /**
@@ -26,5 +26,19 @@ public class CoordinateUtils {
         int deltaY =  second.line() - first.line();
         int deltaZ = deltaX - deltaY;
         return Math.max(Math.max(Math.abs(deltaX), Math.abs(deltaY)), Math.abs(deltaZ));
+    }
+
+    public static byte[][] copyBoard(byte[][] board){
+        if (board == null) return null;
+
+        // Création du tableau de premier niveau
+        byte[][] copy = new byte[board.length][];
+
+        for (int i = 0; i < board.length; i++) {
+            // .clone() sur un tableau de primitives (byte) effectue une copie profonde de la ligne
+            copy[i] = board[i].clone();
+        }
+
+        return copy;
     }
 }

@@ -4,6 +4,9 @@ import Global.Configuration;
 
 import java.util.*;
 
+/**
+ * Represente l'état d'une partie de jeu et gère toute la logique relative au déroulement d'une partie.
+ */
 public class Match extends History<Move> {
     public final static int playerOneIndex = 0;
     public final static int playerTwoIndex = 1;
@@ -53,7 +56,7 @@ public class Match extends History<Move> {
         boardState = new byte[boardSize][boardSize];
         for (int l = 0; l < boardSize; l++) {
             for (int c = 0; c < boardSize; c++) {
-                boardState[l][c] = CoordinateUtils.isInsideBoard(new Coordinate(l, c))? 0 : Byte.MAX_VALUE;
+                boardState[l][c] = MatchUtils.isInsideBoard(new Coordinate(l, c))? 0 : Byte.MAX_VALUE;
             }
         }
     }
@@ -84,7 +87,7 @@ public class Match extends History<Move> {
      * @return true si la position est valide, faux sinon.
      */
     private boolean isMoveValid(int playerIndex, int l, int c) {
-        if(!CoordinateUtils.isInsideBoard(new Coordinate(l, c))){
+        if(!MatchUtils.isInsideBoard(new Coordinate(l, c))){
             Configuration.warning(String.format("Move impossible en %s - en dehors du plateau.", new Coordinate(c, l)));
             return false;
         }
@@ -102,7 +105,7 @@ public class Match extends History<Move> {
     }
 
     private static boolean isOutsideBoard(int l, int c) {
-        return CoordinateUtils.hexagonalManhattanDistance(new Coordinate(l, c), new Coordinate(4, 4)) > 4;
+        return MatchUtils.hexagonalManhattanDistance(new Coordinate(l, c), new Coordinate(4, 4)) > 4;
     }
 
     /**
@@ -312,15 +315,15 @@ public class Match extends History<Move> {
      * Restore l'état du plateau du tour précédent.
      * @param previousBoardState L'état du plateau au tour précédent.
      */
-    public void restoreState(byte[][] previousBoardState){
-        this.boardState = previousBoardState;
-        toggleCurrentPlayer();
+    public void restoreState(byte[][] previousBoardState, Set<Critter> critters){
+        this.boardState = MatchUtils.copyBoard(previousBoardState);
+        this.critters = new HashSet<>(critters);
     }
 
     /**
      * Change le joueur actif.
      */
-    private void toggleCurrentPlayer(){
+    void toggleCurrentPlayer(){
         currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
         Configuration.info("Player " + (currentPlayerIndex + 1) + " turn");
     }
@@ -344,7 +347,7 @@ public class Match extends History<Move> {
         for(Critter critter : critters){
             if(critter.player() != playerIndex) continue;
             for (Coordinate stoneCoord : critter.stonesCoordinates()){
-                if(CoordinateUtils.isNeighbor(coordinate, stoneCoord)){
+                if(MatchUtils.isNeighbor(coordinate, stoneCoord)){
                     neighbors.add(critter);
                     break;
                 }
@@ -396,17 +399,11 @@ public class Match extends History<Move> {
      * @return Copier profonde de l'état du plateau.
      */
     public byte[][] getBoardState(){
-        if (boardState == null) return null;
+        return MatchUtils.copyBoard(boardState);
+    }
 
-        // Création du tableau de premier niveau
-        byte[][] copy = new byte[boardState.length][];
-
-        for (int i = 0; i < boardState.length; i++) {
-            // .clone() sur un tableau de primitives (byte) effectue une copie profonde de la ligne
-            copy[i] = boardState[i].clone();
-        }
-
-        return copy;
+    public Set<Critter> getCritters(){
+        return new HashSet<>(critters);
     }
 
     /**

@@ -32,6 +32,7 @@ public class Game extends Observable {
     public void undo(){
         if(!match.canUndo()) return;
         match.undo();
+        match.toggleCurrentPlayer();
         update();
     }
 
@@ -41,6 +42,7 @@ public class Game extends Observable {
     public void redo(){
         if(!match.canRedo()) return;
         match.redo();
+        match.toggleCurrentPlayer();
         update();
     }
 }

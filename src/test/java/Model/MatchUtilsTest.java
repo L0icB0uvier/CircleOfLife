@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static Model.CoordinateUtils.*;
+import static Model.MatchUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CoordinateUtilsTest {
+public class MatchUtilsTest {
     Coordinate center = new Coordinate(4, 4);
     static Set<Coordinate> coordinates = new HashSet<>();
 

@@ -3,16 +3,21 @@ package Model;
 import Global.Configuration;
 import Patterns.Command;
 
+import java.util.Set;
+
+
 public class Move implements Command {
     Match match;
     private final int line, column;
     byte[][] previousState;
+    Set<Critter> critters;
 
     public Move(Match match, int l, int c){
         this.match = match;
         this.line = l;
         this.column = c;
         this.previousState = match.getBoardState();
+        this.critters = match.getCritters();
     }
 
     public int getLine() {
@@ -32,6 +37,6 @@ public class Move implements Command {
 
     @Override
     public void desexecute() {
-        match.restoreState(previousState);
+        match.restoreState(previousState, critters);
     }
 }

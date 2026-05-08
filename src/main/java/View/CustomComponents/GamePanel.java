@@ -7,11 +7,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
-import javax.swing.text.Position;
 
 import Global.Configuration;
 import Model.Coordinate;
-import Model.CoordinateUtils;
+import Model.MatchUtils;
 import Model.Game;
 import Model.Match;
 import Patterns.Observer;
@@ -225,7 +224,7 @@ public class GamePanel extends JComponent implements Observer {
         int n = xToN(mouseX, mouseY);
         int m = yToM(mouseY);
 
-        if (CoordinateUtils.isInsideBoard(new Coordinate(m, n))) {
+        if (MatchUtils.isInsideBoard(new Coordinate(m, n))) {
         //Configuration.info(String.format("Mouse at %d:%d", x, y));
             if((n != nSelected || m != mSelected)) {
                 nSelected = n;
