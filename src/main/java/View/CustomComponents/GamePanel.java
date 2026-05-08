@@ -44,6 +44,7 @@ public class GamePanel extends JComponent implements Observer {
     int stoneImageSize;
     int x0, y0;
     double innerRadius, outerRadius;
+    private final float highlightStroke = 7.0f;
 
     public GamePanel(Game game) {
         this.game = game;
@@ -74,7 +75,8 @@ public class GamePanel extends JComponent implements Observer {
         drawBoard(g2d);
         drawStones(g2d);
         drawSelected(g2d);
-        drawEvolutionHighlight(g2d);
+        drawFeedforward(g2d);
+
         //drawEaten(g2d);
     }
 
@@ -191,20 +193,48 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
-    private void drawEvolutionHighlight(Graphics2D g2d) {
+    private void drawFeedforward(Graphics2D g2d){
+        boolean showEvolveFeedback = false;
         Coordinate selectedCoordinate = new Coordinate(getnSelected(), getmSelected());
-        Set<Critter> neighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
-        if(!neighbors.isEmpty()){
-            Set<Coordinate> coords = new HashSet<>();
-            for (Critter critter : neighbors){
-                coords.addAll(critter.stonesCoordinates());
-                coords.add(selectedCoordinate);
+        Set<Critter> playerNeighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
+        int evolveInto = -1;
+        Set<Coordinate> evolveCoords = new HashSet<>();
+        evolveCoords.add(selectedCoordinate);
+        if(!playerNeighbors.isEmpty()) {
+            for (Critter critter : playerNeighbors) {
+                evolveCoords.addAll(critter.stonesCoordinates());
             }
-            drawHighlight(g2d, coords, selectedCoordinate, Color.orange, match.getCurrentPlayerIndex());
+
+            evolveInto = ShapeUtils.getShapeId(evolveCoords);
+            showEvolveFeedback = true;
         }
+
+        if(evolveInto >= 0){
+
+            Set<Critter> opponentsNeighbors = new HashSet<>();
+            for (Coordinate coord : evolveCoords){
+                opponentsNeighbors.addAll(match.getPlayerNeighborsCritters(match.getOpponentPlayerIndex(), coord));
+            }
+            if(!opponentsNeighbors.isEmpty()){
+                for (Critter critter : opponentsNeighbors){
+                    if(match.canEat(evolveInto, critter.type())) {
+                        drawHighlight(g2d, critter.stonesCoordinates(), Color.orange, 4);
+                    }
+                }
+            }
+        }
+
+        if(showEvolveFeedback)
+            drawHighlight(g2d, evolveCoords,  Color.green, 8);
     }
 
-    private void drawHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Coordinate previewCoord, Color highlightColor, int player){
+
+    private void drawHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color highlightColor, float strokeThickness){
+        var previousColor = g2d.getColor();
+        var previousStroke = g2d.getStroke();
+        g2d.setStroke(new BasicStroke(strokeThickness));
+        g2d.setColor(highlightColor);
+
         for (Coordinate coord : coordinates){
             int x = nToX(coord.col(), coord.line());
             int y = mToY(coord.line());
@@ -229,22 +259,14 @@ public class GamePanel extends JComponent implements Observer {
 
             for (int i = 0; i < 6; i++) {
                 Coordinate neighborCoord = neighborCoordinate[i];
-                if(!hasNeighbor(previewCoord, neighborCoord, player)){
-                    var previousColor = g2d.getColor();
-                    float thickness = 5.0f;
-                    g2d.setStroke(new BasicStroke(thickness));
-                    g2d.setColor(highlightColor);
+                if(!coordinates.contains(neighborCoord)){
                     g2d.drawLine(corners[i].x, corners[i].y, corners[(i + 1) % 6].x, corners[(i + 1) % 6].y);
-                    g2d.setColor(previousColor);
                 }
             }
         }
-    }
 
-    private boolean hasNeighbor(Coordinate previewPos, Coordinate coord, int player){
-        if(match.isOutsideBoard(coord.line(), coord.col()))
-            return false;
-        return coord.equals(previewPos) || match.getContentAt(coord.line(), coord.col()) == player + 1;
+        g2d.setColor(previousColor);
+        g2d.setStroke(previousStroke);
     }
 
     private Point getStoneDrawPositions(int n, int m){
