@@ -27,15 +27,28 @@ public class Match extends History<Move> {
         initMatch();
     }
 
+    /**
+     * Initialise le match en supprimant l'historique, en initialisant le plateau de jeu et en choisissant un nouveau joueur de manière aléatoire.
+     */
     public void initMatch() {
         reset();
-        previouslyEatenCritters = new ArrayList<>();
         InitializeBoard();
         critters = new HashSet<>();
+        previouslyEatenCritters = new ArrayList<>();
+        pickStartingPlayer();
+    }
+
+    /**
+     * Choisi un joueur aléatoire.
+     */
+    private void pickStartingPlayer() {
         currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
         Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
     }
 
+    /**
+     * Initialize le plateau de jeu avec des 0 à l'intérieur de l'hexagone de jeu et des MAX_VALUE à l'extérieur.
+     */
     private void InitializeBoard() {
         boardState = new byte[boardSize][boardSize];
         for (int l = 0; l < boardSize; l++) {
@@ -47,7 +60,7 @@ public class Match extends History<Move> {
 
     @Override
     public void apply(Move newMove) {
-        if (!isMoveValid(currentPlayerIndex, newMove.line, newMove.column)){ // invalid Move
+        if (!isMoveValid(currentPlayerIndex, newMove.getLine(), newMove.getColumn())){ // invalid Move
             return;
         }
 
@@ -295,7 +308,12 @@ public class Match extends History<Move> {
         players[playerIndex].increaseScore(increaseAmount);
     }
 
-    public void restoreState(int[] state){
+    /**
+     * Restore l'état du plateau du tour précédent.
+     * @param previousBoardState L'état du plateau au tour précédent.
+     */
+    public void restoreState(byte[][] previousBoardState){
+        this.boardState = previousBoardState;
         toggleCurrentPlayer();
     }
 
@@ -373,12 +391,40 @@ public class Match extends History<Move> {
         return boardSize;
     }
 
+    /**
+     * Récupère une copie profonde de l'état du plateau.
+     * @return Copier profonde de l'état du plateau.
+     */
+    public byte[][] getBoardState(){
+        if (boardState == null) return null;
+
+        // Création du tableau de premier niveau
+        byte[][] copy = new byte[boardState.length][];
+
+        for (int i = 0; i < boardState.length; i++) {
+            // .clone() sur un tableau de primitives (byte) effectue une copie profonde de la ligne
+            copy[i] = boardState[i].clone();
+        }
+
+        return copy;
+    }
+
+    /**
+     * Retoune le contenu d'une case.
+     * @param l La ligne de la case.
+     * @param c La colonne de la case.
+     * @return La valeur du contenu de la case.
+     */
     public int getContentAt(int l, int c) {
         if(isOutsideBoard(l, c))
             return Integer.MAX_VALUE;
         return boardState[l][c];
     }
 
+    /**
+     * Retourne la liste des coordonnées du plateau correspondant aux pièces mangées au tour précédent.
+     * @return Liste des coordonnées du plateau correspondant aux pièces mangées au tour précédent. Liste vide si aucune pièce mangée au tour précédent.
+     */
     public List<Coordinate> getPreviouslyEatenCrittersCoordinates(){
         if(previouslyEatenCritters.isEmpty())
             return Collections.emptyList();
