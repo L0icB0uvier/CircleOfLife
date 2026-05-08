@@ -11,6 +11,7 @@ public class Move implements Command {
     private final int line, column;
     byte[][] previousState;
     Set<Critter> critters;
+    PlayerData[] previousScore;
 
     public Move(Match match, int l, int c){
         this.match = match;
@@ -18,6 +19,7 @@ public class Move implements Command {
         this.column = c;
         this.previousState = match.getBoardState();
         this.critters = match.getCritters();
+        this.previousScore=match.getPlayerData();
     }
 
     public int getLine() {
@@ -37,6 +39,6 @@ public class Move implements Command {
 
     @Override
     public void desexecute() {
-        match.restoreState(previousState, critters);
+        match.restoreState(previousState, critters, previousScore);
     }
 }

@@ -1,6 +1,8 @@
 package Model;
 
-public class PlayerData {
+import Global.Configuration;
+
+public class PlayerData implements Cloneable {
     int score;
     int playableTilesNumber;
 
@@ -23,5 +25,16 @@ public class PlayerData {
 
     public int getPlayableTilesNumber() {
         return playableTilesNumber;
+    }
+
+    @Override
+    protected PlayerData clone() {
+        
+        try {
+            return (PlayerData) super.clone();
+        } catch (CloneNotSupportedException e) {
+            Configuration.error("Internal bug, given PlayerData non cloneable");
+        }
+        return null;
     }
 }

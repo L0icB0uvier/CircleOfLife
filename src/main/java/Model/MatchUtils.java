@@ -41,4 +41,12 @@ public class MatchUtils {
 
         return copy;
     }
+
+    public static PlayerData[] copyPlayerData(PlayerData[] players)  {
+        PlayerData[] temp = new PlayerData[players.length];
+        for (int i = 0; i < players.length; i++) {
+            temp[i] = players[i].clone();
+        }
+        return temp;
+    }
 }

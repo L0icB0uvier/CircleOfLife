@@ -315,9 +315,10 @@ public class Match extends History<Move> {
      * Restore l'état du plateau du tour précédent.
      * @param previousBoardState L'état du plateau au tour précédent.
      */
-    public void restoreState(byte[][] previousBoardState, Set<Critter> critters){
+    public void restoreState(byte[][] previousBoardState, Set<Critter> critters, PlayerData[] previousPlayerData){
         this.boardState = MatchUtils.copyBoard(previousBoardState);
         this.critters = new HashSet<>(critters);
+        this.players=MatchUtils.copyPlayerData(previousPlayerData);
     }
 
     /**
@@ -387,7 +388,7 @@ public class Match extends History<Move> {
     }
 
     public PlayerData[] getPlayerData(){
-        return players;
+        return MatchUtils.copyPlayerData(players);
     }
 
     public int getBoardSize(){
