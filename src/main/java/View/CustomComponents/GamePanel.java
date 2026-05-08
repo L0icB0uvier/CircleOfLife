@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -73,6 +74,7 @@ public class GamePanel extends JComponent implements Observer {
         drawBoard(g2d);
         drawStones(g2d);
         drawSelected(g2d);
+        drawEvolutionHighlight(g2d);
         //drawEaten(g2d);
     }
 
@@ -152,7 +154,7 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
-    private void drawCaseCenter(Graphics2D g2d, int n, int m){
+    private void drawTileCenter(Graphics2D g2d, int n, int m){
         int x = nToX(n, m);
         int y = mToY(m);
         g2d.drawRect(x - 1, y - 1, 2, 2);
