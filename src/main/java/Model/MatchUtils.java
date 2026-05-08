@@ -49,4 +49,8 @@ public class MatchUtils {
         }
         return temp;
     }
+
+    public static double euclidianDistance(Coordinate pointA, Coordinate pointB){
+        return Math.sqrt(Math.pow(pointA.col()- pointB.col(), 2) + Math.pow(pointA.line()- pointB.line(), 2));
+    }
 }

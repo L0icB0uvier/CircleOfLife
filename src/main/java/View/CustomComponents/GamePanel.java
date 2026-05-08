@@ -3,7 +3,9 @@ package View.CustomComponents;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -119,7 +121,7 @@ public class GamePanel extends JComponent implements Observer {
                 int contentType = match.getContentAt(m, n);
 
                 if(drawCenter && contentType != Integer.MAX_VALUE)
-                    drawCaseCenter(g2d, n, m);
+                    drawTileCenter(g2d, n, m);
 
                 if(contentType == 0 || contentType == Integer.MAX_VALUE)
                     continue;
@@ -149,10 +151,9 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
-    private void drawCaseCenter(Graphics2D g2d, int n, int m){
-        int x = nToX(n, m);
-        int y = mToY(m);
-        g2d.drawRect(x - 1, y - 1, 2, 2);
+    private void drawTileCenter(Graphics2D g2d, int n, int m){
+        Coordinate pixel = tileToPixel(new Coordinate(n, m));
+        g2d.drawRect(pixel.col() - 1, pixel.line() - 1, 2, 2);
     }
 
     /**
@@ -187,8 +188,9 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     private Point getStoneDrawPositions(int n, int m){
-        int x = nToX(n, m) - Math.round((float) stoneImageSize / 2);
-        int y = mToY(m) - Math.round((float) stoneImageSize / 2);
+        Coordinate pixel = tileToPixel(new Coordinate(n, m));
+        int x = pixel.col() - Math.round((float) stoneImageSize / 2);
+        int y = pixel.line() - Math.round((float) stoneImageSize / 2);
         return new Point(x, y);
     }
 
@@ -221,11 +223,12 @@ public class GamePanel extends JComponent implements Observer {
     public void updateMousePosition(int x, int y) {
         mouseX = x;
         mouseY = y;
-        int n = xToN(mouseX, mouseY);
-        int m = yToM(mouseY);
+        Coordinate mouseToTile = pixelToTile(new Coordinate(mouseX, mouseY));
+        int n = mouseToTile.col();
+        int m = mouseToTile.line();
 
         if (MatchUtils.isInsideBoard(new Coordinate(m, n))) {
-        //Configuration.info(String.format("Mouse at %d:%d", x, y));
+        Configuration.info(String.format("Mouse at %d:%d", x, y));
             if((n != nSelected || m != mSelected)) {
                 nSelected = n;
                 mSelected = m;
@@ -254,12 +257,39 @@ public class GamePanel extends JComponent implements Observer {
         return (int) Math.round(y0 + ((m * Math.sqrt(3) * distance) / 2));
     }
 
+    public Coordinate tileToPixel(Coordinate tile){
+        int n = tile.col();
+        int m = tile.line();
+        return new Coordinate((int) Math.round(x0 + (distance * ((double) n - ((double) m / 2)))),
+                (int) Math.round(y0 + ((m * Math.sqrt(3) * distance) / 2)));
+    }
+
     public int xToN(int x, int y) {
         return (int) (Math.round(((double) (x - x0) / distance) + ((1 / Math.sqrt(3) * ((double) (y - y0) / distance)))));
     }
 
     public int yToM(int y) {
         return (int) (Math.round((2 * (y - y0) / (distance * Math.sqrt(3)))));
+    }
+
+    public Coordinate pixelToTile(Coordinate pixels){
+        int x = pixels.col();
+        int y = pixels.line();
+        int c = (int) (Math.round(((double) (x - x0) / distance) + ((1 / Math.sqrt(3) * ((double) (y - y0) / distance)))));
+        int l = (int) (Math.round((2 * (y - y0) / (distance * Math.sqrt(3)))));
+        Set<Coordinate> tiles = new HashSet<>(Set.of(new Coordinate(c,l), new Coordinate(c-1, l), new Coordinate(c+1, l),
+                new Coordinate(c, l-1), new Coordinate(c, l+1),
+                new Coordinate(c-1, l-1), new Coordinate(c+1, l+1)));
+        Coordinate closestTile = null;
+        double shortestDistance = Double.POSITIVE_INFINITY;
+        for (Coordinate tile : tiles){
+            double distance = MatchUtils.euclidianDistance(tileToPixel(tile), pixels);
+            if (distance < shortestDistance){
+                closestTile = tile;
+                shortestDistance = distance;
+            }
+        }
+        return closestTile;
     }
 
     public void togglePreview() {
