@@ -4,17 +4,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import Global.Configuration;
-import Model.Coordinate;
-import Model.MatchUtils;
-import Model.Game;
-import Model.Match;
+import Model.*;
 import Patterns.Observer;
 
 public class GamePanel extends JComponent implements Observer {
@@ -45,6 +42,7 @@ public class GamePanel extends JComponent implements Observer {
     double distance;
     int stoneImageSize;
     int x0, y0;
+    double innerRadius, outerRadius;
 
     public GamePanel(Game game) {
         this.game = game;
@@ -106,6 +104,9 @@ public class GamePanel extends JComponent implements Observer {
         // Calcule taille de l'image des pierres
         stoneImageSize = (int) Math.round(hexagonHeightRatio * imageHeight);
 
+        outerRadius = (double) stoneImageSize / 2;
+        innerRadius = outerRadius * 0.866025404f;
+
         g2d.drawImage(imgPlateau, x, y, (int) Math.round(imageWidth), (int) Math.round(imageHeight), null);
     }
 
@@ -151,9 +152,10 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
-    private void drawTileCenter(Graphics2D g2d, int n, int m){
-        Coordinate pixel = tileToPixel(new Coordinate(n, m));
-        g2d.drawRect(pixel.col() - 1, pixel.line() - 1, 2, 2);
+    private void drawCaseCenter(Graphics2D g2d, int n, int m){
+        int x = nToX(n, m);
+        int y = mToY(m);
+        g2d.drawRect(x - 1, y - 1, 2, 2);
     }
 
     /**
@@ -185,6 +187,62 @@ public class GamePanel extends JComponent implements Observer {
                 drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
         }
+    }
+
+    private void drawEvolutionHighlight(Graphics2D g2d) {
+        Coordinate selectedCoordinate = new Coordinate(getnSelected(), getmSelected());
+        Set<Critter> neighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
+        if(!neighbors.isEmpty()){
+            Set<Coordinate> coords = new HashSet<>();
+            for (Critter critter : neighbors){
+                coords.addAll(critter.stonesCoordinates());
+                coords.add(selectedCoordinate);
+            }
+            drawHighlight(g2d, coords, selectedCoordinate, Color.orange, match.getCurrentPlayerIndex());
+        }
+    }
+
+    private void drawHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Coordinate previewCoord, Color highlightColor, int player){
+        for (Coordinate coord : coordinates){
+            int x = nToX(coord.col(), coord.line());
+            int y = mToY(coord.line());
+
+            Coordinate[] neighborCoordinate = new Coordinate[]{
+                    new Coordinate(coord.col() - 1, coord.line()),
+                    new Coordinate(coord.col() - 1, coord.line() - 1),
+                    new Coordinate(coord.col(), coord.line() - 1),
+                    new Coordinate(coord.col() + 1, coord.line()),
+                    new Coordinate(coord.col() + 1, coord.line() + 1),
+                    new Coordinate(coord.col(), coord.line() + 1),
+            };
+
+            Point[] corners = new Point[] {
+                    new Point((int) Math.round(x - innerRadius), y + (int) Math.round(0.5f * outerRadius)),
+                    new Point((int) Math.round(x - innerRadius), y - (int) Math.round(0.5f * outerRadius)),
+                    new Point(x, y - (int) Math.round(outerRadius)),
+                    new Point((int) Math.round(x + innerRadius), y - (int) Math.round(0.5f * outerRadius)),
+                    new Point((int) Math.round(x + innerRadius), y + (int) Math.round(0.5f * outerRadius)),
+                    new Point(x, y + (int) Math.round(outerRadius))
+            };
+
+            for (int i = 0; i < 6; i++) {
+                Coordinate neighborCoord = neighborCoordinate[i];
+                if(!hasNeighbor(previewCoord, neighborCoord, player)){
+                    var previousColor = g2d.getColor();
+                    float thickness = 5.0f;
+                    g2d.setStroke(new BasicStroke(thickness));
+                    g2d.setColor(highlightColor);
+                    g2d.drawLine(corners[i].x, corners[i].y, corners[(i + 1) % 6].x, corners[(i + 1) % 6].y);
+                    g2d.setColor(previousColor);
+                }
+            }
+        }
+    }
+
+    private boolean hasNeighbor(Coordinate previewPos, Coordinate coord, int player){
+        if(match.isOutsideBoard(coord.line(), coord.col()))
+            return false;
+        return coord.equals(previewPos) || match.getContentAt(coord.line(), coord.col()) == player + 1;
     }
 
     private Point getStoneDrawPositions(int n, int m){
