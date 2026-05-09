@@ -30,6 +30,8 @@ public class Move implements Command {
         return column;
     }
 
+
+
     @Override
     public void execute() {
         // sauvegarder l'état du plateau;

@@ -53,4 +53,18 @@ public class MatchUtils {
     public static double euclidianDistance(Coordinate pointA, Coordinate pointB){
         return Math.sqrt(Math.pow(pointA.col()- pointB.col(), 2) + Math.pow(pointA.line()- pointB.line(), 2));
     }
+
+    public static Match copy(Match match){
+        Match newMatch = new Match();
+        newMatch.boardState = match.getBoardState();
+        newMatch.players = match.getPlayerData();
+        for (Critter critter : match.critters){
+            newMatch.critters.add(new Critter(critter));
+        }
+        newMatch.currentPlayerIndex = match.currentPlayerIndex;
+        for (Critter critter : match.previouslyEatenCritters){
+            newMatch.previouslyEatenCritters.add(new Critter(critter));
+        }
+        return newMatch;
+    }
 }
