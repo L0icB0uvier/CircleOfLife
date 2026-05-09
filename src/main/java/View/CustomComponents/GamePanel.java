@@ -222,7 +222,7 @@ public class GamePanel extends JComponent implements Observer {
         Point startPoint = new Point((int) Math.round(x - innerRadius), y - (int) Math.round(0.5f * outerRadius));
         Point endPoint = new Point(x, y - (int) Math.round(outerRadius));
         int angle = 30;
-        int distY = startPoint.y - (y + (int) Math.round(0.5f * outerRadius));
+        int distY = Math.abs(startPoint.y - (y + (int) Math.round(0.5f * outerRadius)));
         int distX = distY;
         g2d.setColor(highlightColor);
         Configuration.info("Start highlight with distances "+ distX + ": ");
@@ -231,8 +231,8 @@ public class GamePanel extends JComponent implements Observer {
         g2d.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
         for(Boolean direction: borders) {
             startPoint = endPoint;
-            angle += (direction) ? -60 : 60;
-            endPoint = new Point((int) (startPoint.x + distX * Math.cos(Math.toRadians(angle))), (int) (startPoint.y + distY * Math.sin(Math.toRadians(angle))));
+            angle = (angle + 360 + ((direction) ? -60 : 60)) % 360;
+            endPoint = new Point((int) (startPoint.x + distX * Math.cos(Math.toRadians(angle))), (int) (startPoint.y + distY * Math.sin(-Math.toRadians(angle))));
             Configuration.info("Angle : " + angle  + ", and new point (" + endPoint.x + ", " + endPoint.y + ")");
             g2d.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
         }

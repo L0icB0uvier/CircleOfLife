@@ -1,5 +1,7 @@
 package Model;
 
+import Global.Configuration;
+
 import java.util.*;
 
 public class ShapeUtils {
@@ -33,15 +35,15 @@ public class ShapeUtils {
                 new ArrayList<>(Arrays.asList(true, true, false, false, true, true, true, true, false, false, true, true, true, true, false, false, true)));
 
         // ID 3
-        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)), 3); // 2
-        shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)),
-                new ArrayList<>(Arrays.asList(true, true, false, true, true, false, true, true, true, false, true, true, false)));
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 2)), 3); // 1
         shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 2)),
+                new ArrayList<>(Arrays.asList(true, true, false, true, true, false, true, true, true, false, true, true, false)));
+        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)), 3); // 2
+        shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)),
                 new ArrayList<>(Arrays.asList(true, false, true, true, true, false, true, true, false, true, true, true, false)));
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)), 3); // 3
         shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)),
-                new ArrayList<>(Arrays.asList(true, false, true, true, false, true, true, false, true, true, true, false, true)));
+                new ArrayList<>(Arrays.asList(true, false, true, true, false, true, true, true, false, true, true, false, true)));
 
         // ID 4
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 1), new Coordinate(3, 1)), 4); // 1
@@ -133,7 +135,7 @@ public class ShapeUtils {
                 new ArrayList<>(Arrays.asList(true, true, false, true, true, true, false, true, false, true, true, true, true, false, false)));
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(2, 1)), 7); // 4
         shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(2, 1)),
-                new ArrayList<>(Arrays.asList(true, false, true, false, true, true, true, false, true, true, true, true, false, false, true)));
+                new ArrayList<>(Arrays.asList(true, false, true, false, true, true, true, false, true, true, true, false, false, true, true)));
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 2)), 7); // 5
         shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 2)),
                 new ArrayList<>(Arrays.asList(true, false, true, true, true, false, false, true, true, true, true, false, true, false, true)));
@@ -182,7 +184,7 @@ public class ShapeUtils {
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 1)), 10); // 1
         shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 1)),
                 new ArrayList<>(Arrays.asList(true, false, true, true, false, true, true, true, true, false, false, true, true)));
-        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(-1, 1)), 10); // 2
+        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(-1, 1), new Coordinate(0, 1)), 10); // 2
         shapesBorders.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(-1, 1)),
                 new ArrayList<>(Arrays.asList(true, true, true, false, true, true, false, true, true, true, true, false, false)));
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 1)), 10); // 3
