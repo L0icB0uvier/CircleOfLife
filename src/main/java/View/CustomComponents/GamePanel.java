@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +43,8 @@ public class GamePanel extends JComponent implements Observer {
     int stoneImageSize;
     int x0, y0;
     double innerRadius, outerRadius;
-    private final float highlightStroke = 7.0f;
+    private final float evolveHighlightThickness = 6.0f;
+    private final float feedHighlightThickness = 6.0f;
 
     public GamePanel(Game game) {
         this.game = game;
@@ -74,8 +74,8 @@ public class GamePanel extends JComponent implements Observer {
         Graphics2D g2d = (Graphics2D) g;
         drawBoard(g2d);
         drawStones(g2d);
-        drawSelected(g2d);
-        drawFeedforward(g2d);
+        if(drawSelected(g2d))
+            drawFeedforward(g2d);
 
         //drawEaten(g2d);
     }
@@ -166,13 +166,13 @@ public class GamePanel extends JComponent implements Observer {
      * Dessine la pierre sous le curseur du joueur actif.
      * @param g2d Le Graphic à utiliser pour dessiner.
      */
-    private void drawSelected(Graphics2D g2d){
+    private boolean drawSelected(Graphics2D g2d){
         int m = getmSelected();
         int n = getnSelected();
-        if (n==-1 || m==-1) return;
+        if (n==-1 || m==-1) return false;
         int contentType = match.getContentAt(m, n);
         if(contentType > 0)
-            return;
+            return false;
 
         Point drawPos = getStoneDrawPositions(n, m);
 
@@ -182,15 +182,17 @@ public class GamePanel extends JComponent implements Observer {
                 break;
             case -1:
                 if(match.getCurrentPlayerIndex() == 0)
-                    return;
+                    return false;
                 drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
             case -2:
                 if(match.getCurrentPlayerIndex() == 1)
-                    return;
+                    return false;
                 drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
         }
+
+        return true;
     }
 
     private void drawFeedforward(Graphics2D g2d){
@@ -218,14 +220,14 @@ public class GamePanel extends JComponent implements Observer {
             if(!opponentsNeighbors.isEmpty()){
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
-                        drawHighlight(g2d, critter.stonesCoordinates(), Color.orange, 4);
+                        drawHighlight(g2d, critter.stonesCoordinates(), Color.orange, feedHighlightThickness);
                     }
                 }
             }
         }
 
         if(showEvolveFeedback)
-            drawHighlight(g2d, evolveCoords,  Color.green, 8);
+            drawHighlight(g2d, evolveCoords,  Color.yellow, evolveHighlightThickness);
     }
 
 
