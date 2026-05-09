@@ -200,7 +200,41 @@ public class GamePanel extends JComponent implements Observer {
                 coords.addAll(critter.stonesCoordinates());
                 coords.add(selectedCoordinate);
             }
-            drawHighlight(g2d, coords, selectedCoordinate, Color.orange, match.getCurrentPlayerIndex());
+            ArrayList<Boolean> borders = ShapeUtils.getShapeBorders(coords);
+            int minLine = Integer.MAX_VALUE;
+            int minCol = Integer.MAX_VALUE;
+
+            for (Coordinate coord : coords) {
+                if (coord.col() <= minCol && coord.line() <= minLine) {
+                    minLine = coord.line();
+                    minCol = coord.col();
+                }
+            }
+            Coordinate origin = new Coordinate(minCol, minLine);
+            if (!borders.isEmpty()) drawHighlight(g2d, origin, borders, Color.ORANGE);
+            //drawHighlight(g2d, coords, selectedCoordinate, Color.orange, match.getCurrentPlayerIndex());
+        }
+    }
+
+    private void drawHighlight(Graphics2D g2d, Coordinate originCritter, ArrayList<Boolean> borders, Color highlightColor) {
+        int x = nToX(originCritter.col(), originCritter.line());
+        int y = mToY(originCritter.line());
+        Point startPoint = new Point((int) Math.round(x - innerRadius), y - (int) Math.round(0.5f * outerRadius));
+        Point endPoint = new Point(x, y - (int) Math.round(outerRadius));
+        int angle = 30;
+        int distY = startPoint.y - (y + (int) Math.round(0.5f * outerRadius));
+        int distX = distY;
+        g2d.setColor(highlightColor);
+        Configuration.info("Start highlight with distances "+ distX + ": ");
+        float thickness = 5.0f;
+        g2d.setStroke(new BasicStroke(thickness));
+        g2d.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+        for(Boolean direction: borders) {
+            startPoint = endPoint;
+            angle += (direction) ? -60 : 60;
+            endPoint = new Point((int) (startPoint.x + distX * Math.cos(Math.toRadians(angle))), (int) (startPoint.y + distY * Math.sin(Math.toRadians(angle))));
+            Configuration.info("Angle : " + angle  + ", and new point (" + endPoint.x + ", " + endPoint.y + ")");
+            g2d.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
         }
     }
 
@@ -288,7 +322,6 @@ public class GamePanel extends JComponent implements Observer {
         int m = mouseToTile.line();
 
         if (MatchUtils.isInsideBoard(new Coordinate(m, n))) {
-        Configuration.info(String.format("Mouse at %d:%d", x, y));
             if((n != nSelected || m != mSelected)) {
                 nSelected = n;
                 mSelected = m;
