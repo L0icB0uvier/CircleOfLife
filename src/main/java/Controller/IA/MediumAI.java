@@ -35,7 +35,7 @@ public class MediumAI extends AI {
         for (Coordinate move : possibleMoves){
             Match newMatch = MatchUtils.copy(match);
             newMatch.playMove(move.line(), move.col());
-            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), true);
+            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), Double.MIN_VALUE, Double.MAX_VALUE, true);
             if (eval > maxEval){
                 maxEval = eval;
                 best = new Move(match, move.line(), move.col());

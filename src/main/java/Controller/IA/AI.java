@@ -114,34 +114,46 @@ public abstract class AI {
      * @return La valeur de l'évaluation la plus avantageuse pour l'IA après le nombre de coups spécifié.
      */
     double minimax(Match match, int depth, int playerID, double alpha, double beta, boolean isMax){
+        // cas de base : si la partie est terminée ou la profondeur max atteinte, on évalue l'état du match
         if (depth == 0 || match.isGameOver()){
             return evaluate(match, playerID);
         }
 
         double eval;
-
+        // cas récursif : si c'est le tour de l'IA, on sélectionne le coup qui maximise l'évaluation
         if (isMax){
             double maxEval = Double.MIN_VALUE;
             List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
             for (Coordinate move : possibleMoves){
+                // copie profonde du match et simulation d'un coup
                 Match newMatch = MatchUtils.copy(match);
                 newMatch.playMove(move.line(), move.col());
+
+                // appel récursif : on suppose que l'adversaire jouera le pire coup selon l'évaluation choisie par l'IA
                 eval = minimax(newMatch, depth - 1, playerID, alpha, beta, false);
                 maxEval = Math.max(eval, maxEval);
+
+                // mise à jour du maximum des évaluations jusqu'ici pour élaguer si possible
                 alpha = Math.max(alpha, eval);
                 if (beta <= alpha) break;
             }
             return maxEval;
         }
 
+        // cas récursif : si c'est le tour de l'adversaire, on suppose que le coup choisi minimisera l'évaluation
         else{
             double minEval = Double.MAX_VALUE;
             List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
             for (Coordinate move : possibleMoves){
+                // copie profonde du match et simulation d'un coup
                 Match newMatch = MatchUtils.copy(match);
                 newMatch.playMove(move.line(), move.col());
+
+                // appel récursif : l'IA cherche à nouveau à maximiser l'évaluation
                 eval = minimax(newMatch, depth - 1, playerID, alpha, beta, true);
                 minEval = Math.min(eval, minEval);
+
+                // mise à jour du minimum des évaluations jusqu'ici pour élaguer si possible
                 beta = Math.min(beta, eval);
                 if (beta <= alpha) break;
             }
