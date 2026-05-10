@@ -113,7 +113,7 @@ public abstract class AI {
      *              coups possibles.
      * @return La valeur de l'évaluation la plus avantageuse pour l'IA après le nombre de coups spécifié.
      */
-    double minimax(Match match, int depth, int playerID, boolean isMax){
+    double minimax(Match match, int depth, int playerID, double alpha, double beta, boolean isMax){
         if (depth == 0 || match.isGameOver()){
             return evaluate(match, playerID);
         }
@@ -126,8 +126,10 @@ public abstract class AI {
             for (Coordinate move : possibleMoves){
                 Match newMatch = MatchUtils.copy(match);
                 newMatch.playMove(move.line(), move.col());
-                eval = minimax(newMatch, depth - 1, playerID, false);
+                eval = minimax(newMatch, depth - 1, playerID, alpha, beta, false);
                 maxEval = Math.max(eval, maxEval);
+                alpha = Math.max(alpha, eval);
+                if (beta <= alpha) break;
             }
             return maxEval;
         }
@@ -138,8 +140,10 @@ public abstract class AI {
             for (Coordinate move : possibleMoves){
                 Match newMatch = MatchUtils.copy(match);
                 newMatch.playMove(move.line(), move.col());
-                eval = minimax(newMatch, depth - 1, (playerID+1)%2, true);
+                eval = minimax(newMatch, depth - 1, playerID, alpha, beta, true);
                 minEval = Math.min(eval, minEval);
+                beta = Math.min(beta, eval);
+                if (beta <= alpha) break;
             }
             return minEval;
         }
