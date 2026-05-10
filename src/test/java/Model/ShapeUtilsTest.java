@@ -121,32 +121,181 @@ class ShapeUtilsTest {
 
     @Test
     void validateShape4(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(4, 4), new Coordinate(5, 4), new Coordinate(6, 5), new Coordinate(7, 5))); // 1
+        assertEquals(4, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(4, 4), new Coordinate(5, 4), new Coordinate(4, 5), new Coordinate(3, 5))); // 2
+        assertEquals(4, ShapeUtils.getShapeId(validSet2));
+
+        Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(4, 4), new Coordinate(5, 5), new Coordinate(5, 6), new Coordinate(6, 7))); // 3
+        assertEquals(4, ShapeUtils.getShapeId(validSet3));
+
+        Set<Coordinate> validSet4 = new HashSet<>(Set.of(new Coordinate(4, 4), new Coordinate(4, 5), new Coordinate(5, 6), new Coordinate(5, 7))); // 4
+        assertEquals(4, ShapeUtils.getShapeId(validSet4));
+
+        Set<Coordinate> validSet5 = new HashSet<>(Set.of(new Coordinate(4, 4), new Coordinate(4, 5), new Coordinate(3, 5), new Coordinate(3, 6))); // 5
+        assertEquals(4, ShapeUtils.getShapeId(validSet5));
+
+        Set<Coordinate> validSet6 = new HashSet<>(Set.of(new Coordinate(4, 4), new Coordinate(5, 5), new Coordinate(6, 5), new Coordinate(7, 6))); // 6
+        assertEquals(4, ShapeUtils.getShapeId(validSet6));
+
+        Set<Coordinate> invalidSet1 = new HashSet<>(Set.of(new Coordinate(4, 4), new Coordinate(5, 5), new Coordinate(3, 4), new Coordinate(7, 6))); // 6
+        assertNotEquals(4, ShapeUtils.getShapeId(invalidSet1));
 
     }
 
     @Test
     void validateShape5(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 4), new Coordinate(5, 4), new Coordinate(5, 3)));
+        assertEquals(5, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 3), new Coordinate(3, 4), new Coordinate(5, 4)));
+        assertEquals(5, ShapeUtils.getShapeId(validSet2));
+
+        Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(3, 4), new Coordinate(4, 5), new Coordinate(5, 5)));
+        assertEquals(5, ShapeUtils.getShapeId(validSet3));
+
+        Set<Coordinate> validSet4 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 4), new Coordinate(4, 5), new Coordinate(3, 5)));
+        assertEquals(5, ShapeUtils.getShapeId(validSet4));
+
+        Set<Coordinate> validSet5 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 3), new Coordinate(3, 4), new Coordinate(4, 5)));
+        assertEquals(5, ShapeUtils.getShapeId(validSet5));
+
+        Set<Coordinate> validSet6 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 3), new Coordinate(5, 4), new Coordinate(5, 5)));
+        assertEquals(5, ShapeUtils.getShapeId(validSet6));
 
     }
 
     @Test
-    void validateShape6(){}
+    void validateShape6(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(0, 1)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(-1, 1), new Coordinate(-2, 1)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet2));
+
+        Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(3, 1)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet3));
+
+        Set<Coordinate> validSet4 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 1), new Coordinate(3, 1)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet4));
+
+        Set<Coordinate> validSet5 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 1), new Coordinate(3, 2)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet5));
+
+        Set<Coordinate> validSet6 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 2)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet6));
+
+        Set<Coordinate> validSet7 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 2), new Coordinate(2, 3)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet7));
+
+        Set<Coordinate> validSet8 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(2, 3)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet8));
+
+        Set<Coordinate> validSet9 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(0, 2), new Coordinate(1, 3)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet9));
+
+        Set<Coordinate> validSet10 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(0, 2), new Coordinate(-1, 2)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet10));
+
+        Set<Coordinate> validSet11 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(0, 2)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet11));
+
+        Set<Coordinate> validSet12 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(1, 2), new Coordinate(1, 3)));
+        assertEquals(6, ShapeUtils.getShapeId(validSet12));
+
+    }
 
     @Test
-    void validateShape7(){}
+    void validateShape7(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(2, 1)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(1, 1)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet2));
+
+        Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(-1, 1), new Coordinate(0, 1), new Coordinate(1, 1)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet3));
+
+        Set<Coordinate> validSet4 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(2, 1)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet4));
+
+        Set<Coordinate> validSet5 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet5));
+
+        Set<Coordinate> validSet6 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(2, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet6));
+
+        Set<Coordinate> validSet7 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 1), new Coordinate(2, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet7));
+
+        Set<Coordinate> validSet8 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(1, 2), new Coordinate(2, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet8));
+
+        Set<Coordinate> validSet9 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(1, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet9));
+
+        Set<Coordinate> validSet10 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(0, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet10));
+
+        Set<Coordinate> validSet11 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(-1, 1), new Coordinate(0, 1), new Coordinate(0, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet11));
+
+        Set<Coordinate> validSet12 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(0, 2), new Coordinate(1, 2)));
+        assertEquals(7, ShapeUtils.getShapeId(validSet12));
+    }
 
     @Test
     void validateShape8(){
         Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1)));
         assertEquals(8, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1)));
+        assertEquals(8, ShapeUtils.getShapeId(validSet2));
     }
 
     @Test
-    void validateShape9(){}
+    void validateShape9(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)));
+        assertEquals(9, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0)));
+        assertEquals(9, ShapeUtils.getShapeId(validSet2));
+
+        Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(0, 2)));
+        assertEquals(9, ShapeUtils.getShapeId(validSet3));
+    }
 
     @Test
-    void validateShape10(){}
+    void validateShape10(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 3), new Coordinate(5, 4)));
+        assertEquals(10, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(5, 3), new Coordinate(5, 4), new Coordinate(4, 4)));
+        assertEquals(10, ShapeUtils.getShapeId(validSet2));
+
+        Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 4), new Coordinate(5, 4)));
+        assertEquals(10, ShapeUtils.getShapeId(validSet3));
+
+        Set<Coordinate> validSet4 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 3), new Coordinate(3, 4)));
+        assertEquals(10, ShapeUtils.getShapeId(validSet4));
+
+        Set<Coordinate> validSet5 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(3, 4), new Coordinate(4, 5)));
+        assertEquals(10, ShapeUtils.getShapeId(validSet5));
+
+        Set<Coordinate> validSet6 = new HashSet<>(Set.of(new Coordinate(3, 3), new Coordinate(4, 4), new Coordinate(4, 5)));
+        assertEquals(10, ShapeUtils.getShapeId(validSet6));
+    }
 
     @Test
-    void validateShape11(){}
+    void validateShape11(){
+        Set<Coordinate> validSet1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 0)));
+        assertEquals(11, ShapeUtils.getShapeId(validSet1));
+
+        Set<Coordinate> validSet2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0, 1)));
+        assertEquals(11, ShapeUtils.getShapeId(validSet2));
+
+        Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1)));
+        assertEquals(11, ShapeUtils.getShapeId(validSet3));
+    }
 }

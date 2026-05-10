@@ -88,7 +88,7 @@ public class MatchUtilsTest {
                     Set<Coordinate> computedFirstNeighbors = new HashSet<>();
 
                     for (Coordinate tileB : coordinates) {
-                            if (isNeighbor(tileA, tileB) && isInsideBoard(tileB)) {
+                            if (MatchUtils.isNeighbor(tileA, tileB) && MatchUtils.isInsideBoard(tileB)) {
                                 computedFirstNeighbors.add(tileB);
                             }
                     }
@@ -128,5 +128,57 @@ public class MatchUtilsTest {
             expectedNeighbors.add(new Coordinate(col, line - 1));              // case haut-droite
         }
         return expectedNeighbors;
+    }
+
+    @Test
+    void isNeighbor() {
+        Coordinate coord1 = new Coordinate(2, 2);
+        Coordinate coord2 = new Coordinate(1, 1);
+        Coordinate coord3 = new Coordinate(1, 2);
+        Coordinate coord4 = new Coordinate(2, 3);
+        Coordinate coord5 = new Coordinate(3, 3);
+        Coordinate coord6 = new Coordinate(3, 2);
+        Coordinate coord7 = new Coordinate(2, 1);
+        Coordinate coord8 = new Coordinate(4, 4);
+        Coordinate coord9 = new Coordinate(0, 0);
+        Coordinate coord10 = new Coordinate(0, 2);
+
+        assertTrue(MatchUtils.isNeighbor(coord1, coord2));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord3));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord4));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord5));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord6));
+        assertTrue(MatchUtils.isNeighbor(coord1, coord7));
+        assertFalse(MatchUtils.isNeighbor(coord1, coord8));
+        assertFalse(MatchUtils.isNeighbor(coord1, coord9));
+        assertFalse(MatchUtils.isNeighbor(coord1, coord10));
+    }
+
+    @Test
+    void calculatePointEarned() {
+        Set<Critter> critters1 = new HashSet<>();
+        critters1.add(ShapeUtils.critterFromId(11, 1, 1));
+        critters1.add(ShapeUtils.critterFromId(10, 1, 1));
+        assertEquals(5, MatchUtils.calculatePointEarned(critters1));
+
+        Set<Critter> critters2 = new HashSet<>();
+        critters2.add(ShapeUtils.critterFromId(0, 0, 1));
+        critters2.add(ShapeUtils.critterFromId(1, 0, 1));
+        assertEquals(5, MatchUtils.calculatePointEarned(critters2));
+
+        Set<Critter> critters3 = new HashSet<>();
+        critters3.add(ShapeUtils.critterFromId(1, 0, 1));
+        critters3.add(ShapeUtils.critterFromId(2, 0, 1));
+        critters3.add(ShapeUtils.critterFromId(3, 0, 1));
+        assertEquals(12, MatchUtils.calculatePointEarned(critters3));
+
+        Set<Critter> critters4 = new HashSet<>();
+        critters4.add(ShapeUtils.critterFromId(1, 0, 1));
+        critters4.add(ShapeUtils.critterFromId(2, 0, 1));
+        critters4.add(ShapeUtils.critterFromId(12, 0, 1));
+        assertEquals(8, MatchUtils.calculatePointEarned(critters4));
+
+        assertEquals(0, MatchUtils.calculatePointEarned(null));
+        assertEquals(0, MatchUtils.calculatePointEarned(new HashSet<>()));
     }
 }

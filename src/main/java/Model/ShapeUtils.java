@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ShapeUtils {
     private static final Map<Set<Coordinate>, Integer> shapes;
@@ -46,7 +47,7 @@ public class ShapeUtils {
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(-1, 1), new Coordinate(-2, 1)), 6); // 2
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 0), new Coordinate(3, 1)), 6); // 3
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 1), new Coordinate(3, 1)), 6); // 4
-        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 1), new Coordinate(2, 2)), 6); // 5
+        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(2, 1), new Coordinate(3, 2)), 6); // 5
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 2)), 6); // 6
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 2), new Coordinate(2, 3)), 6); // 7
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(2, 3)), 6); // 8
@@ -116,10 +117,12 @@ public class ShapeUtils {
         int minCol = Integer.MAX_VALUE;
 
         for (Coordinate coord : boardCoordinate) {
-            if (coord.col() <= minCol && coord.line() <= minLine) {
+            if (coord.line() < minLine) {
                 minLine = coord.line();
                 minCol = coord.col();
             }
+            else if(coord.line() == minLine && coord.col() < minCol)
+                minCol = coord.col();
         }
 
         Set<Coordinate> normalized = new HashSet<>();
@@ -130,5 +133,16 @@ public class ShapeUtils {
         }
 
         return normalized;
+    }
+
+    public static Critter critterFromId(int type, int id, int player){
+        List<Set<Coordinate>> keys = shapes.entrySet().stream()
+                .filter(entry -> Objects.equals(entry.getValue(), type))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if(id >= keys.size()) return null;
+
+        return new Critter(keys.get(id), player);
     }
 }

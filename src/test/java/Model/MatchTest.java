@@ -3,6 +3,9 @@ package Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MatchTest {
@@ -44,29 +47,23 @@ class MatchTest {
 
     @Test
     void feed() {
+
     }
 
-    @Test
-    void isNeighbor() {
-        Coordinate coord1 = new Coordinate(2, 2);
-        Coordinate coord2 = new Coordinate(1, 1);
-        Coordinate coord3 = new Coordinate(1, 2);
-        Coordinate coord4 = new Coordinate(2, 3);
-        Coordinate coord5 = new Coordinate(3, 3);
-        Coordinate coord6 = new Coordinate(3, 2);
-        Coordinate coord7 = new Coordinate(2, 1);
-        Coordinate coord8 = new Coordinate(4, 4);
-        Coordinate coord9 = new Coordinate(0, 0);
-        Coordinate coord10 = new Coordinate(0, 2);
 
-        assertTrue(MatchUtils.isNeighbor(coord1, coord2));
-        assertTrue(MatchUtils.isNeighbor(coord1, coord3));
-        assertTrue(MatchUtils.isNeighbor(coord1, coord4));
-        assertTrue(MatchUtils.isNeighbor(coord1, coord5));
-        assertTrue(MatchUtils.isNeighbor(coord1, coord6));
-        assertTrue(MatchUtils.isNeighbor(coord1, coord7));
-        assertFalse(MatchUtils.isNeighbor(coord1, coord8));
-        assertFalse(MatchUtils.isNeighbor(coord1, coord9));
-        assertFalse(MatchUtils.isNeighbor(coord1, coord10));
+    @Test
+    void updatePlayerScore(){
+        assertEquals(0, match.getPlayerScore(0));
+        assertEquals(0, match.getPlayerScore(1));
+        match.updatePlayerScore(0, 5);
+        assertEquals(5, match.getPlayerScore(0));
+        assertEquals(0, match.getPlayerScore(1));
+        match.updatePlayerScore(1, 2);
+        assertEquals(5, match.getPlayerScore(0));
+        assertEquals(2, match.getPlayerScore(1));
+        match.updatePlayerScore(1, 4);
+        assertEquals(5, match.getPlayerScore(0));
+        assertEquals(6, match.getPlayerScore(1));
+
     }
 }

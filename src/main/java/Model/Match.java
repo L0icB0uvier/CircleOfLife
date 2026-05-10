@@ -127,7 +127,7 @@ public class Match extends History<Move> {
         previouslyEatenCritters.addAll(eatenCritters);
 
         if(!eatenCritters.isEmpty()){
-            int pointsEarned = calculatePointEarned(eatenCritters);
+            int pointsEarned = MatchUtils.calculatePointEarned(eatenCritters);
             updatePlayerScore(currentPlayerIndex, pointsEarned);
         }
 
@@ -291,18 +291,6 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Calcule le nombre de points gagné en mangeant des critters.
-     * @param eatenCritters La liste des critters mangés.
-     * @return Le nombre de points gagnés.
-     */
-    public int calculatePointEarned(Set<Critter> eatenCritters){
-        int score = 0;
-        for (Critter critter : eatenCritters)
-            score += critter.stonesCoordinates().size();
-        return score;
-    }
-
-    /**
      * Met à jour le score du joueur correspondant.
      * @param playerIndex L'index du joueur pour lequel il faut mettre à jour le score.
      * @param increaseAmount Le nombre de points à ajouter à son score.
@@ -389,6 +377,12 @@ public class Match extends History<Move> {
 
     public PlayerData[] getPlayerData(){
         return MatchUtils.copyPlayerData(players);
+    }
+
+    public int getPlayerScore(int playerIndex){
+        if(playerIndex > 1 || playerIndex < 0)
+            return -1;
+        return players[playerIndex].getScore();
     }
 
     public int getBoardSize(){

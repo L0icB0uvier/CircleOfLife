@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Set;
+
 public class MatchUtils {
     /**
      * Vérifie si 2 coordonnées sont voisines.
@@ -52,5 +54,23 @@ public class MatchUtils {
 
     public static double euclidianDistance(Coordinate pointA, Coordinate pointB){
         return Math.sqrt(Math.pow(pointA.col()- pointB.col(), 2) + Math.pow(pointA.line()- pointB.line(), 2));
+    }
+
+    /**
+     * Calcule le nombre de points gagné en mangeant des critters.
+     * @param eatenCritters La liste des critters mangés.
+     * @return Le nombre de points gagnés.
+     */
+    public static int calculatePointEarned(Set<Critter> eatenCritters){
+        if(eatenCritters == null || eatenCritters.isEmpty()) return 0;
+
+        int score = 0;
+        for (Critter critter : eatenCritters){
+            if(critter == null)
+                continue;
+            score += critter.stonesCoordinates().size();
+        }
+
+        return score;
     }
 }
