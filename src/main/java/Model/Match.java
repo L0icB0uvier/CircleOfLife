@@ -36,9 +36,15 @@ public class Match extends History<Move> {
     public void initMatch() {
         reset();
         InitializeBoard();
+        resetScores();
         critters = new HashSet<>();
         previouslyEatenCritters = new ArrayList<>();
         pickStartingPlayer();
+    }
+
+    private void resetScores(){
+        players[0].reset();
+        players[1].reset();
     }
 
     /**

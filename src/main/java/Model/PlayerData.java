@@ -7,8 +7,7 @@ public class PlayerData implements Cloneable {
     int playableTilesNumber;
 
     public PlayerData(){
-        score = 0;
-        playableTilesNumber = 61;
+        reset();
     }
 
     public PlayerData(int score){
@@ -25,6 +24,11 @@ public class PlayerData implements Cloneable {
 
     public int getPlayableTilesNumber() {
         return playableTilesNumber;
+    }
+
+    public void reset(){
+        score = 0;
+        playableTilesNumber = 61;
     }
 
     @Override
