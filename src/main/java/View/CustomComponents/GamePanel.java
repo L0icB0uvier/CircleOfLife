@@ -11,10 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import Global.Configuration;
-import Model.Coordinate;
-import Model.MatchUtils;
-import Model.Game;
-import Model.Match;
+import Model.*;
 import Patterns.Observer;
 
 public class GamePanel extends JComponent implements Observer {
@@ -45,6 +42,9 @@ public class GamePanel extends JComponent implements Observer {
     double distance;
     int stoneImageSize;
     int x0, y0;
+    double innerRadius, outerRadius;
+    private final float evolveHighlightThickness = 6.0f;
+    private final float feedHighlightThickness = 6.0f;
 
     public GamePanel(Game game) {
         this.game = game;
@@ -74,7 +74,9 @@ public class GamePanel extends JComponent implements Observer {
         Graphics2D g2d = (Graphics2D) g;
         drawBoard(g2d);
         drawStones(g2d);
-        drawSelected(g2d);
+        if(drawSelected(g2d))
+            drawFeedforward(g2d);
+
         //drawEaten(g2d);
     }
 
@@ -105,6 +107,9 @@ public class GamePanel extends JComponent implements Observer {
 
         // Calcule taille de l'image des pierres
         stoneImageSize = (int) Math.round(hexagonHeightRatio * imageHeight);
+
+        outerRadius = (double) stoneImageSize / 2;
+        innerRadius = outerRadius * 0.866025404f;
 
         g2d.drawImage(imgPlateau, x, y, (int) Math.round(imageWidth), (int) Math.round(imageHeight), null);
     }
@@ -152,21 +157,22 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     private void drawTileCenter(Graphics2D g2d, int n, int m){
-        Coordinate pixel = tileToPixel(new Coordinate(n, m));
-        g2d.drawRect(pixel.col() - 1, pixel.line() - 1, 2, 2);
+        int x = nToX(n, m);
+        int y = mToY(m);
+        g2d.drawRect(x - 1, y - 1, 2, 2);
     }
 
     /**
      * Dessine la pierre sous le curseur du joueur actif.
      * @param g2d Le Graphic à utiliser pour dessiner.
      */
-    private void drawSelected(Graphics2D g2d){
+    private boolean drawSelected(Graphics2D g2d){
         int m = getmSelected();
         int n = getnSelected();
-        if (n==-1 || m==-1) return;
+        if (n==-1 || m==-1) return false;
         int contentType = match.getContentAt(m, n);
         if(contentType > 0)
-            return;
+            return false;
 
         Point drawPos = getStoneDrawPositions(n, m);
 
@@ -176,15 +182,93 @@ public class GamePanel extends JComponent implements Observer {
                 break;
             case -1:
                 if(match.getCurrentPlayerIndex() == 0)
-                    return;
+                    return false;
                 drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
             case -2:
                 if(match.getCurrentPlayerIndex() == 1)
-                    return;
+                    return false;
                 drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
         }
+
+        return true;
+    }
+
+    private void drawFeedforward(Graphics2D g2d){
+        boolean showEvolveFeedback = false;
+        Coordinate selectedCoordinate = new Coordinate(getnSelected(), getmSelected());
+        Set<Critter> playerNeighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
+        int evolveInto = -1;
+        Set<Coordinate> evolveCoords = new HashSet<>();
+        evolveCoords.add(selectedCoordinate);
+        if(!playerNeighbors.isEmpty()) {
+            for (Critter critter : playerNeighbors) {
+                evolveCoords.addAll(critter.stonesCoordinates());
+            }
+
+            evolveInto = ShapeUtils.getShapeId(evolveCoords);
+            showEvolveFeedback = true;
+        }
+
+        if(evolveInto >= 0){
+
+            Set<Critter> opponentsNeighbors = new HashSet<>();
+            for (Coordinate coord : evolveCoords){
+                opponentsNeighbors.addAll(match.getPlayerNeighborsCritters(match.getOpponentPlayerIndex(), coord));
+            }
+            if(!opponentsNeighbors.isEmpty()){
+                for (Critter critter : opponentsNeighbors){
+                    if(match.canEat(evolveInto, critter.type())) {
+                        drawHighlight(g2d, critter.stonesCoordinates(), Color.orange, feedHighlightThickness);
+                    }
+                }
+            }
+        }
+
+        if(showEvolveFeedback)
+            drawHighlight(g2d, evolveCoords,  Color.yellow, evolveHighlightThickness);
+    }
+
+
+    private void drawHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color highlightColor, float strokeThickness){
+        var previousColor = g2d.getColor();
+        var previousStroke = g2d.getStroke();
+        g2d.setStroke(new BasicStroke(strokeThickness));
+        g2d.setColor(highlightColor);
+
+        for (Coordinate coord : coordinates){
+            int x = nToX(coord.col(), coord.line());
+            int y = mToY(coord.line());
+
+            Coordinate[] neighborCoordinate = new Coordinate[]{
+                    new Coordinate(coord.col() - 1, coord.line()),
+                    new Coordinate(coord.col() - 1, coord.line() - 1),
+                    new Coordinate(coord.col(), coord.line() - 1),
+                    new Coordinate(coord.col() + 1, coord.line()),
+                    new Coordinate(coord.col() + 1, coord.line() + 1),
+                    new Coordinate(coord.col(), coord.line() + 1),
+            };
+
+            Point[] corners = new Point[] {
+                    new Point((int) Math.round(x - innerRadius), y + (int) Math.round(0.5f * outerRadius)),
+                    new Point((int) Math.round(x - innerRadius), y - (int) Math.round(0.5f * outerRadius)),
+                    new Point(x, y - (int) Math.round(outerRadius)),
+                    new Point((int) Math.round(x + innerRadius), y - (int) Math.round(0.5f * outerRadius)),
+                    new Point((int) Math.round(x + innerRadius), y + (int) Math.round(0.5f * outerRadius)),
+                    new Point(x, y + (int) Math.round(outerRadius))
+            };
+
+            for (int i = 0; i < 6; i++) {
+                Coordinate neighborCoord = neighborCoordinate[i];
+                if(!coordinates.contains(neighborCoord)){
+                    g2d.drawLine(corners[i].x, corners[i].y, corners[(i + 1) % 6].x, corners[(i + 1) % 6].y);
+                }
+            }
+        }
+
+        g2d.setColor(previousColor);
+        g2d.setStroke(previousStroke);
     }
 
     private Point getStoneDrawPositions(int n, int m){

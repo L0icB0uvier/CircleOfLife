@@ -104,7 +104,7 @@ public class Match extends History<Move> {
         return true;
     }
 
-    private static boolean isOutsideBoard(int l, int c) {
+    public boolean isOutsideBoard(int l, int c) {
         return MatchUtils.hexagonalManhattanDistance(new Coordinate(l, c), new Coordinate(4, 4)) > 4;
     }
 
@@ -195,12 +195,16 @@ public class Match extends History<Move> {
         }
 
         for (Critter c : opponentNeighbors){
-            if (c.type() == (critter.type() + 1)%12){
+            if (canEat(critter.type(), c.type())){
                 eatCritter(c);
                 eatenCritters.add(c);
             }
         }
         return eatenCritters;
+    }
+
+    public boolean canEat(int evolvingCritterType, int targetCritterType){
+        return targetCritterType == (evolvingCritterType + 1)%12;
     }
 
     /**
@@ -330,7 +334,7 @@ public class Match extends History<Move> {
      * @param coordinate Les coordonnées de la position où chercher des critter voisins.
      * @return Set des tous les critters voisins appartenant au joueur.
      */
-    private Set<Critter> getPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
+    public Set<Critter> getPlayerNeighborsCritters(int playerIndex, Coordinate coordinate){
         if(critters.isEmpty()) return Collections.emptySet();
         Set<Critter> neighbors = new HashSet<>();
         for(Critter critter : critters){
@@ -373,6 +377,10 @@ public class Match extends History<Move> {
      */
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
+    }
+
+    public int getOpponentPlayerIndex(){
+        return (currentPlayerIndex + 1) % 2;
     }
 
     public PlayerData[] getPlayerData(){
