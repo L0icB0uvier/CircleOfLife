@@ -5,7 +5,7 @@ import Global.Configuration;
 import java.util.*;
 
 /**
- * Represente l'état d'une partie de jeu et gère toute la logique relative au déroulement d'une partie.
+ * Représente l'état d'une partie de jeu et gère toute la logique relative au déroulement d'une partie.
  */
 public class Match extends History<Move> {
     public final static int playerOneIndex = 0;
@@ -164,10 +164,10 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Evolue un ou plusieurs Critter.
+     * Évolue un ou plusieurs Critter.
      * @param evolutionCandidates Les Critter existants à fusionner pour l'évolution.
      * @param newStoneCoord Coordonnées de la dernière pierre posée.
-     * @return Le Critter evolué.
+     * @return Le Critter évolué.
      */
     public Critter evolve(Set<Critter> evolutionCandidates, Coordinate newStoneCoord){
         Set<Coordinate> evolutionCoords = new HashSet<>();
@@ -366,7 +366,7 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Retourne le critter aux coordonnées souhaités s'il existe.
+     * Retourne le critter aux coordonnées souhaitées s'il existe.
      * @param coord Les coordonnées où chercher un critter.
      * @return L'instance du critter s'il existe, null sinon.
      */
@@ -408,7 +408,7 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Retoune le contenu d'une case.
+     * Retourne le contenu d'une case.
      * @param l La ligne de la case.
      * @param c La colonne de la case.
      * @return La valeur du contenu de la case.

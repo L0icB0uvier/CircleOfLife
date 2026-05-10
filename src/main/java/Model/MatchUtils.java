@@ -11,6 +11,11 @@ public class MatchUtils {
         return hexagonalManhattanDistance(first, second) == 1;
     }
 
+    /**
+     * Vérifie que la case de coordonnées données est bien dans le plateau
+     * @param coord Les coordonnées de la case à tester.
+     * @return true si la case est dans le plateau, false sinon
+     */
     public static boolean isInsideBoard(Coordinate coord) {
         return MatchUtils.hexagonalManhattanDistance(coord, new Coordinate(4, 4)) <= 4;
     }
@@ -50,10 +55,22 @@ public class MatchUtils {
         return temp;
     }
 
+    /**
+     * Calcule la distance Euclidienne entre deux points de coordonnées données.
+     * @param pointA Le premier point.
+     * @param pointB Le deuxième point.
+     * @return La distance Euclidienne entre pointA et pointB.
+     */
     public static double euclidianDistance(Coordinate pointA, Coordinate pointB){
         return Math.sqrt(Math.pow(pointA.col()- pointB.col(), 2) + Math.pow(pointA.line()- pointB.line(), 2));
     }
 
+
+    /**
+     * Réalise une copie profonde d'un match.
+     * @param match Le match à copier.
+     * @return Un match ayant un état, des joueurs, des critters et un joueur actif égaux à celui donné en argument
+     */
     public static Match copy(Match match){
         Match newMatch = new Match();
         newMatch.boardState = match.getBoardState();

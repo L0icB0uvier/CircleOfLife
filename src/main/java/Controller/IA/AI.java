@@ -24,7 +24,7 @@ public abstract class AI {
     }
 
     /**
-     * Méthode helper permettant de créer une instance de l'IA correpondant à la difficulté voulue.
+     * Méthode helper permettant de créer une instance de l'IA correspondant à la difficulté voulue.
      * @param match Une instance de match sur laquelle l'IA doit opérer.
      * @param aiLevel La difficulté de l'IA souhaité.
      * @return Une instance d'une sous classe de AI de la difficulté demandée.
@@ -33,15 +33,9 @@ public abstract class AI {
         AI ai = null;
 
         switch (aiLevel){
-            case EASY -> {
-                ai = new EasyAI(match);
-            }
-            case MEDIUM -> {
-                ai = new MediumAI(match);
-            }
-            case HARD -> {
-                ai = new HardAI(match);
-            }
+            case EASY -> ai = new EasyAI(match);
+            case MEDIUM -> ai = new MediumAI(match);
+            case HARD -> ai = new HardAI(match);
         }
 
         return ai;

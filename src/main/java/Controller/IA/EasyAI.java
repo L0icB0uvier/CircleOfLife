@@ -1,6 +1,5 @@
 package Controller.IA;
 
-import Global.Configuration;
 import Model.*;
 
 import java.util.List;
