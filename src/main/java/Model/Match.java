@@ -359,7 +359,7 @@ public class Match extends History<Move> {
 
     /**
      * Récupère le nombre de critters actuellement présent sur le plateau.
-     * @return Le nombre de critters sur le palteau.
+     * @return Le nombre de critters sur le plateau.
      */
     public int getNumberOfCritters(){
         return critters.size();
@@ -459,5 +459,22 @@ public class Match extends History<Move> {
             }
         }
         return playableMoves;
-    } 
+    }
+
+    /**
+     * Calcule la taille moyenne des critters du joueur donné dans la configuration actuelle du match.
+     * @param playerID L'index du joueur dont les critters seront mesurés.
+     * @return La taille moyenne des critters du joueur.
+     */
+    public double averageCritterSizePLayer(int playerID){
+        double total = 0;
+        double critterNumber = 0;
+        for (Critter critter : critters){
+            if (critter.player() == playerID){
+                critterNumber += 1.;
+                total += critter.stonesCoordinates().size();
+            }
+        }
+        return total / critterNumber;
+    }
 }
