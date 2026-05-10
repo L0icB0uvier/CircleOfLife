@@ -312,7 +312,7 @@ public class GamePanel extends JComponent implements Observer {
         int m = mouseToTile.line();
 
         if (MatchUtils.isInsideBoard(new Coordinate(m, n))) {
-        Configuration.info(String.format("Mouse at %d:%d", x, y));
+        //Configuration.info(String.format("Mouse at %d:%d", x, y));
             if((n != nSelected || m != mSelected)) {
                 nSelected = n;
                 mSelected = m;
