@@ -77,7 +77,7 @@ public abstract class AI {
     }
 
     /**
-     * Annule le calcule du coup de l'IA en annulant le CompletableFuture qui sera géré directement dans le Thread.
+     * Annule le calcul du coup de l'IA en annulant le CompletableFuture qui sera géré directement dans le Thread.
      */
     public void cancel(){
         if(futureMove != null)
@@ -85,8 +85,17 @@ public abstract class AI {
     }
 
     /**
-     * Lance la logique de calcul du coup. A implémenter dans chaque sous classes avec la logique spécifique à l'IA souhaité.
+     * Lance la logique de calcul du coup. À implémenter dans chaque sous classes avec la logique spécifique à l'IA souhaitée.
      * @return Le Move joué par l'IA à ce tour.
      */
     abstract public Move findMove();
+
+    /**
+     * Calcule la valeur de la configuration actuelle du plateau pour l'algorithme de Minimax.
+     * À implémenter dans chaque sous classes avec la logique spécifique à l'IA souhaitée.
+     * @param match Le match dont on doit évaluer la configuration actuelle.
+     * @param playerID L'index joueur de l'IA dans le match.
+     * @return La valeur de la configuration actuelle.
+     */
+    abstract double evaluate(Match match, int playerID);
 }

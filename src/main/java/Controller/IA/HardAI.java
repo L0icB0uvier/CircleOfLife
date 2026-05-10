@@ -15,6 +15,13 @@ public class HardAI extends AI {
         Configuration.readInt("DepthAI");
     }
 
+    // TODO : trouver une heuristique pour l'IA difficile en plus du score
+    double evaluate(Match match, int playerID){
+        PlayerData[] data = match.getPlayerData();
+        double[] score = new double[]{(double)data[playerID].getScore(), (double)data[(playerID+1)%2].getScore()};
+        return score[0] - score[1];
+    }
+
     /**
      * Trouve un coup à l'aide d'un arbre MIN/MAX.
      * @return Le Move le plus avantageux pour l'IA, trouvé avec l'algorithme Minimax.
@@ -24,12 +31,12 @@ public class HardAI extends AI {
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
         Coordinate random = possibleMoves.get(new Random().nextInt(possibleMoves.size()));
         Move best = new Move(match, random.line(), random.col());
-        int maxEval = Integer.MIN_VALUE;
-        int eval;
+        double maxEval = Double.MIN_VALUE;
+        double eval;
         for (Coordinate move : possibleMoves){
             Match newMatch = MatchUtils.copy(match);
             newMatch.playMove(move.line(), move.col());
-            eval = minimax(newMatch, this.depth, match.getCurrentPlayerIndex(), true);
+            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), true);
             if (eval > maxEval){
                 maxEval = eval;
                 best = new Move(match, move.line(), move.col());
@@ -49,18 +56,15 @@ public class HardAI extends AI {
      *              coups possibles.
      * @return La valeur de l'évaluation la plus avantageuse pour l'IA après le nombre de coups spécifié.
      */
-    private int minimax(Match match, int depth, int playerID, boolean isMax){
-        PlayerData[] data = match.getPlayerData();
-        int[] score = new int[]{data[playerID].getScore(), data[(playerID+1)%2].getScore()};
-
+    private double minimax(Match match, int depth, int playerID, boolean isMax){
         if (depth == 0 || match.isGameOver()){
-            return score[playerID] - score[(playerID+1)%2];
+            return evaluate(match, playerID);
         }
 
-        int eval;
+        double eval;
 
         if (isMax){
-            int maxEval = Integer.MIN_VALUE;
+            double maxEval = Double.MIN_VALUE;
             List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
             for (Coordinate move : possibleMoves){
                 Match newMatch = MatchUtils.copy(match);
@@ -72,7 +76,7 @@ public class HardAI extends AI {
         }
 
         else{
-            int minEval = Integer.MAX_VALUE;
+            double minEval = Double.MAX_VALUE;
             List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
             for (Coordinate move : possibleMoves){
                 Match newMatch = MatchUtils.copy(match);
