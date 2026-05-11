@@ -188,7 +188,7 @@ public class GamePanel extends JComponent implements Observer {
             case -2:
                 if(match.getCurrentPlayerIndex() == 1)
                     return false;
-                drawStone(g2d, match.getCurrentPlayerIndex() == 1? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
+                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
         }
 
@@ -199,7 +199,7 @@ public class GamePanel extends JComponent implements Observer {
         boolean showEvolveFeedback = false;
         Coordinate selectedCoordinate = new Coordinate(getnSelected(), getmSelected());
         Set<Critter> playerNeighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
-        int evolveInto = -1;
+        int evolveInto = 0;
         Set<Coordinate> evolveCoords = new HashSet<>();
         evolveCoords.add(selectedCoordinate);
         if(!playerNeighbors.isEmpty()) {
