@@ -171,7 +171,7 @@ public class GamePanel extends JComponent implements Observer {
         int n = getnSelected();
         if (n==-1 || m==-1) return false;
         int contentType = match.getContentAt(m, n);
-        if(contentType > 0)
+        if(contentType > 0 || contentType == -3)
             return false;
 
         Point drawPos = getStoneDrawPositions(n, m);
@@ -188,7 +188,7 @@ public class GamePanel extends JComponent implements Observer {
             case -2:
                 if(match.getCurrentPlayerIndex() == 1)
                     return false;
-                drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
+                drawStone(g2d, match.getCurrentPlayerIndex() == 1? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, stoneImageSize);
                 break;
         }
 
