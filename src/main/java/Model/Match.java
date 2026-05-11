@@ -112,7 +112,7 @@ public class Match extends History<Move> {
         }
 
         // Case inaccessible interdite pour le joueur
-        if(boardState[l][c] == -(playerIndex + 1)){
+        if(boardState[l][c] == -(playerIndex + 1) || boardState[l][c] == -3){
             return false;
         }
 
