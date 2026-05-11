@@ -41,6 +41,8 @@ public class Game extends Observable {
      * @param move
      */
     public void playMove(Move move){
+        if(match.isGameOver())
+            return;
         match.apply(move);
         match.endTurn();
         update();

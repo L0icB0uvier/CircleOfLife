@@ -21,6 +21,8 @@ public class Match extends History<Move> {
 
     List<Critter> previouslyEatenCritters;
 
+    private boolean gameOver = false;
+
     private final int boardSize = 9;
 
     public Match(){
@@ -40,6 +42,7 @@ public class Match extends History<Move> {
         critters = new HashSet<>();
         previouslyEatenCritters = new ArrayList<>();
         pickStartingPlayer();
+        gameOver = false;
     }
 
     /**
@@ -86,8 +89,7 @@ public class Match extends History<Move> {
     void endTurn(){
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
-            Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
-            initMatch();
+            gameOver();
             return;
         }
 
@@ -95,9 +97,16 @@ public class Match extends History<Move> {
 
         // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
         if(winByFillUp()){
-            Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
-            initMatch();
+            gameOver();
         }
+    }
+
+    /**
+     * Met fin à la partie.
+     */
+    void gameOver(){
+        gameOver = true;
+        Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
     }
 
     /**
@@ -509,5 +518,9 @@ public class Match extends History<Move> {
             }
         }
         return total / critterNumber;
+    }
+
+    public boolean isGameOver(){
+        return gameOver;
     }
 }
