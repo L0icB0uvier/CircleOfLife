@@ -93,7 +93,7 @@ public class Controller implements EventCollector, Observer {
     private void continueGame(){
         if (!GameDataManager.hasSaveFile()) return;
         try {
-            GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0));
+            GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0), this);
             Settings matchSettings = Configuration.getSettings();
             players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
             players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);

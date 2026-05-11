@@ -3,6 +3,7 @@ package Model;
 import Global.Configuration;
 import Global.PlayerSettings;
 import Global.Settings;
+import View.EventCollector;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+import Controller.Controller;
 import Controller.IA.AILevel;
 
 public class GameDataManager {
@@ -91,13 +93,14 @@ public class GameDataManager {
     }
 
     /**
-     * Charge les données d'un match et créé un mnouveau match avec ces données dans
+     * Charge les données d'un match et créé un nouveau match avec ces données dans
      * Game.
      * 
      * @param game L'instance de game dans laquelle charger le match.
+     * @param filename Le nom du fichier à partir duquel charger (sans extension .save).
      * @throws FileNotFoundException
      */
-    public static void loadMatch(Game game, String filename) throws FileNotFoundException {
+    public static void loadMatch(Game game, String filename, Controller controller) throws FileNotFoundException {
         File file = new File(savePath + filename + ".save");
         Scanner scanner = new Scanner(file);
 
@@ -138,44 +141,39 @@ public class GameDataManager {
 
         int lenPast = scanner.nextInt();
         int lenFuture = scanner.nextInt();
-        // read past
 
-        if (lenPast !=0 && lenPast % 2 != 0) // calculé le currentPlayerIndex
+        // calculé le currentPlayerIndex
+        if (lenPast % 2 != 0) {
             currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
+        }
+        if (m.currentPlayerIndex!=currentPlayerIndex)
+            controller.update();
         m.currentPlayerIndex = currentPlayerIndex;
 
-        for (int k = 0; k < lenPast; k++) {
+        // read past et futur
+        for (int k = 0; k < lenPast + lenFuture; k++) {
             Move temp;
             try {
                 temp = readMove(m, scanner);
                 System.out.println(temp.getColumn() + " " + temp.getLine());
                 m.apply(temp);
+                controller.update();
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                e.printStackTrace();   
+                Configuration.error("Impossible de lire move");
             }
         }
 
-        // read future
-        for (int k = 0; k < lenFuture; k++) {
-            Move temp;
-            try {
-                temp = readMove(m, scanner);
-                System.out.println(temp.getColumn() + " " + temp.getLine());
-                m.apply(temp);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        }
-
-        for (int i = 0; i < lenFuture; i++) { // revenir en arriere si on a future
+        // revenir en arriere si on a future
+        for (int i = 0; i < lenFuture; i++) { 
             m.undo();
+            m.toggleCurrentPlayer();
+            controller.update();
         }
 
         scanner.close();
     }
+
 
     private static Move readMove(Match m, Scanner scanner) throws Exception {
         int l = scanner.nextInt();
@@ -187,6 +185,13 @@ public class GameDataManager {
         return pd.getScore()+ "";
     }
 
+    /**
+     * Retourne un nom de fichier de format "<date_courant>_<infos_joueurs>.save" avec avec des traits de soulignement comme séparateurs.
+     * 
+     * @param m Un Match.
+     * @param settings Les settings du match.
+     * @return Vrai s'il existe des données et faux sinon.
+     */
     public static String getFileName(Match m, Settings settings) {
         String sep = "_";
         Date d = new Date();
@@ -206,6 +211,11 @@ public class GameDataManager {
         return getSaveFiles().size() != 0;
     }
 
+    /**
+     * Renvoie la liste de tous les fichiers ayant l'extension ".save" dans le répertoire courant (l'extension "".save" étant supprimée).
+     * 
+     * @return Une Liste des Strings de nom de fichier avec l'enxtension ".save" supprimée.
+     */
     public static List<String> getSaveFiles() {
         Path dirPath = Paths.get(savePath);
         List<String> res = new ArrayList<>();
