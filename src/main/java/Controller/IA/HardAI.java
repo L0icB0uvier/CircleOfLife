@@ -1,25 +1,47 @@
 package Controller.IA;
 
 import Global.Configuration;
-import Model.Match;
-import Model.Move;
+import Model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class HardAI extends AI {
+    int depth;
+
     public HardAI(Match match) {
         super(match);
         aiLevel = AILevel.HARD;
+        Configuration.readInt("DepthAI");
+    }
+
+    // TODO : trouver une heuristique pour l'IA difficile en plus du score
+    double evaluate(Match match, int playerID){
+        PlayerData[] data = match.getPlayerData();
+        double[] score = new double[]{(double)data[playerID].getScore(), (double)data[(playerID+1)%2].getScore()};
+        return score[0] - score[1];
     }
 
     /**
-     * Uses a AND/OR tree to generate a valid Move on its current Match.
-     * @return Either : a move that locks the AI in a win; a uniformly random valid move
+     * Trouve un coup à l'aide d'un arbre MIN/MAX.
+     * @return Le Move le plus avantageux pour l'IA, trouvé avec l'algorithme Minimax.
      */
     @Override
     public Move findMove() {
-       return null;
+        List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
+        Coordinate random = possibleMoves.get(new Random().nextInt(possibleMoves.size()));
+        Move best = new Move(match, random.line(), random.col());
+        double maxEval = Double.MIN_VALUE;
+        double eval;
+        for (Coordinate move : possibleMoves){
+            Match newMatch = MatchUtils.copy(match);
+            newMatch.playMove(move.line(), move.col());
+            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), Double.MIN_VALUE, Double.MAX_VALUE, true);
+            if (eval > maxEval){
+                maxEval = eval;
+                best = new Move(match, move.line(), move.col());
+            }
+        }
+        return best;
     }
 }

@@ -5,7 +5,7 @@ import Global.Configuration;
 import java.util.*;
 
 /**
- * Represente l'état d'une partie de jeu et gère toute la logique relative au déroulement d'une partie.
+ * Représente l'état d'une partie de jeu et gère toute la logique relative au déroulement d'une partie.
  */
 public class Match extends History<Move> {
     public final static int playerOneIndex = 0;
@@ -187,10 +187,10 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Evolue un ou plusieurs Critter.
+     * Évolue un ou plusieurs Critter.
      * @param evolutionCandidates Les Critter existants à fusionner pour l'évolution.
      * @param newStoneCoord Coordonnées de la dernière pierre posée.
-     * @return Le Critter evolué.
+     * @return Le Critter évolué.
      */
     public Critter evolve(Set<Critter> evolutionCandidates, Coordinate newStoneCoord){
         Set<Coordinate> evolutionCoords = new HashSet<>();
@@ -382,14 +382,14 @@ public class Match extends History<Move> {
 
     /**
      * Récupère le nombre de critters actuellement présent sur le plateau.
-     * @return Le nombre de critters sur le palteau.
+     * @return Le nombre de critters sur le plateau.
      */
     public int getNumberOfCritters(){
         return critters.size();
     }
 
     /**
-     * Retourne le critter aux coordonnées souhaités s'il existe.
+     * Retourne le critter aux coordonnées souhaitées s'il existe.
      * @param coord Les coordonnées où chercher un critter.
      * @return L'instance du critter s'il existe, null sinon.
      */
@@ -441,7 +441,7 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Retoune le contenu d'une case.
+     * Retourne le contenu d'une case.
      * @param l La ligne de la case.
      * @param c La colonne de la case.
      * @return La valeur du contenu de la case.
@@ -492,5 +492,22 @@ public class Match extends History<Move> {
             }
         }
         return playableMoves;
+    }
+
+    /**
+     * Calcule la taille moyenne des critters du joueur donné dans la configuration actuelle du match.
+     * @param playerID L'index du joueur dont les critters seront mesurés.
+     * @return La taille moyenne des critters du joueur.
+     */
+    public double averageCritterSizePLayer(int playerID){
+        double total = 0;
+        double critterNumber = 0;
+        for (Critter critter : critters){
+            if (critter.player() == playerID){
+                critterNumber += 1.;
+                total += critter.stonesCoordinates().size();
+            }
+        }
+        return total / critterNumber;
     }
 }

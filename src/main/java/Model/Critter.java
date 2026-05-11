@@ -7,4 +7,8 @@ public record Critter (Set<Coordinate> stonesCoordinates, int type, int player) 
     public Critter(Set<Coordinate> coordinates, int player){
         this(coordinates, ShapeUtils.getShapeId(coordinates), player);
     }
+
+    public Critter(Critter critter){
+        this(critter.stonesCoordinates, critter.type, critter.player());
+    }
 }
