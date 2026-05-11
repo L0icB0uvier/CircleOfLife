@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 .kotlin
 *.save
+sauvegardes/*.save
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

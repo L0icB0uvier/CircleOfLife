@@ -20,7 +20,7 @@ import Controller.Controller;
 import Controller.IA.AILevel;
 
 public class GameDataManager {
-    static String savePath = "./";
+    static String savePath = "./sauvegardes/";
 
     /**
      * Sauvegarde un match ainsi que ses paramètres.
@@ -30,7 +30,8 @@ public class GameDataManager {
      * @throws Exception
      */
     public static void saveMatch(Match match, Settings settings) throws Exception {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(getFileName(match, settings)));
+        Files.createDirectories(Paths.get(savePath));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(savePath + getFileName(match, settings)));
         String sep = System.lineSeparator();
 
         // écrit settings
@@ -66,6 +67,12 @@ public class GameDataManager {
         writer.close();
     }
 
+    /**
+     * Retourne la représentation textuelle d'un Move.
+     * 
+     * @param m Move.
+     * @return Un String correspondant à la représentation textuelle de m.
+     */
     private static String moveToLineColumn(Move m) {
         String res = "";
         String sep = " ";
@@ -73,6 +80,12 @@ public class GameDataManager {
         return res;
     }
 
+    /**
+     * Retourne la représentation textuelle d'un PlayerSettings.
+     * 
+     * @param settings PlayerSettings.
+     * @return Un char correspondant à la représentation textuelle de settings.
+     */
     private static char getPlayerType(PlayerSettings settings) {
         if (!settings.isAI())
             return 'J';
@@ -175,12 +188,25 @@ public class GameDataManager {
     }
 
 
+    /**
+     * Lit un déplacement à partir d'un scanner en supposant un format identique à celui de moveToLineColumn.
+     * 
+     * @param m Match sur lequel le move va s'appliquer.
+     * @param scanner Scanner.
+     * @return Un Move qui correspond à ce qui a été lu.
+     */
     private static Move readMove(Match m, Scanner scanner) throws Exception {
         int l = scanner.nextInt();
         int c = scanner.nextInt();
         return new Move(m, l, c);
     }
 
+    /**
+     * Retourne la représentation textuelle d'un PlayerData.
+     * 
+     * @param pd PlayerData.
+     * @return Un String correspondant à la représentation textuelle de pd.
+     */
     private static String playerDataToString(PlayerData pd) {
         return pd.getScore()+ "";
     }
