@@ -54,6 +54,9 @@ public class Match extends History<Move> {
         }
     }
 
+    /**
+     * Remet les scores à 0.
+     */
     void resetScores(){
         players[0].reset();
         players[1].reset();
@@ -77,10 +80,13 @@ public class Match extends History<Move> {
         super.apply(newMove);
     }
 
+    /**
+     * Met fin au tour actuel. Vérifie les conditions de victoires et change de joueur.
+     */
     void endTurn(){
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
-            Configuration.info("Player " + currentPlayerIndex + " won!");
+            Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
             initMatch();
             return;
         }
@@ -89,7 +95,7 @@ public class Match extends History<Move> {
 
         // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
         if(winByFillUp()){
-            Configuration.info("Player " + currentPlayerIndex + " won!");
+            Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
             initMatch();
         }
     }
@@ -119,6 +125,12 @@ public class Match extends History<Move> {
         return true;
     }
 
+    /**
+     * Vérifie si la case est dans le plateau de jeu.
+     * @param l La ligne de la case.
+     * @param c La colonne de la case.
+     * @return true si dans le plateau de jeu, false sinon.
+     */
     public boolean isOutsideBoard(int l, int c) {
         return MatchUtils.hexagonalManhattanDistance(new Coordinate(l, c), new Coordinate(4, 4)) > 4;
     }
@@ -337,13 +349,17 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Vérifie si la partie est terminée.
-     * @return true si les conditions de victoires sont remplies, faux sinon.
+     * Vérifie si le joueur actif a gagné au score.
+     * @return true si le joueur actif a atteint ou dépassé 20 points, faux sinon.
      */
     public boolean winByScore(){
         return (players[currentPlayerIndex].getScore() >= 20);
     }
 
+    /**
+     * Vérifie si le joueur actif gagne par f
+     * @return
+     */
     public boolean winByFillUp(){
         return getCurrentPlayerPlayableMoves().isEmpty();
     }
@@ -474,7 +490,7 @@ public class Match extends History<Move> {
         List<Coordinate> playableMoves = new ArrayList<>();
         for (int l = 0; l < boardSize; l++) {
             for (int c = 0; c < boardSize; c++) {
-                if(isMoveValid(playerIndex ,l, c)){
+                if(isMoveValid(playerIndex, l, c)){
                     playableMoves.add(new Coordinate(c, l));
                 }
             }
