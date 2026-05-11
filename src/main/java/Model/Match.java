@@ -101,18 +101,18 @@ public class Match extends History<Move> {
      * @return true si la position est valide, faux sinon.
      */
     public boolean isMoveValid(int playerIndex, int l, int c) {
+        // Case en dehors du plateau
         if(!MatchUtils.isInsideBoard(new Coordinate(l, c))){
-            Configuration.warning(String.format("Move impossible en %s - en dehors du plateau.", new Coordinate(c, l)));
             return false;
         }
 
+        // Case occupée
         if(boardState[l][c] > 0){
-            Configuration.warning(String.format("Move impossible en %s - case occupée.", new Coordinate(c, l)));
             return false;
         }
 
+        // Case inaccessible interdite pour le joueur
         if(boardState[l][c] == -(playerIndex + 1)){
-            Configuration.warning(String.format("Move impossible %s en - case interdite pour le joueur actif.", new Coordinate(c, l)));
             return false;
         }
 

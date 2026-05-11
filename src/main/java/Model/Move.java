@@ -32,7 +32,6 @@ public class Move implements Command {
 
     @Override
     public void execute() {
-        Configuration.info(String.format("Exécution du move %d:%d", column, line));
         match.playMove(line, column);
     }
 

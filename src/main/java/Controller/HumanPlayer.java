@@ -1,5 +1,6 @@
 package Controller;
 
+import Global.Configuration;
 import Model.Coordinate;
 import Model.Game;
 import Model.Move;
@@ -18,8 +19,10 @@ public class HumanPlayer extends Player {
      */
     @Override
     public void handleClick(int l, int c) {
-        if(!game.isMoveValid(new Coordinate(c, l)))
+        if(!game.isMoveValid(new Coordinate(c, l))){
+            Configuration.warning(String.format("Move Invalide - %d:%d", c, l));
             return;
+        }
         game.playMove(new Move(game.getMatch(), l, c));
     }
 }
