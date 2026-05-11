@@ -14,7 +14,7 @@ public class Match extends History<Move> {
     PlayerData[] players = new PlayerData[2];
     int currentPlayerIndex;
 
-    byte[][] boardState; // 0 tile can be played, -1 can't be played by PayerOne, -2 can't be played by playerTwo
+    byte[][] boardState; // 0 tile can be played, -1 can't be played by PayerOne, -2 can't be played by playerTwo, -3 can't be player by both players
                         // 1 is occupied by playerOne, 2 by playerTwo
 
     Set<Critter> critters;
@@ -118,11 +118,7 @@ public class Match extends History<Move> {
         }
 
         // Case inaccessible interdite pour le joueur
-        if(boardState[l][c] == -(playerIndex + 1) || boardState[l][c] == -3){
-            return false;
-        }
-
-        return true;
+        return boardState[l][c] != -(playerIndex + 1) && boardState[l][c] != -3;
     }
 
     /**
@@ -357,8 +353,8 @@ public class Match extends History<Move> {
     }
 
     /**
-     * Vérifie si le joueur actif gagne par f
-     * @return
+     * Vérifie si le joueur actif gagne par remplissage.
+     * @return true si le joueur actif ne peut plus poser de pierre, false sinon.
      */
     public boolean winByFillUp(){
         return getCurrentPlayerPlayableMoves().isEmpty();

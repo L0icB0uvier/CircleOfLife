@@ -2,6 +2,9 @@ package Model;
 
 import Global.Configuration;
 
+/**
+ * Stocke le score du joueur.
+ */
 public class PlayerData implements Cloneable {
     int score;
 

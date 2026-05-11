@@ -1,10 +1,7 @@
 package Model;
 
-import Global.Configuration;
 import Patterns.Command;
-
 import java.util.Set;
-
 
 public class Move implements Command {
     Match match;

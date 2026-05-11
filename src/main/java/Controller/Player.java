@@ -4,6 +4,9 @@ import Controller.IA.AI;
 import Model.Game;
 import Global.PlayerSettings;
 
+/**
+ * Classe de base pour représenter un joueur.
+ */
 public class Player {
     Game game;
     boolean isAI;
