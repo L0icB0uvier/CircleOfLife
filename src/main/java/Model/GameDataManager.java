@@ -8,12 +8,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.Set;
 
 import Controller.IA.AILevel;
 
@@ -28,75 +28,47 @@ public class GameDataManager {
      * @throws Exception
      */
     public static void saveMatch(Match match, Settings settings) throws Exception {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(getFileName(match)));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(getFileName(match, settings)));
         String sep = System.lineSeparator();
-
-        // écrit le passé
-        writer.write(match.past.size() + sep);
-        Iterator<Move> it = match.pastIterator();
-        while (it.hasNext()) {
-            Move m = it.next();
-            writer.write(moveToString(m) + sep);
-        }
-
-        // écrit le futur
-        writer.write(match.future.size() + sep);
-        it = match.futurIterator();
-        while (it.hasNext()) {
-            Move m = it.next();
-            writer.write(moveToString(m) + sep);
-
-        }
 
         // écrit settings
         writer.write(getPlayerType(settings.getPlayer1Settings()));
         writer.write(' ');
         writer.write(getPlayerType(settings.getPlayer2Settings()));
+        writer.write(sep);
 
+        // écrit le joueur courant
+        writer.write(match.getCurrentPlayerIndex() + sep);
+
+
+        //écrit le nombre de coup joué dans le passé et le futur (passé + futur = nb total coups)
+        writer.write(match.past.size() + sep);
+        writer.write(match.future.size() + sep);
+
+        // écrit le passé
+        Iterator<Move> it = match.pastIterator();
+        while (it.hasNext()) {
+            Move m = it.next();
+            writer.write(moveToLineColumn(m) + sep);
+        }
+
+        // écrit le futur
+        it = match.futurIterator();
+        while (it.hasNext()) {
+            Move m = it.next();
+            writer.write(moveToLineColumn(m) + sep);
+
+        }
+
+        
         writer.close();
     }
 
-    private static String moveToString(Move m) {
+    private static String moveToLineColumn(Move m) {
         String res = "";
-        String sep = System.lineSeparator();
-        res += m.getLine() + " " + m.getColumn() + sep;
-        // convertir previousState
-        for (byte[] arr : m.previousState) {
-            res += arrToString(arr) + sep;
-        }
-
-        // convertir critters
-        res += m.critters.size() + "";
-        res += sep;
-
-        for (Critter critter : m.critters) {
-            res += critterToString(critter) + sep;
-        }
-
-        // convertir previousScore
-
-        res += playerDataToString(m.previousScore[0]) + sep;
-        res += playerDataToString(m.previousScore[1]);
-
+        String sep = " ";
+        res += m.getLine() + sep + m.getColumn();
         return res;
-    }
-
-    private static String critterToString(Critter c) {
-        String res = "";
-        String sep = System.lineSeparator();
-        Set<Coordinate> coordinates = c.stonesCoordinates();
-        int player = c.player();
-
-        res += coordinates.size() + sep;
-        for (Coordinate coordinate : coordinates) {
-            res += coordinate.col() + " " + coordinate.line() + sep;
-        }
-        res += player;
-        return res;
-    }
-
-    private static String playerDataToString(PlayerData pd) {
-        return pd.score + "";
     }
 
     private static char getPlayerType(PlayerSettings settings) {
@@ -118,17 +90,6 @@ public class GameDataManager {
         return Character.MAX_HIGH_SURROGATE;
     }
 
-    private static String arrToString(byte[] arr) {
-        String res = "";
-        String sep = " ";
-        int t = arr.length - 1;
-        for (int i = 0; i < t; i++) {
-            res += Byte.toUnsignedInt(arr[i]) + sep;
-        }
-        res += Byte.toUnsignedInt(arr[t]);
-        return res;
-    }
-
     /**
      * Charge les données d'un match et créé un mnouveau match avec ces données dans
      * Game.
@@ -136,46 +97,18 @@ public class GameDataManager {
      * @param game L'instance de game dans laquelle charger le match.
      * @throws FileNotFoundException
      */
-    public static void loadMatch(Game game) throws FileNotFoundException {
-        File file = new File(savePath);
+    public static void loadMatch(Game game, String filename) throws FileNotFoundException {
+        File file = new File(savePath + filename + ".save");
         Scanner scanner = new Scanner(file);
-        Match m = new Match();
-        m.initMatch();
-
-        // read past
-        int lenPast = scanner.nextInt();
-        for (int k = 0; k < lenPast; k++) {
-            Move temp;
-            try {
-                temp = readMove(m, scanner);
-                m.apply(temp);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        // read future
-        int lenFuture = scanner.nextInt();
-
-        for (int k = 0; k < lenFuture; k++) {
-            Move temp;
-            try {
-                temp = readMove(m, scanner);
-                m.future.addFirst(temp);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        }
 
         // Read player type
-        String playerTypesLine = scanner.nextLine();
-        String[] playerTypes = playerTypesLine.split(" ");
+        String[] playerTypes = new String[2];
+        playerTypes[0] = scanner.next();
+        playerTypes[1] = scanner.next();
         if (Objects.equals(playerTypes[0], "J")) {
             Configuration.setPlayer1Settings(null);
         } else {
+            System.out.println("in here");
             if (Objects.equals(playerTypes[0], "E")) {
                 Configuration.setPlayer1Settings(AILevel.EASY);
             } else if (Objects.equals(playerTypes[0], "M")) {
@@ -197,64 +130,71 @@ public class GameDataManager {
             }
         }
 
+        game.createMatch();
+        Match m = game.getMatch();
+        m.initMatch();
+
+        int currentPlayerIndex = scanner.nextInt();
+
+        int lenPast = scanner.nextInt();
+        int lenFuture = scanner.nextInt();
+        int nbMove = lenPast==0?lenFuture:lenPast; //si il n'y a pas de passé, on derive currentPlayerIndex depuis le futur
+        // read past
+
+        if (nbMove % 2 != 0) // calculé le currentPlayerIndex
+            currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
+        m.currentPlayerIndex = currentPlayerIndex;
+
+        for (int k = 0; k < lenPast; k++) {
+            Move temp;
+            try {
+                temp = readMove(m, scanner);
+                System.out.println(temp.getColumn() + " " + temp.getLine());
+                m.apply(temp);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        // read future
+        for (int k = 0; k < lenFuture; k++) {
+            Move temp;
+            try {
+                temp = readMove(m, scanner);
+                System.out.println(temp.getColumn() + " " + temp.getLine());
+                m.apply(temp);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+        for (int i = 0; i < lenFuture; i++) { // revenir en arriere si on a future
+            m.undo();
+        }
+
         scanner.close();
     }
 
     private static Move readMove(Match m, Scanner scanner) throws Exception {
-
-        // lire ligne/colonne
-
         int l = scanner.nextInt();
         int c = scanner.nextInt();
-
-        // lire previousState
-        for (int i = 0; i < m.boardState.length; i++) {
-            for (int j = 0; j < m.boardState[i].length; j++) {
-                m.boardState[i][j] = (byte) scanner.nextInt();
-            }
-        }
-
-        // lire critters
-        int nbCritters = scanner.nextInt();
-        m.critters = new HashSet<>(nbCritters);
-
-        for (int i = 0; i < nbCritters; i++) {
-            m.critters.add(readCritter(scanner));
-        }
-
-        // lire players
-        for (int i = 0; i < m.players.length; i++) {
-            m.players[i] = readPlayerData(scanner);
-        }
-
         return new Move(m, l, c);
     }
 
-    private static Critter readCritter(Scanner scanner) throws Exception {
-
-        int line, col;
-        int nbCoordinates = scanner.nextInt();
-        Set<Coordinate> coordinates = new HashSet<>(nbCoordinates);
-        for (int i = 0; i < nbCoordinates; i++) {
-            col = scanner.nextInt();
-            line = scanner.nextInt();
-            coordinates.add(new Coordinate(col, line));
-        }
-
-        int player = scanner.nextInt();
-        return new Critter(coordinates, player);
+    private static String playerDataToString(PlayerData pd) {
+        return pd.getScore()+ "";
     }
 
-    private static PlayerData readPlayerData(Scanner s) throws Exception {
-        int score = s.nextInt();
-        return new PlayerData(score);
-    }
-
-    public static String getFileName(Match m) {
+    public static String getFileName(Match m, Settings settings) {
+        String sep = "_";
         Date d = new Date();
         PlayerData[] pd = m.getPlayerData();
-        String playerDataString = playerDataToString(pd[0]) + " " + playerDataToString(pd[1]);
-        return d.toString().replaceAll(" ", "_") + "_" + playerDataString.replaceAll(" ", "_") + ".save";
+        String playerDataString = playerDataToString(pd[0]) + sep + getPlayerType(settings.getPlayer1Settings()) + sep
+                + playerDataToString(pd[1]) + sep + getPlayerType(settings.getPlayer2Settings());
+        return d.toString().replaceAll(" ", "_") + "_" + playerDataString + ".save";
 
     }
 
@@ -264,14 +204,22 @@ public class GameDataManager {
      * @return Vrai s'il existe des données et faux sinon.
      */
     public static boolean hasSaveFile() {
-        Path path = Paths.get(savePath);
+        return getSaveFiles().size() != 0;
+    }
 
-        if (Files.exists(path)) {
-            Configuration.info("Le fichier existe !");
-            return true;
-        } else {
-            Configuration.info("Le fichier est introuvable.");
-            return false;
+    public static List<String> getSaveFiles() {
+        Path dirPath = Paths.get(savePath);
+        List<String> res = new ArrayList<>();
+
+        try {
+            Files.list(dirPath)
+                    .filter(Files::isRegularFile)
+                    .map(path -> path.getFileName().toString())
+                    .filter(filename -> filename.endsWith(".save"))
+                    .forEach(filename -> res.add(filename.replaceAll(".save", "")));
+        } catch (IOException e) {
+            Configuration.error("Erreur lors d'acces a des fichiers de sauvegardes");
         }
+        return res;
     }
 }

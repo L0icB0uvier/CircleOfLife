@@ -91,8 +91,9 @@ public class Controller implements EventCollector, Observer {
      * Charge une partie à partir des données sauvegardées du joueur.
      */
     private void continueGame(){
+        if (!GameDataManager.hasSaveFile()) return;
         try {
-            GameDataManager.loadMatch(game);
+            GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0));
             Settings matchSettings = Configuration.getSettings();
             players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
             players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
