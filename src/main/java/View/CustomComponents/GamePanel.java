@@ -89,6 +89,8 @@ public class GamePanel extends JComponent implements Observer {
 
         g2D.drawImage(imgPlateau, x, y, imageWidth, imageHeight, null);
         drawPlateau(g2D);
+        super.paintComponent(g);
+
     }
 
     private void drawPlateau(Graphics2D g2D) {
@@ -99,7 +101,7 @@ public class GamePanel extends JComponent implements Observer {
         int n = 0;
         int m = 0;
         int xSelected = -1, ySelected = -1;
-        Color colorSelected = UIColor.getColor(game.getCurrentPlayerIndex() == 0 ? UIColor.BLUE: UIColor.RED);
+        Color colorSelected = game.getCurrentPlayerIndex() == 0 ? UIColor.BLUE: UIColor.RED;
         int posX = (int) (width / 2.0 - 2 * incX);
         int posXInit = posX;
         int posY = (int) (height / 2.0 - (5 * incY - size / 2));
@@ -113,18 +115,18 @@ public class GamePanel extends JComponent implements Observer {
                 }
                 switch (match.getContentAt(m, n)) {
                     case 1:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.BLUE, n, m);
                         break;
 
                     case 2:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.RED, n, m);
                         break;
 
                     default:
                         drawHexagon(g2D, posX, posY, (int) size, Color.WHITE, n, m);
                         break;
                 }
-               // drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+               // drawHexagon(g2D, posX, posY, (int) size, UIColor.RED), n, m);
                 n++;
                 posX += incX;
             }
@@ -144,11 +146,11 @@ public class GamePanel extends JComponent implements Observer {
             }
             switch (match.getContentAt(m, n)) {
                     case 1:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.BLUE, n, m);
                         break;
 
                     case 2:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.RED, n, m);
                         break;
 
                     default:
@@ -174,11 +176,11 @@ public class GamePanel extends JComponent implements Observer {
                 }
                 switch (match.getContentAt(m, n)) {
                     case 1:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.BLUE), n, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.BLUE, n, m);
                         break;
 
                     case 2:
-                        drawHexagon(g2D, posX, posY, (int) size, UIColor.getColor(UIColor.RED), n, m);
+                        drawHexagon(g2D, posX, posY, (int) size, UIColor.RED, n, m);
                         break;
                     
                     default:
@@ -197,6 +199,7 @@ public class GamePanel extends JComponent implements Observer {
             posXInit = posX;
         }
         if(xSelected != -1) drawHexagon(g2D, xSelected, ySelected, (int) size, colorSelected, nSelected, mSelected);
+
     }
 
     /*
@@ -233,7 +236,7 @@ public class GamePanel extends JComponent implements Observer {
         g2D.setColor(color);
         g2D.fillPolygon(xs, ys, 6);
 
-        if(n == nSelected && m == mSelected) g2D.setColor(UIColor.getColor(UIColor.WAFFLE));
+        if(n == nSelected && m == mSelected) g2D.setColor(UIColor.BACKGROUND);
         else g2D.setColor(Color.BLACK);
         g2D.setStroke(new BasicStroke(size/9.0f));
         g2D.drawPolygon(xs, ys, 6);

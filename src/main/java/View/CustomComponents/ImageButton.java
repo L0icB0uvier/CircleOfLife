@@ -1,12 +1,15 @@
 package View.CustomComponents;
 
 
+import Global.Configuration;
+import View.Utils.UIColor;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class ImageButton extends JButton {
+public class  ImageButton extends JButton {
     private Image imageEnabled, imageDisabled;
     boolean hovered = false;
 
@@ -36,12 +39,25 @@ public class ImageButton extends JButton {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        int size = Math.min(getWidth(), getHeight())-10;
+        int width,height;
 
+        if(getParent().getWidth() == 0){
+            width = getWidth();
+        }else {
+            width = getParent().getWidth() / 4;
+        }
+        if(getParent().getHeight() == 0){
+            height = getHeight();
+        }else {
+            height = getParent().getHeight();
+        }
+
+        int size = Math.min(width,height);
         int x = (getWidth() - size) / 2;
         int y = (getHeight() - size) / 2;
 
         g.drawImage(isEnabled()? imageEnabled : imageDisabled, x, y, size, size, this);
+
     }
 
 }

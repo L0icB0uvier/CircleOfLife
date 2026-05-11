@@ -28,6 +28,12 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <version>11.4.3</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

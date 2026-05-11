@@ -9,9 +9,10 @@ import java.awt.event.MouseEvent;
 
 public class MouseAdapter extends java.awt.event.MouseAdapter {
     EventCollector control;
+    //GraphicalGame graphialGame;
     GraphicalGame graphicalGame;
 
-    public MouseAdapter(EventCollector control, GraphicalGame graphicalGame){
+    public MouseAdapter(EventCollector control, /*GraphicalGame graphicalGame*/ GraphicalGame graphicalGame){
         this.control = control;
         this.graphicalGame = graphicalGame;
     }

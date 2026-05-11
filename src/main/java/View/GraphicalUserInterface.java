@@ -9,13 +9,16 @@ import View.Adapter.*;
 import View.CustomComponents.PopUpPanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 
 public class GraphicalUserInterface implements Runnable, UserInterface, Observer {
     Game game;
     EventCollector controller;
     JFrame frame;
+    //GraphicalGame graphicalGame;
     GraphicalGame graphicalGame;
+
     GraphicalMainMenu graphicalMainMenu;
     GraphicalNewGame graphicalNewGame;
 
@@ -78,8 +81,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     }
 
     public void updateUndoRedoEnabled(){
-        graphicalGame.gameControlBar.undoBt.setEnabled(game.getMatch().canUndo());
-        graphicalGame.gameControlBar.redoBt.setEnabled(game.getMatch().canRedo());
+        //TODO : ajouter les images des boutons grisés
+        //graphicalGame.gameControlBar.undoBt.setEnabled(game.getMatch().canUndo());
+        //graphicalGame.gameControlBar.redoBt.setEnabled(game.getMatch().canRedo());
     }
 
 
@@ -91,11 +95,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalGame.gameControlBar.saveBt.addActionListener(new ControlButtonAdapter(controller,"Save"));
 
         updateUndoRedoEnabled();
-
-        PopUpAdapter pua = new PopUpAdapter(frame,controller,"Voulez-vous quitter la partie en cours ?","Les données non sauvegardées seront perdues !","annuler","continuer");
-        graphicalGame.gameControlBar.leaveBt.addActionListener(pua);
-        pua.setActionLeftButton("annuler");
-        pua.setActionRightButton("Quit");
+        PopUpAdapter pua;
 
         pua = new PopUpAdapter(frame,controller,"Voulez-vous sauvegarder la partie en cours ?","","annuler","continuer");
         graphicalGame.gameControlBar.saveBt.addActionListener(pua);
@@ -110,6 +110,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);
         graphicalGame.gamePanel.addMouseMotionListener(mouseAdapter);
+
         Configuration.info("Changement de page vers " + graphicalGame.getClass());
         frame.setContentPane(graphicalGame);
         frame.revalidate();
@@ -128,7 +129,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame = new JFrame("Gauffre empoisonnée");
         Configuration.initSettings();
         frame.setSize(Configuration.readInt("WindowWidth"), Configuration.readInt("WindowHeight"));
-
+        frame.setMinimumSize(new Dimension(800,600));
         game.addObserver(this);
 
         graphicalMainMenu = new GraphicalMainMenu(frame);
@@ -143,7 +144,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         frame.addKeyListener(new KeyboardAdapter(controller));
 
-        frame.setContentPane(graphicalMainMenu);
+        frame.setContentPane(graphicalNewGame);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

@@ -1,5 +1,8 @@
 package View.CustomComponents;
 
+import Model.PlayerData;
+import View.Utils.FontScaler;
+import View.Utils.RoundedBorder;
 import View.Utils.UIColor;
 import View.Utils.UIFont;
 
@@ -10,10 +13,9 @@ public class PlayerInfo extends JPanel {
 
     private final String name;
     int nPlayer;
-    Color color;
     JLabel scoreLabel, nameLabel;
 
-    PlayerInfo(String name, int nPlayer){
+    public PlayerInfo(String name, int nPlayer){
         this.name = name;
         this.nPlayer = nPlayer;
         init();
@@ -21,37 +23,43 @@ public class PlayerInfo extends JPanel {
 
     private void init(){
         Font sizedFont = UIFont.getFont();
+        //TODO modifier la font du projet
 
-        Color color = UIColor.getColor(nPlayer ==  0 ? UIColor.BLUE:UIColor.RED);
+        Color color = nPlayer ==  0 ? UIColor.BLUE:UIColor.RED;
         GridBagLayout gbl = new GridBagLayout();
         this.setLayout(gbl);
 
         // GridBagConstraints for all components
         GridBagConstraints nameConstraints = new GridBagConstraints();
-        nameConstraints.gridx = nPlayer;
-        nameConstraints.weighty=1;
-        nameConstraints.weightx=95;
+        nameConstraints.weighty=0.1;
+        nameConstraints.weightx=0.1;
+        nameConstraints.insets = new Insets(0,20,0,0);
         nameConstraints.fill= GridBagConstraints.BOTH;
+        nameConstraints.anchor = GridBagConstraints.WEST;
 
         GridBagConstraints scoreConstraints = new GridBagConstraints();
-        scoreConstraints.gridx = 1 - nPlayer;
-        scoreConstraints.weighty=1;
-        scoreConstraints.weightx=5;
+        scoreConstraints.weighty=0.1;
+        scoreConstraints.weightx=0.1;
+        scoreConstraints.insets = new Insets(0,0,0,20);
         scoreConstraints.fill= GridBagConstraints.BOTH;
+        scoreConstraints.anchor = GridBagConstraints.EAST;
+
 
         // Initialisation of all components
         nameLabel = new JLabel();
         nameLabel.setText(this.name);
-        nameLabel.setHorizontalAlignment(JLabel.CENTER);
+        nameLabel.setHorizontalAlignment(JLabel.LEFT);
+        nameLabel.setVerticalAlignment(JLabel.CENTER);
         nameLabel.setForeground(color);
-        nameLabel.setFont(sizedFont);
+        nameLabel.addComponentListener(new FontScaler());
+
 
         scoreLabel = new JLabel();
-        scoreLabel.setText("0");
-        scoreLabel.setHorizontalAlignment(JLabel.CENTER);
+        scoreLabel.setText("0/20");
+        scoreLabel.setHorizontalAlignment(JLabel.RIGHT);
+        nameLabel.setVerticalAlignment(JLabel.CENTER);
         scoreLabel.setForeground(color);
-        scoreLabel.setFont(sizedFont);
-
+        scoreLabel.addComponentListener(new FontScaler());
 
         // Adding components to the layout
         gbl.setConstraints(nameLabel,nameConstraints);
@@ -59,20 +67,14 @@ public class PlayerInfo extends JPanel {
         gbl.setConstraints(scoreLabel,scoreConstraints);
         this.add(scoreLabel);
 
-        this.setBackground(UIColor.getColor(nPlayer == 0 ? UIColor.LIGHT_BLUE : UIColor.LIGHT_RED));
+        this.setBackground(nPlayer == 0 ? UIColor.LIGHT_BLUE : UIColor.LIGHT_RED);
+        this.setOpaque(false);
+        this.setBorder(new RoundedBorder(15));
 
     }
-    @Override
-    public void doLayout() {
-        super.doLayout();
-        float fontSize = nameLabel.getHeight()>0?nameLabel.getHeight() * 0.4f:22;
-        nameLabel.setFont(nameLabel.getFont().deriveFont(fontSize));
-        scoreLabel.setFont(scoreLabel.getFont().deriveFont(fontSize));
-        super.doLayout();
-    }
 
-    public void setScore(int score){
-        scoreLabel.setText(String.valueOf(score));
+    public void updateScore(PlayerData data){
+        scoreLabel.setText(String.valueOf(data.getScore()) + "/20");
         repaint();
     }
 
