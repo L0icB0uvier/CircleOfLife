@@ -42,19 +42,6 @@ public class Match extends History<Move> {
         pickStartingPlayer();
     }
 
-    private void resetScores(){
-        players[0].reset();
-        players[1].reset();
-    }
-
-    /**
-     * Choisi un joueur aléatoire.
-     */
-    private void pickStartingPlayer() {
-        currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
-        Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
-    }
-
     /**
      * Initialize le plateau de jeu avec des 0 à l'intérieur de l'hexagone de jeu et des MAX_VALUE à l'extérieur.
      */
@@ -67,6 +54,19 @@ public class Match extends History<Move> {
         }
     }
 
+    void resetScores(){
+        players[0].reset();
+        players[1].reset();
+    }
+
+    /**
+     * Choisi un joueur aléatoire.
+     */
+    void pickStartingPlayer() {
+        currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
+        Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
+    }
+
     @Override
     public void apply(Move newMove) {
         if (!isMoveValid(currentPlayerIndex, newMove.getLine(), newMove.getColumn())){ // invalid Move
@@ -75,14 +75,22 @@ public class Match extends History<Move> {
 
         previouslyEatenCritters.clear();
         super.apply(newMove);
+    }
 
-        if(isGameOver()){
+    void endTurn(){
+        // Il faut vérifier si le move joué a accordé la victoire au joueur actif
+        if(winByScore()){
             Configuration.info("Player " + currentPlayerIndex + " won!");
-            players[currentPlayerIndex].score += 1;
             initMatch();
+            return;
         }
-        else{
-            toggleCurrentPlayer();
+
+        toggleCurrentPlayer();
+
+        // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
+        if(winByFillUp()){
+            Configuration.info("Player " + currentPlayerIndex + " won!");
+            initMatch();
         }
     }
 
@@ -92,11 +100,12 @@ public class Match extends History<Move> {
      * @param c La colonne du move.
      * @return true si la position est valide, faux sinon.
      */
-    private boolean isMoveValid(int playerIndex, int l, int c) {
+    public boolean isMoveValid(int playerIndex, int l, int c) {
         if(!MatchUtils.isInsideBoard(new Coordinate(l, c))){
             Configuration.warning(String.format("Move impossible en %s - en dehors du plateau.", new Coordinate(c, l)));
             return false;
         }
+
         if(boardState[l][c] > 0){
             Configuration.warning(String.format("Move impossible en %s - case occupée.", new Coordinate(c, l)));
             return false;
@@ -331,8 +340,12 @@ public class Match extends History<Move> {
      * Vérifie si la partie est terminée.
      * @return true si les conditions de victoires sont remplies, faux sinon.
      */
-    public boolean isGameOver(){
-        return (players[currentPlayerIndex].getScore() >= 20 || players[currentPlayerIndex].getPlayableTilesNumber() == 0);
+    public boolean winByScore(){
+        return (players[currentPlayerIndex].getScore() >= 20);
+    }
+
+    public boolean winByFillUp(){
+        return getCurrentPlayerPlayableMoves().isEmpty();
     }
 
     /**
@@ -467,5 +480,5 @@ public class Match extends History<Move> {
             }
         }
         return playableMoves;
-    } 
+    }
 }

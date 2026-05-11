@@ -4,14 +4,9 @@ import Global.Configuration;
 
 public class PlayerData implements Cloneable {
     int score;
-    int playableTilesNumber;
 
     public PlayerData(){
         reset();
-    }
-
-    public PlayerData(int score){
-        this.score = score;
     }
 
     public void increaseScore(int increaseAmount){
@@ -22,13 +17,9 @@ public class PlayerData implements Cloneable {
         return score;
     }
 
-    public int getPlayableTilesNumber() {
-        return playableTilesNumber;
-    }
 
     public void reset(){
         score = 0;
-        playableTilesNumber = 61;
     }
 
     @Override

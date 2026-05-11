@@ -13,6 +13,10 @@ public class Game extends Observable {
         return match.currentPlayerIndex;
     }
 
+    public boolean isMoveValid(Coordinate coordinate){
+        return match.isMoveValid(getCurrentPlayerIndex(), coordinate.line(), coordinate.col());
+    }
+
     public Match getMatch(){
         return match;
     }
@@ -23,6 +27,7 @@ public class Game extends Observable {
      */
     public void playMove(Move move){
         match.apply(move);
+        match.endTurn();
         update();
     }
 
