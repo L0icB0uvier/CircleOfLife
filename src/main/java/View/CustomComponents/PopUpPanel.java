@@ -87,7 +87,7 @@ public class PopUpPanel extends JPanel {
 
     public void setSecondaryLabel(String secondaryLabel) {
         this.secondaryLabel.setText("<html><div style='text-align:start;width:610px;padding-left :10px;padding-right :10px'>" + secondaryLabel + "</div></html>");
-        this.secondaryLabel.setForeground(UIColor.getColor(UIColor.RED));
+        this.secondaryLabel.setForeground(UIColor.RED);
         this.secondaryLabel.setVerticalAlignment(SwingConstants.NORTH);
     }
 

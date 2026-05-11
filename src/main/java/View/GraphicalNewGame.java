@@ -83,18 +83,18 @@ public class GraphicalNewGame extends JPanel {
         player1Box.add(Box.createGlue());
 
         JLabel player1Label = createLabel("Joueur 1 :");
-        player1Label.setForeground(UIColor.getColor(UIColor.RED));
+        player1Label.setForeground(UIColor.RED);
         sizes.put(player1Label, SIZE_TEXT);
         player1Box.add(player1Label);
         player1Box.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
-        player1Button = createToggleButton("J1", UIColor.getColor(UIColor.RED), UIColor.getColor(UIColor.WHITE));
-        player1Button.setBackground(UIColor.getColor(UIColor.RED));
+        player1Button = createToggleButton("J1", UIColor.RED, UIColor.WHITE);
+        player1Button.setBackground(UIColor.RED);
         player1Button.setForeground(Color.BLACK);
         player1Button.setSelected(true);
         sizes.put(player1Button, SIZE_TEXT);
         player1Box.add(player1Button);
-        AI1Button = createToggleButton("IA", UIColor.getColor(UIColor.RED), UIColor.getColor(UIColor.WHITE));
-        AI1Button.setBackground(UIColor.getColor(UIColor.RED));
+        AI1Button = createToggleButton("IA", UIColor.RED, UIColor.WHITE);
+        AI1Button.setBackground(UIColor.RED);
         AI1Button.setForeground(Color.DARK_GRAY);
 
         player1Group = new ButtonGroup();
@@ -108,8 +108,8 @@ public class GraphicalNewGame extends JPanel {
         JPanel card1 = new JPanel(new GridLayout(1, 1));
 
         AI1ComboBox = createComboBox(new String[]{"Facile", "Moyen", "Difficile"});
-        AI1ComboBox.setBackground(UIColor.getColor(UIColor.RED));
-        AI1ComboBox.setBorder(BorderFactory.createLineBorder(UIColor.getColor(UIColor.RED)));
+        AI1ComboBox.setBackground(UIColor.RED);
+        AI1ComboBox.setBorder(BorderFactory.createLineBorder(UIColor.RED));
         sizes.put(AI1ComboBox, SIZE_TEXT);
 
         card1.add(AI1ComboBox);
@@ -128,20 +128,20 @@ public class GraphicalNewGame extends JPanel {
         player2Box.add(Box.createGlue());
 
         JLabel player2Label = createLabel("Joueur 2 :");
-        player2Label.setForeground(UIColor.getColor(UIColor.ALT_BLUE));
+        player2Label.setForeground(UIColor.ALT_BLUE);
         sizes.put(player2Label, SIZE_TEXT);
         player2Box.add(player2Label);
         player2Box.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
 
         player2Group = new ButtonGroup();
-        player2Button = createToggleButton("J2", UIColor.getColor(UIColor.ALT_BLUE), UIColor.getColor(UIColor.WHITE));
-        player2Button.setBackground(UIColor.getColor(UIColor.ALT_BLUE));
+        player2Button = createToggleButton("J2", UIColor.ALT_BLUE, UIColor.WHITE);
+        player2Button.setBackground(UIColor.ALT_BLUE);
         player2Button.setForeground(Color.BLACK);
         player2Button.setSelected(true);
         sizes.put(player2Button, SIZE_TEXT);
         player2Box.add(player2Button);
-        AI2Button = createToggleButton("IA", UIColor.getColor(UIColor.ALT_BLUE), UIColor.getColor(UIColor.WHITE));
-        AI2Button.setBackground(UIColor.getColor(UIColor.ALT_BLUE));
+        AI2Button = createToggleButton("IA", UIColor.ALT_BLUE, UIColor.WHITE);
+        AI2Button.setBackground(UIColor.ALT_BLUE);
         AI2Button.setForeground(Color.BLACK);
         sizes.put(AI2Button, SIZE_TEXT);
 
@@ -154,8 +154,8 @@ public class GraphicalNewGame extends JPanel {
         JPanel card2 = new JPanel(new GridLayout(1, 1));
 
         AI2ComboBox = createComboBox(new String[]{"Facile", "Moyen", "Difficile"});
-        AI2ComboBox.setBackground(UIColor.getColor(UIColor.ALT_BLUE));
-        AI2ComboBox.setBorder(BorderFactory.createLineBorder(UIColor.getColor(UIColor.ALT_BLUE)));
+        AI2ComboBox.setBackground(UIColor.ALT_BLUE);
+        AI2ComboBox.setBorder(BorderFactory.createLineBorder(UIColor.ALT_BLUE));
 
         sizes.put(AI2ComboBox, SIZE_TEXT);
         card2.add(AI2ComboBox);
@@ -173,13 +173,13 @@ public class GraphicalNewGame extends JPanel {
         Box buttonsBox = Box.createHorizontalBox();
 
         cancelButton = createBorderedButton("Annuler");
-        cancelButton.setBackground(UIColor.getColor(UIColor.RED));
+        cancelButton.setBackground(UIColor.RED);
         sizes.put(cancelButton, SIZE_TEXT);
         buttonsBox.add(cancelButton);
         buttonsBox.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
 
         startButton = createBorderedButton("Démarrer");
-        startButton.setBackground(UIColor.getColor(UIColor.WAFFLE));
+        startButton.setBackground(UIColor.BACKGROUND);
         sizes.put(startButton, SIZE_TEXT);
         buttonsBox.add(startButton);
         newGameBox.add(buttonsBox);

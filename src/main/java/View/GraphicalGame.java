@@ -2,81 +2,82 @@ package View;
 
 import Model.Game;
 import Model.PlayerData;
-import View.CustomComponents.GameControlBar;
-import View.CustomComponents.GameInfo;
-import View.CustomComponents.GamePanel;
+import View.CustomComponents.*;
+import View.Utils.RoundedBorder;
 import View.Utils.UIColor;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GraphicalGame extends JPanel {
     GamePanel gamePanel;
-    GameInfo gameInfo;
+    ArrayList<PlayerInfo> playerInfos;
+    CustomLabel gameInfo;
+    GameHistory gameHistory;
     GameControlBar gameControlBar;
     Game game;
     public GraphicalGame(Game game){
         this.game=game;
-        GridBagLayout gbl = new GridBagLayout();
+        playerInfos = new ArrayList<>();
 
-        this.setLayout(gbl);
+        MigLayout layout = new MigLayout("fill, insets 10 10 10 10", "[70%][30%]","[][][grow][]" );
+        this.setLayout(layout);
+        this.setBackground(UIColor.BACKGROUND);
+
+        gameInfo = new CustomLabel(game);
 
         gamePanel = new GamePanel(game);
-        GridBagConstraints graphicalLevelConstraints = new GridBagConstraints();
-        graphicalLevelConstraints.gridy = 1;
-        graphicalLevelConstraints.weighty=80;
-        graphicalLevelConstraints.weightx=1;
-        graphicalLevelConstraints.fill= GridBagConstraints.BOTH;
+        //JPanel p = new JPanel();
+        //p.setBorder(new RoundedBorder(15,Color.BLACK,3));
 
-        gameInfo = new GameInfo();
-        GridBagConstraints gameInfoConstraints = new GridBagConstraints();
-        gameInfoConstraints.gridy = 0;
-        gameInfoConstraints.weighty=10;
-        gameInfoConstraints.weightx=1;
-        gameInfoConstraints.fill = GridBagConstraints.BOTH;
+        playerInfos.add(new PlayerInfo("Player1",0));
+        PlayerInfo player1Info = playerInfos.get(0);
+        playerInfos.add(new PlayerInfo("Player2",1));
+        PlayerInfo player2Info = playerInfos.get(1);
+
+        gameHistory = new GameHistory();
+        gameHistory.setBackground(Color.WHITE);
+        gameHistory.setOpaque(false);
+        gameHistory.setBorder(new RoundedBorder(15, Color.BLACK,3));
 
         gameControlBar = new GameControlBar();
-        GridBagConstraints gameControlBarConstraints = new GridBagConstraints();
-        gameControlBarConstraints.gridy = 2;
-        gameControlBarConstraints.weighty= 10;
-        gameControlBarConstraints.weightx= 1;
-        gameControlBarConstraints.fill= GridBagConstraints.BOTH;
+        gameControlBar.setBackground(UIColor.BACKGROUND);
 
-        gameControlBar.setBackground(UIColor.getColor(UIColor.WHITE));
+        gameInfo.setMinimumSize(new Dimension(0, 0));
+        gamePanel.setMinimumSize(new Dimension(0, 0));
+        player1Info.setMinimumSize(new Dimension(0, 0));
+        player2Info.setMinimumSize(new Dimension(0, 0));
+        gameHistory.setMinimumSize(new Dimension(0, 0));
+        gameControlBar.setMinimumSize(new Dimension(0, 0));
 
-        gbl.setConstraints(gameInfo,gameInfoConstraints);
-        this.add(gameInfo);
-        gbl.setConstraints(gamePanel,graphicalLevelConstraints);
-        this.add(gamePanel);
-        gbl.setConstraints(gameControlBar,gameControlBarConstraints);
-        this.add(gameControlBar);
+        this.add(gameInfo,"cell 0 0, grow, sg top");
+        this.add(player1Info,"cell 1 0, grow, sg top");
+        this.add(player2Info,"cell 1 1, grow, sg top");
+        this.add(gamePanel,"cell 0 1, span 1 3, grow");
+        this.add(gameHistory,"cell 1 2, grow");
+        this.add(gameControlBar,"cell 1 3, grow, sg top");
+
         this.setVisible(true);
 
         updateScore(game.getMatch().getPlayerData());
-
-        gameControlBar.previewBt.addActionListener(e -> gamePanel.togglePreview());
     }
+
+
 
     public GamePanel getGamePanel() {
         return gamePanel;
     }
 
     public void playerTurn(int nPlayer){
-
-        gameInfo.playerTurn(nPlayer);
-        Color c;
-        if(nPlayer == 0){
-            c = UIColor.getColor(UIColor.BLUE);
-        }else{
-            c = UIColor.getColor(UIColor.RED);
-        }
-        gamePanel.setBorder(BorderFactory.createMatteBorder(7,7,7,7,c));
-        repaint();
-
+        //TODO: changer playerInfo et gameInfo
+        //PlayerInfo.playerTurn(nPlayer);
     }
 
     public void updateScore(PlayerData[] playerData) {
-        gameInfo.updateScore(playerData);
+        playerInfos.get(0).updateScore(playerData[0]);
+        playerInfos.get(1).updateScore(playerData[1]);
     }
 
 }

@@ -33,14 +33,14 @@ public class GraphicalMainMenu extends JPanel {
         JLabel part2Title = new JLabel("Gauffre ");
         part2Title.setFont(titleFont);
         sizes.put(part2Title, 10);
-        part2Title.setForeground(UIColor.getColor(UIColor.WAFFLE));
+        part2Title.setForeground(UIColor.BACKGROUND);
         titlePanel.add(part2Title);
         JLabel part3Title = new JLabel("Empoisonnée");
         part3Title.setFont(titleFont);
         sizes.put(part2Title, 10);
-        part3Title.setForeground(UIColor.getColor(UIColor.GREEN));
+        part3Title.setForeground(UIColor.GREEN);
         titlePanel.add(part3Title);
-        titlePanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, UIColor.getColor(UIColor.WAFFLE)));
+        titlePanel.setBorder(BorderFactory.createMatteBorder(3, 3, 3, 3, UIColor.BACKGROUND));
         titlePanel.setBorder(new CompoundBorder(titlePanel.getBorder(), BorderFactory.createEmptyBorder(10, 20, 10, 20)));
 
         textPanel.add(titlePanel);
