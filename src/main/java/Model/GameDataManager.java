@@ -41,7 +41,7 @@ public class GameDataManager {
         writer.write(match.getCurrentPlayerIndex() + sep);
 
 
-        //écrit le nombre de coup joué dans le passé et le futur (passé + futur = nb total coups)
+        //écrit le nombre de coup joué dans le passé et le futur
         writer.write(match.past.size() + sep);
         writer.write(match.future.size() + sep);
 
@@ -138,10 +138,9 @@ public class GameDataManager {
 
         int lenPast = scanner.nextInt();
         int lenFuture = scanner.nextInt();
-        int nbMove = lenPast==0?lenFuture:lenPast; //si il n'y a pas de passé, on derive currentPlayerIndex depuis le futur
         // read past
 
-        if (nbMove % 2 != 0) // calculé le currentPlayerIndex
+        if (lenPast !=0 && lenPast % 2 != 0) // calculé le currentPlayerIndex
             currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
         m.currentPlayerIndex = currentPlayerIndex;
 
