@@ -51,15 +51,12 @@ public class PlayerInfo extends JPanel {
         nameLabel.setHorizontalAlignment(JLabel.LEFT);
         nameLabel.setVerticalAlignment(JLabel.CENTER);
         nameLabel.setForeground(color);
-        nameLabel.addComponentListener(new FontScaler());
-
 
         scoreLabel = new JLabel();
         scoreLabel.setText("0/20");
         scoreLabel.setHorizontalAlignment(JLabel.RIGHT);
         nameLabel.setVerticalAlignment(JLabel.CENTER);
         scoreLabel.setForeground(color);
-        scoreLabel.addComponentListener(new FontScaler());
 
         // Adding components to the layout
         gbl.setConstraints(nameLabel,nameConstraints);
@@ -70,6 +67,8 @@ public class PlayerInfo extends JPanel {
         this.setBackground(nPlayer == 0 ? UIColor.LIGHT_BLUE : UIColor.LIGHT_RED);
         this.setOpaque(false);
         this.setBorder(new RoundedBorder(15));
+
+        this.addComponentListener(new FontScaler(nameLabel,scoreLabel));
 
     }
 

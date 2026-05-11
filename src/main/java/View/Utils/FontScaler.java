@@ -6,15 +6,19 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class FontScaler extends ComponentAdapter {
-    private static final float ratio = 0.3f;
+    private static final float RATIO = 0.3f;
+    private final JLabel[] jLabels;
 
-    public FontScaler(){
+    public FontScaler(JLabel... jLabels){
+        this.jLabels = jLabels;
     }
 
     @Override
     public void componentResized(ComponentEvent e) {
-        Component c = e.getComponent();
-        float size = c.getParent().getHeight() * ratio;
-        c.setFont(c.getFont().deriveFont(size));
+        float size = e.getComponent().getHeight() * RATIO;
+        for (JLabel label : jLabels) {
+            label.setFont(label.getFont().deriveFont(size));
+        }
+        e.getComponent().revalidate();
     }
 }

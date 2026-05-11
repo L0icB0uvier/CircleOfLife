@@ -71,6 +71,7 @@ public class GamePanel extends JComponent implements Observer {
 
     @Override
     protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         drawBoard(g2d);
         drawStones(g2d);
