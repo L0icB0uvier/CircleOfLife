@@ -109,7 +109,7 @@ public abstract class AI {
      */
     double minimax(Match match, int depth, int playerID, double alpha, double beta, boolean isMax){
         // cas de base : si la partie est terminée ou la profondeur max atteinte, on évalue l'état du match
-        if (depth == 0 || match.isGameOver()){
+        if (depth == 0 || match.winByFillUp() || match.winByScore()){
             return evaluate(match, playerID);
         }
 
