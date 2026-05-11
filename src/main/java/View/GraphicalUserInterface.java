@@ -126,7 +126,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
     @Override
     public void run() {
-        frame = new JFrame("Gauffre empoisonnée");
+        frame = new JFrame("Circle of life");
         Configuration.initSettings();
         frame.setSize(Configuration.readInt("WindowWidth"), Configuration.readInt("WindowHeight"));
         frame.setMinimumSize(new Dimension(800,600));
