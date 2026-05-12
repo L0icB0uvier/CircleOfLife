@@ -298,4 +298,40 @@ class ShapeUtilsTest {
         Set<Coordinate> validSet3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1, 1)));
         assertEquals(11, ShapeUtils.getShapeId(validSet3));
     }
+
+    @Test
+    void getShapeCoordinatesForId() {
+        Set<Coordinate> expected_1_2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,1), new Coordinate(2, 2), new Coordinate(3, 3)));
+        assertEquals(expected_1_2, ShapeUtils.getShapeCoordinatesForId(1, 2));
+
+        Set<Coordinate> expected_2_1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,1), new Coordinate(2, 1), new Coordinate(1, 2)));
+        assertEquals(expected_2_1, ShapeUtils.getShapeCoordinatesForId(2, 1));
+
+        Set<Coordinate> expected_3_1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,0), new Coordinate(0, 1), new Coordinate(1, 1)));
+        assertEquals(expected_3_1, ShapeUtils.getShapeCoordinatesForId(3, 1));
+
+        Set<Coordinate> expected_4_1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,0), new Coordinate(-1, 1), new Coordinate(0, 1)));
+        assertEquals(expected_4_1, ShapeUtils.getShapeCoordinatesForId(4, 1));
+
+        Set<Coordinate> expected_5_0 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,1), new Coordinate(2, 1), new Coordinate(2, 0)));
+        assertEquals(expected_5_0, ShapeUtils.getShapeCoordinatesForId(5, 0));
+
+        Set<Coordinate> expected_6_3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,1), new Coordinate(2, 1), new Coordinate(3, 1)));
+        assertEquals(expected_6_3, ShapeUtils.getShapeCoordinatesForId(6, 3));
+
+        Set<Coordinate> expected_7_6 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,1), new Coordinate(2, 1), new Coordinate(2, 2)));
+        assertEquals(expected_7_6, ShapeUtils.getShapeCoordinatesForId(7, 6));
+
+        Set<Coordinate> expected_8_1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,0), new Coordinate(1, 1)));
+        assertEquals(expected_8_1, ShapeUtils.getShapeCoordinatesForId(8, 1));
+
+        Set<Coordinate> expected_9_2 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0,1), new Coordinate(0, 2)));
+        assertEquals(expected_9_2, ShapeUtils.getShapeCoordinatesForId(9, 2));
+
+        Set<Coordinate> expected_10_3 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(1,0), new Coordinate(0, 1)));
+        assertEquals(expected_10_3, ShapeUtils.getShapeCoordinatesForId(10, 3));
+
+        Set<Coordinate> expected_11_1 = new HashSet<>(Set.of(new Coordinate(0, 0), new Coordinate(0,1)));
+        assertEquals(expected_11_1, ShapeUtils.getShapeCoordinatesForId(11, 1));
+    }
 }

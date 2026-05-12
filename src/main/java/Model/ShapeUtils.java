@@ -21,8 +21,8 @@ public class ShapeUtils {
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 1), new Coordinate(1, 2)), 2); // 2
 
         // ID 3
-        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)), 3); // 2
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 2)), 3); // 1
+        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)), 3); // 2
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)), 3); // 3
 
         // ID 4
