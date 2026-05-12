@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class HardAI extends AI {
-    int depth;
+    int depth = 3;
 
     public HardAI(Match match) {
         super(match);
