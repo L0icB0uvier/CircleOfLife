@@ -3,7 +3,6 @@ package Model;
 import Global.Configuration;
 import Global.PlayerSettings;
 import Global.Settings;
-import View.EventCollector;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-import Controller.Controller;
 import Controller.IA.AILevel;
 
 public class GameDataManager {
@@ -43,8 +41,7 @@ public class GameDataManager {
         // écrit le joueur courant
         writer.write(match.getCurrentPlayerIndex() + sep);
 
-
-        //écrit le nombre de coup joué dans le passé et le futur
+        // écrit le nombre de coup joué dans le passé et le futur
         writer.write(match.past.size() + sep);
         writer.write(match.future.size() + sep);
 
@@ -63,7 +60,6 @@ public class GameDataManager {
 
         }
 
-        
         writer.close();
     }
 
@@ -109,11 +105,12 @@ public class GameDataManager {
      * Charge les données d'un match et créé un nouveau match avec ces données dans
      * Game.
      * 
-     * @param game L'instance de game dans laquelle charger le match.
-     * @param filename Le nom du fichier à partir duquel charger (sans extension .save).
+     * @param game     L'instance de game dans laquelle charger le match.
+     * @param filename Le nom du fichier à partir duquel charger (sans extension
+     *                 .save).
      * @throws FileNotFoundException
      */
-    public static void loadMatch(Game game, String filename, Controller controller) throws FileNotFoundException {
+    public static void loadMatch(Game game, String filename) throws FileNotFoundException {
         File file = new File(savePath + filename + ".save");
         Scanner scanner = new Scanner(file);
 
@@ -159,8 +156,8 @@ public class GameDataManager {
         if (lenPast % 2 != 0) {
             currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
         }
-        if (m.currentPlayerIndex!=currentPlayerIndex)
-            controller.update();
+        if (m.currentPlayerIndex != currentPlayerIndex)
+            game.update();
         m.currentPlayerIndex = currentPlayerIndex;
 
         // read past et futur
@@ -169,29 +166,26 @@ public class GameDataManager {
             try {
                 temp = readMove(m, scanner);
                 System.out.println(temp.getColumn() + " " + temp.getLine());
-                m.apply(temp);
-                controller.update();
+                game.playMove(temp);
             } catch (Exception e) {
-                e.printStackTrace();   
+                e.printStackTrace();
                 Configuration.error("Impossible de lire move");
             }
         }
 
         // revenir en arriere si on a future
-        for (int i = 0; i < lenFuture; i++) { 
-            m.undo();
-            m.toggleCurrentPlayer();
-            controller.update();
+        for (int i = 0; i < lenFuture; i++) {
+            game.undo();
         }
 
         scanner.close();
     }
 
-
     /**
-     * Lit un déplacement à partir d'un scanner en supposant un format identique à celui de moveToLineColumn.
+     * Lit un déplacement à partir d'un scanner en supposant un format identique à
+     * celui de moveToLineColumn.
      * 
-     * @param m Match sur lequel le move va s'appliquer.
+     * @param m       Match sur lequel le move va s'appliquer.
      * @param scanner Scanner.
      * @return Un Move qui correspond à ce qui a été lu.
      */
@@ -208,13 +202,14 @@ public class GameDataManager {
      * @return Un String correspondant à la représentation textuelle de pd.
      */
     private static String playerDataToString(PlayerData pd) {
-        return pd.getScore()+ "";
+        return pd.getScore() + "";
     }
 
     /**
-     * Retourne un nom de fichier de format "<date_courant>_<infos_joueurs>.save" avec avec des traits de soulignement comme séparateurs.
+     * Retourne un nom de fichier de format "<date_courant>_<infos_joueurs>.save"
+     * avec avec des traits de soulignement comme séparateurs.
      * 
-     * @param m Un Match.
+     * @param m        Un Match.
      * @param settings Les settings du match.
      * @return Vrai s'il existe des données et faux sinon.
      */
@@ -238,9 +233,11 @@ public class GameDataManager {
     }
 
     /**
-     * Renvoie la liste de tous les fichiers ayant l'extension ".save" dans le répertoire courant (l'extension "".save" étant supprimée).
+     * Renvoie la liste de tous les fichiers ayant l'extension ".save" dans le
+     * répertoire courant (l'extension "".save" étant supprimée).
      * 
-     * @return Une Liste des Strings de nom de fichier avec l'enxtension ".save" supprimée.
+     * @return Une Liste des Strings de nom de fichier avec l'enxtension ".save"
+     *         supprimée.
      */
     public static List<String> getSaveFiles() {
         Path dirPath = Paths.get(savePath);

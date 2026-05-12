@@ -118,6 +118,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
     @Override
     public void update() {
+        if (graphicalGame==null) return;
         playerTurn(game.getCurrentPlayerIndex());
         updateScore(game.getMatch().getPlayerData());
         updateUndoRedoEnabled();
