@@ -24,6 +24,7 @@ public class Match extends History<Move> {
     private boolean gameOver = false;
 
     private final int boardSize = 9;
+    int winner = -1;
 
     public Match(){
         players[0] = new PlayerData();
@@ -43,6 +44,7 @@ public class Match extends History<Move> {
         previouslyEatenCritters = new ArrayList<>();
         pickStartingPlayer();
         gameOver = false;
+        winner = -1;
     }
 
     /**
@@ -106,6 +108,7 @@ public class Match extends History<Move> {
      */
     void gameOver(){
         gameOver = true;
+        winner = currentPlayerIndex;
         Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
     }
 
@@ -522,5 +525,9 @@ public class Match extends History<Move> {
 
     public boolean isGameOver(){
         return gameOver;
+    }
+
+    public int getWinner() {
+        return winner;
     }
 }
