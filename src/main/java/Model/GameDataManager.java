@@ -8,10 +8,15 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -213,12 +218,14 @@ public class GameDataManager {
      */
     public static String getFileName(Match m, Settings settings) {
         String sep = "_";
-        Date d = new Date();
+        String sepTime = "-";
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(
+                "EEEE d MMMM yyyy HH:mm:ss", Locale.FRENCH);
         PlayerData[] pd = m.getPlayerData();
         String playerDataString = playerDataToString(pd[0]) + sep + getPlayerType(settings.getPlayer1Settings()) + sep
                 + playerDataToString(pd[1]) + sep + getPlayerType(settings.getPlayer2Settings());
-        return d.toString().replaceAll(" ", "_") + "_" + playerDataString + ".save";
-
+        return ZonedDateTime.now().format(fmt).replaceAll(" ", sep).replaceAll(":", sepTime) + sep
+                + playerDataString.toLowerCase() + ".save";
     }
 
     /**
@@ -250,6 +257,51 @@ public class GameDataManager {
         } catch (IOException e) {
             Configuration.error("Erreur lors d'acces a des fichiers de sauvegardes");
         }
+        return res;
+    }
+
+    private static String parsePlayerType(String s) {
+        char playerType = s.charAt(0);
+        switch (playerType) {
+
+            case 'e':
+                return "(IA facile)";
+
+            case 'm':
+                return "(IA moyenne)";
+
+            case 'h':
+                return "(IA difficile)";
+
+            default:
+                return "";
+        }
+    }
+
+    public static String[] parseFileName(String filename) {
+        String[] res = new String[4];
+        String sep = "_";
+        if (filename.endsWith(".save"))
+            filename.replaceAll(".save", "");
+
+        String arr[] = filename.split(sep);
+
+        String date[] = Arrays.copyOfRange(arr, 0, arr.length - 4);
+        String game[] = Arrays.copyOfRange(arr, arr.length - 4, arr.length);
+
+        // parse date
+        date[date.length - 1] = date[date.length - 1].replaceAll("-", ":");
+        res[0] = String.join(" ", date);
+
+        // parse player 1
+        res[1] = "Joueur 1 " + parsePlayerType(game[1]);
+
+        // parse player 2
+        res[2] = "Joueur 2 " + parsePlayerType(game[3]);
+
+        // parse score (joueur 1 score - joueur 2 score)
+        res[3] = game[0] + " - " + game[2];
+
         return res;
     }
 }
