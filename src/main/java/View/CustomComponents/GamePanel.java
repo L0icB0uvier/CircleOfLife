@@ -50,18 +50,18 @@ public class GamePanel extends JComponent implements Observer {
     private final float feedHighlightThickness = 6.0f;
 
     private final imageRatio[] shapePositionRatios = new imageRatio[]{
-            new imageRatio(1, 1), // 0
-            new imageRatio(1, 1), // 1
-            new imageRatio(1, 1), // 2
-            new imageRatio(1, 1), // 3
-            new imageRatio(1, 1), // 4
-            new imageRatio(1, 1), // 5
-            new imageRatio(1, 1), // 6
-            new imageRatio(1, 1), // 7
-            new imageRatio(1, 1), // 8
-            new imageRatio(1, 1), // 9
-            new imageRatio(1, 1), // 10
-            new imageRatio(1, 1), // 11
+            new imageRatio(0.48825, 0.07045), // 0
+            new imageRatio(0.68074, 0.07300), // 1
+            new imageRatio(0.84497, 0.25152), // 2
+            new imageRatio(0.91086, 0.47923), // 3
+            new imageRatio(0.87220, 0.69573), // 4
+            new imageRatio(0.65734, 0.84806), // 5
+            new imageRatio(0.43349, 0.88752), // 6
+            new imageRatio(0.22379, 0.80887), // 7
+            new imageRatio(0.09705, 0.68408), // 8
+            new imageRatio(0.08924, 0.42216), // 9
+            new imageRatio(0.11971, 0.25825), // 10
+            new imageRatio(0.29032, 0.11066), // 11
     };
 
     private final Map<Integer, Integer> circleShapeType = Map.ofEntries(
