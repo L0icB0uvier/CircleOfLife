@@ -36,6 +36,10 @@ public class Game extends Observable {
         return match;
     }
 
+    public boolean isGameOver(){
+        return match.isGameOver();
+    }
+
     /**
      * Joue un move puis appel update pour notifier les observateurs.
      * @param move

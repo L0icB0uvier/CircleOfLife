@@ -18,6 +18,7 @@ public class GraphicalGame extends JPanel {
     GameHistory gameHistory;
     GameControlBar gameControlBar;
     Game game;
+
     public GraphicalGame(Game game){
         this.game=game;
         playerInfos = new ArrayList<>();
@@ -72,12 +73,17 @@ public class GraphicalGame extends JPanel {
 
     public void playerTurn(int nPlayer){
         //TODO: changer playerInfo et gameInfo
+        gameInfo.updatePlayerTurn(nPlayer);
         //PlayerInfo.playerTurn(nPlayer);
     }
 
     public void updateScore(PlayerData[] playerData) {
         playerInfos.get(0).updateScore(playerData[0]);
         playerInfos.get(1).updateScore(playerData[1]);
+    }
+
+    public void gameOver(){
+        gameInfo.gameOver(0);
     }
 
 }

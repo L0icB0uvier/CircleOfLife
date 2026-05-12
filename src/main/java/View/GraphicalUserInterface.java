@@ -75,6 +75,10 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalGame.playerTurn(nPlayer);
     }
 
+    public void gameOver(){
+        graphicalGame.gameOver();
+    }
+
     @Override
     public void updateScore(PlayerData[] playerData) {
         graphicalGame.updateScore(playerData);
@@ -120,6 +124,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     @Override
     public void update() {
         playerTurn(game.getCurrentPlayerIndex());
+        if(game.isGameOver()){
+            gameOver();
+        }
         updateScore(game.getMatch().getPlayerData());
         updateUndoRedoEnabled();
     }

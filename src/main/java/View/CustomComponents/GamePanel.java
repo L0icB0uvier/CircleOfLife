@@ -75,10 +75,38 @@ public class GamePanel extends JComponent implements Observer {
         Graphics2D g2d = (Graphics2D) g;
         drawBoard(g2d);
         drawStones(g2d);
+        if(match.isGameOver()){
+            return;
+        }
         if(drawSelected(g2d))
             drawFeedforward(g2d);
 
         //drawEaten(g2d);
+    }
+
+    private void drawGameOverMessage(Graphics2D g2d){
+        Font prev = g2d.getFont();
+        String text = "Partie terminée";
+        double targetWidth = getWidth() * 0.25;
+
+        Font currentFont = new Font("SansSerif", Font.BOLD, 12);
+        FontMetrics fm = g2d.getFontMetrics(currentFont);
+        int currentWidth = fm.stringWidth(text);
+
+        if (currentWidth > 0) { // Sécurité pour éviter division par zéro
+            double ratio = targetWidth / currentWidth;
+
+            // 4. Appliquer la nouvelle taille
+            float nouvelleTaille = (float) (currentFont.getSize() * ratio);
+            g2d.setFont(currentFont.deriveFont(nouvelleTaille));
+        }
+
+        fm = g2d.getFontMetrics(); // Recalculer les mesures avec la nouvelle taille
+        int x = (int) (getWidth() - fm.stringWidth(text)) / 2;
+        int y = fm.getHeight() + 20;
+        g2d.drawString(text, x, y);
+
+        g2d.setFont(prev);
     }
 
     private void drawBoard(Graphics2D g2d){

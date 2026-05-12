@@ -33,9 +33,15 @@ public class CustomLabel extends JPanel {
         this.setBorder(new RoundedBorder(15));
 
         this.addComponentListener(new FontScaler(text,playerName));
-
-
     }
 
+    public void updatePlayerTurn(int currentPlayer){
+        playerName.setText(currentPlayer == 0? "Joueur1" : "Joueur2");
+        playerName.setForeground(currentPlayer == 0? UIColor.BLUE : UIColor.RED);
+    }
+
+    public void gameOver(int winner){
+        text.setText(" a gagné la partie");
+    }
 }
 
