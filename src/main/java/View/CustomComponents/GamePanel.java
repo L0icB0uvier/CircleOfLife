@@ -3,9 +3,8 @@ package View.CustomComponents;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -13,6 +12,9 @@ import javax.swing.JComponent;
 import Global.Configuration;
 import Model.*;
 import Patterns.Observer;
+import View.Utils.imageRatio;
+
+import static java.util.Map.entry;
 
 public class GamePanel extends JComponent implements Observer {
     Game game;
@@ -27,24 +29,60 @@ public class GamePanel extends JComponent implements Observer {
             imgStoneDisabled;
 
     int imgSrcHeight, imgSrcWidth;
+    double imageWidth, imageHeight;
     int mouseX, mouseY;
     int nSelected, mSelected;
 
     boolean previewEnabled = false;
-    boolean drawCenter = true;
+    boolean drawCenter = false;
 
     double alpha = 1;
     double oneMinusAlpha;
 
-    double x0Ratio = 0.35505, y0Ratio = 0.24893;
-    double ratioDistanceX = 0.07248;
-    double hexagonHeightRatio = 0.08461;
+    private final imageRatio boardOriginRatio = new imageRatio(0.35505, 0.24893);
+    private final double ratioDistanceX = 0.07248;
+    private final double hexagonHeightRatio = 0.08461;
     double distance;
     int stoneImageSize;
+    int boardX0, boardY0;
     int x0, y0;
     double innerRadius, outerRadius;
+
     private final float evolveHighlightThickness = 6.0f;
     private final float feedHighlightThickness = 6.0f;
+
+    private final imageRatio[] shapePositionRatios = new imageRatio[]{
+            new imageRatio(0.48825, 0.07045), // 0
+            new imageRatio(0.68074, 0.07300), // 1
+            new imageRatio(0.84497, 0.25152), // 2
+            new imageRatio(0.91086, 0.47923), // 3
+            new imageRatio(0.87220, 0.69573), // 4
+            new imageRatio(0.65734, 0.84806), // 5
+            new imageRatio(0.43349, 0.88752), // 6
+            new imageRatio(0.22379, 0.80887), // 7
+            new imageRatio(0.09705, 0.68408), // 8
+            new imageRatio(0.08924, 0.46216), // 9
+            new imageRatio(0.11971, 0.25825), // 10
+            new imageRatio(0.29032, 0.11066), // 11
+    };
+
+    private final double circleHexagonHeight = 0.04708;
+    private final double circleInterHexagonDistance = 0.04077;
+
+    private final Map<Integer, Integer> circleShapeType = Map.ofEntries(
+            entry(0, 0),
+            entry(1, 2),
+            entry(2, 1),
+            entry(3, 1),
+            entry(4, 1),
+            entry(5, 0),
+            entry(6, 3),
+            entry(7, 6),
+            entry(8, 1),
+            entry(9, 2),
+            entry(10, 3),
+            entry(11, 1)
+    );
 
     public GamePanel(Game game) {
         this.game = game;
@@ -113,25 +151,22 @@ public class GamePanel extends JComponent implements Observer {
         int width = getSize().width;
         int height = getSize().height;
 
-        int x, y;
-        double imageWidth, imageHeight;
-
         if(width > height){
-            x = (int) ((width - ((alpha * height * imgSrcWidth) / imgSrcHeight))) / 2;
-            y = (int) ((oneMinusAlpha) / 2 * height);
+            boardX0 = (int) ((width - ((alpha * height * imgSrcWidth) / imgSrcHeight))) / 2;
+            boardY0 = (int) ((oneMinusAlpha) / 2 * height);
             imageWidth = (alpha * height * imgSrcWidth) / imgSrcHeight;
             imageHeight = alpha * height;
         }
         else{
-            x = (int) (((oneMinusAlpha) / 2) * width);
-            y = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
+            boardX0 = (int) (((oneMinusAlpha) / 2) * width);
+            boardY0 = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
             imageWidth = alpha * width;
             imageHeight = (alpha * width * imgSrcHeight) / imgSrcWidth;
         }
 
         // Calcul du centre de la case 0:0 du plateau
-        x0 = (int) Math.round(x + (x0Ratio * imageWidth));
-        y0 = (int) Math.round(y + (y0Ratio * imageHeight));
+        x0 = (int) Math.round(boardX0 + (boardOriginRatio.xRatio() * imageWidth));
+        y0 = (int) Math.round(boardY0 + (boardOriginRatio.yRatio() * imageHeight));
         distance = ratioDistanceX * imageWidth;
 
         // Calcule taille de l'image des pierres
@@ -140,7 +175,7 @@ public class GamePanel extends JComponent implements Observer {
         outerRadius = (double) stoneImageSize / 2;
         innerRadius = outerRadius * 0.866025404f;
 
-        g2d.drawImage(imgPlateau, x, y, (int) Math.round(imageWidth), (int) Math.round(imageHeight), null);
+        g2d.drawImage(imgPlateau, boardX0, boardY0, (int) Math.round(imageWidth), (int) Math.round(imageHeight), null);
     }
 
     /**
@@ -224,6 +259,22 @@ public class GamePanel extends JComponent implements Observer {
         return true;
     }
 
+    private void drawCircleShape(Graphics2D g2d, int shapeType, int playerIndex){
+        Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(shapeType, circleShapeType.get(shapeType));
+        double circleStoneDistance = circleInterHexagonDistance * imageWidth;
+        int circleStoneImageSize = (int) Math.round(circleHexagonHeight * imageHeight);
+
+        var ratio = shapePositionRatios[shapeType];
+        double originX = boardX0 + imageWidth * ratio.xRatio();
+        double originY = boardY0 + imageHeight * ratio.yRatio();
+
+        for(Coordinate coord : coords){
+            int x = (int) Math.round((originX + ((coord.col() * circleStoneDistance) - (coord.line() * circleStoneDistance) / 2)) - (double) circleStoneImageSize / 2) ;
+            int y = (int) Math.round((originY + ((Math.sqrt(3) * circleStoneDistance * coord.line()) / 2)) - (double) circleStoneImageSize / 2);
+            drawStone(g2d, playerIndex == 0? imgStonePlayer1 : imgStonePlayer2, x, y, circleStoneImageSize);
+        }
+    }
+
     private void drawFeedforward(Graphics2D g2d){
         boolean showEvolveFeedback = false;
         Coordinate selectedCoordinate = new Coordinate(getnSelected(), getmSelected());
@@ -241,22 +292,28 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         if(evolveInto >= 0){
-
             Set<Critter> opponentsNeighbors = new HashSet<>();
             for (Coordinate coord : evolveCoords){
                 opponentsNeighbors.addAll(match.getPlayerNeighborsCritters(match.getOpponentPlayerIndex(), coord));
             }
+
+            int eatenShape = -1;
             if(!opponentsNeighbors.isEmpty()){
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
                         drawHighlight(g2d, critter.stonesCoordinates(), Color.orange, feedHighlightThickness);
+                        eatenShape = critter.type();
                     }
                 }
             }
+            if(eatenShape >= 0)
+                drawCircleShape(g2d, eatenShape, match.getOpponentPlayerIndex());
         }
 
         if(showEvolveFeedback)
             drawHighlight(g2d, evolveCoords,  Color.yellow, evolveHighlightThickness);
+
+        drawCircleShape(g2d, evolveInto, match.getCurrentPlayerIndex());
     }
 
 

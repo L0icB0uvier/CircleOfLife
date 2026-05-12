@@ -1,13 +1,12 @@
 package Model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ShapeUtils {
     private static final Map<Set<Coordinate>, Integer> shapes;
 
     static {
-        Map<Set<Coordinate>, Integer> tempShapes = new HashMap<>();
+        Map<Set<Coordinate>, Integer> tempShapes = new LinkedHashMap<>();
 
         // ID 0
         tempShapes.put(Set.of(new Coordinate(0, 0)), 0);
@@ -22,8 +21,8 @@ public class ShapeUtils {
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 1), new Coordinate(1, 2)), 2); // 2
 
         // ID 3
-        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)), 3); // 2
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1), new Coordinate(1, 1), new Coordinate(1, 2)), 3); // 1
+        tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 1), new Coordinate(1, 1)), 3); // 2
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(1, 1), new Coordinate(2, 1)), 3); // 3
 
         // ID 4
@@ -144,5 +143,17 @@ public class ShapeUtils {
         if(id >= keys.size()) return null;
 
         return new Critter(keys.get(id), player);
+    }
+
+    public static Set<Coordinate> getShapeCoordinatesForId(int type, int id){
+        List<Set<Coordinate>> keys = shapes.entrySet().stream()
+                .filter(entry -> Objects.equals(entry.getValue(), type))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if(id >= keys.size())
+            return Collections.emptySet();
+
+        return keys.get(id);
     }
 }
