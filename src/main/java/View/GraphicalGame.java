@@ -30,6 +30,7 @@ public class GraphicalGame extends JPanel {
         gameInfo = new CustomLabel(game);
 
         gamePanel = new GamePanel(game);
+        gamePanel.recalculate();
         //JPanel p = new JPanel();
         //p.setBorder(new RoundedBorder(15,Color.BLACK,3));
 

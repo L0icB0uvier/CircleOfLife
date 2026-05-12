@@ -1,6 +1,7 @@
 package View.CustomComponents;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.*;
@@ -48,6 +49,8 @@ public class GamePanel extends JComponent implements Observer {
     int x0, y0;
     double innerRadius, outerRadius;
 
+    boolean requireCalculation = true;
+
     private final float evolveHighlightThickness = 6.0f;
     private final float feedHighlightThickness = 6.0f;
 
@@ -66,8 +69,13 @@ public class GamePanel extends JComponent implements Observer {
             new imageRatio(0.29032, 0.11066), // 11
     };
 
+    private Point2D.Double[] shapeOriginPoints;
+
     private final double circleHexagonHeight = 0.04708;
     private final double circleInterHexagonDistance = 0.04077;
+    private double circleStoneDistance;
+    int circleStoneImageSize;
+    double circleStoneOffset;
 
     private final Map<Integer, Integer> circleShapeType = Map.ofEntries(
             entry(0, 0),
@@ -86,8 +94,19 @@ public class GamePanel extends JComponent implements Observer {
 
     public GamePanel(Game game) {
         this.game = game;
+
+        this.addHierarchyBoundsListener(new java.awt.event.HierarchyBoundsAdapter() {
+            @Override
+            public void ancestorResized(java.awt.event.HierarchyEvent e) {
+                requireCalculation = true;
+            }
+        });
+
         game.addObserver(this);
-        match=game.getMatch();
+        match = game.getMatch();
+
+        shapeOriginPoints = new Point2D.Double[12];
+
         nSelected = -1;
         mSelected = -1;
         oneMinusAlpha = 1 - alpha;
@@ -111,6 +130,9 @@ public class GamePanel extends JComponent implements Observer {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        if(requireCalculation)
+            recalculate();
+
         drawBoard(g2d);
         drawStones(g2d);
         if(match.isGameOver()){
@@ -122,32 +144,9 @@ public class GamePanel extends JComponent implements Observer {
         //drawEaten(g2d);
     }
 
-    private void drawGameOverMessage(Graphics2D g2d){
-        Font prev = g2d.getFont();
-        String text = "Partie terminée";
-        double targetWidth = getWidth() * 0.25;
+    public void recalculate(){
+        Configuration.config("Recalculate Game Panel");
 
-        Font currentFont = new Font("SansSerif", Font.BOLD, 12);
-        FontMetrics fm = g2d.getFontMetrics(currentFont);
-        int currentWidth = fm.stringWidth(text);
-
-        if (currentWidth > 0) { // Sécurité pour éviter division par zéro
-            double ratio = targetWidth / currentWidth;
-
-            // 4. Appliquer la nouvelle taille
-            float nouvelleTaille = (float) (currentFont.getSize() * ratio);
-            g2d.setFont(currentFont.deriveFont(nouvelleTaille));
-        }
-
-        fm = g2d.getFontMetrics(); // Recalculer les mesures avec la nouvelle taille
-        int x = (int) (getWidth() - fm.stringWidth(text)) / 2;
-        int y = fm.getHeight() + 20;
-        g2d.drawString(text, x, y);
-
-        g2d.setFont(prev);
-    }
-
-    private void drawBoard(Graphics2D g2d){
         int width = getSize().width;
         int height = getSize().height;
 
@@ -175,6 +174,20 @@ public class GamePanel extends JComponent implements Observer {
         outerRadius = (double) stoneImageSize / 2;
         innerRadius = outerRadius * 0.866025404f;
 
+        circleStoneDistance = circleInterHexagonDistance * imageWidth;
+        circleStoneImageSize = (int) Math.round(circleHexagonHeight * imageHeight);
+
+        circleStoneOffset = (double) circleStoneImageSize / 2;
+        for (int i = 0; i < 12; i++) {
+            var ratio = shapePositionRatios[i];
+            shapeOriginPoints[i] = new Point2D.Double(boardX0 + imageWidth * ratio.xRatio(), boardY0 + imageHeight * ratio.yRatio());
+        }
+
+        requireCalculation = false;
+    }
+
+
+    private void drawBoard(Graphics2D g2d){
         g2d.drawImage(imgPlateau, boardX0, boardY0, (int) Math.round(imageWidth), (int) Math.round(imageHeight), null);
     }
 
@@ -261,16 +274,10 @@ public class GamePanel extends JComponent implements Observer {
 
     private void drawCircleShape(Graphics2D g2d, int shapeType, int playerIndex){
         Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(shapeType, circleShapeType.get(shapeType));
-        double circleStoneDistance = circleInterHexagonDistance * imageWidth;
-        int circleStoneImageSize = (int) Math.round(circleHexagonHeight * imageHeight);
-
-        var ratio = shapePositionRatios[shapeType];
-        double originX = boardX0 + imageWidth * ratio.xRatio();
-        double originY = boardY0 + imageHeight * ratio.yRatio();
 
         for(Coordinate coord : coords){
-            int x = (int) Math.round((originX + ((coord.col() * circleStoneDistance) - (coord.line() * circleStoneDistance) / 2)) - (double) circleStoneImageSize / 2) ;
-            int y = (int) Math.round((originY + ((Math.sqrt(3) * circleStoneDistance * coord.line()) / 2)) - (double) circleStoneImageSize / 2);
+            int x = (int) Math.round(shapeOriginPoints[shapeType].x + (coord.col() * circleStoneDistance - coord.line() * circleStoneDistance / 2) - circleStoneOffset) ;
+            int y = (int) Math.round((shapeOriginPoints[shapeType].y + ((Math.sqrt(3) * circleStoneDistance * coord.line()) / 2)) - circleStoneOffset);
             drawStone(g2d, playerIndex == 0? imgStonePlayer1 : imgStonePlayer2, x, y, circleStoneImageSize);
         }
     }

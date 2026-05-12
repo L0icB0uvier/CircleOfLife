@@ -16,7 +16,6 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     Game game;
     EventCollector controller;
     JFrame frame;
-    //GraphicalGame graphicalGame;
     GraphicalGame graphicalGame;
 
     GraphicalMainMenu graphicalMainMenu;

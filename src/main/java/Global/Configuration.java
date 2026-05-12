@@ -174,6 +174,12 @@ public class Configuration {
     }
 
     /**
+     * Log un message de config dans la console en utilisant un Logger.
+     * @param s Message à afficher.
+     */
+    public static void config(String s) {instance().logger.config(s);}
+
+    /**
      * Log une erreur dans la console en utilisant un Logger.
      * @param s Message à afficher.
      */
