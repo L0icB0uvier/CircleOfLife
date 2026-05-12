@@ -116,7 +116,7 @@ public abstract class AI {
         double eval;
         // cas récursif : si c'est le tour de l'IA, on sélectionne le coup qui maximise l'évaluation
         if (isMax){
-            double maxEval = Double.MIN_VALUE;
+            double maxEval = -Double.MAX_VALUE;
             List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
             for (Coordinate move : possibleMoves){
                 // copie profonde du match et simulation d'un coup

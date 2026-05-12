@@ -2,6 +2,8 @@ package Controller.IA;
 
 import Model.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -33,7 +35,8 @@ public class EasyAI extends AI{
     @Override
     public Move findMove() {
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
-        double maxEval = Double.MIN_VALUE;
+        Collections.shuffle(possibleMoves);
+        double maxEval = -Double.MAX_VALUE;
         double eval;
         Move best = null;
 
@@ -44,17 +47,11 @@ public class EasyAI extends AI{
             newMatch.playMove(move.line(), move.col());
 
             // évaluation Minimax et mise à jour du coup optimal
-            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), Double.MIN_VALUE, Double.MAX_VALUE, true);
+            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), -Double.MAX_VALUE, Double.MAX_VALUE, true);
             if (eval > maxEval){
                 maxEval = eval;
                 best = new Move(match, move.line(), move.col());
             }
-        }
-
-        // si le coup optimal trouvé par le minimax ne permet pas d'améliorer la configuration actuelle, on joue aléatoirement
-        if (maxEval == evaluate(match, match.getCurrentPlayerIndex())) {
-            Coordinate random = possibleMoves.get(new Random().nextInt(possibleMoves.size()));
-            best = new Move(match, random.line(), random.col());
         }
         return best;
     }
