@@ -121,7 +121,6 @@ public class GameDataManager {
         if (Objects.equals(playerTypes[0], "J")) {
             Configuration.setPlayer1Settings(null);
         } else {
-            System.out.println("in here");
             if (Objects.equals(playerTypes[0], "E")) {
                 Configuration.setPlayer1Settings(AILevel.EASY);
             } else if (Objects.equals(playerTypes[0], "M")) {
@@ -165,7 +164,6 @@ public class GameDataManager {
             Move temp;
             try {
                 temp = readMove(m, scanner);
-                System.out.println(temp.getColumn() + " " + temp.getLine());
                 game.playMove(temp);
             } catch (Exception e) {
                 e.printStackTrace();
