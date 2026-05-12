@@ -3,6 +3,7 @@ package Controller.IA;
 import Global.Configuration;
 import Model.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -29,14 +30,19 @@ public class HardAI extends AI {
     @Override
     public Move findMove() {
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
-        Coordinate random = possibleMoves.get(new Random().nextInt(possibleMoves.size()));
-        Move best = new Move(match, random.line(), random.col());
-        double maxEval = Double.MIN_VALUE;
+        Collections.shuffle(possibleMoves);
+        double maxEval = -Double.MAX_VALUE;
         double eval;
+        Move best = null;
+
+        // on parcourt les coups possibles et on trouve celui qui maximise l'évaluation de l'heuristique à l'aide d'un Minimax
         for (Coordinate move : possibleMoves){
+            // copie profonde du match et simulation du coup
             Match newMatch = MatchUtils.copy(match);
             newMatch.playMove(move.line(), move.col());
-            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), Double.MIN_VALUE, Double.MAX_VALUE, true);
+
+            // évaluation Minimax et mise à jour du coup optimal
+            eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
             if (eval > maxEval){
                 maxEval = eval;
                 best = new Move(match, move.line(), move.col());
