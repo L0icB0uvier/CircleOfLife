@@ -34,6 +34,7 @@ public class GamePanel extends JComponent implements Observer {
     int mouseX, mouseY;
     int nSelected, mSelected;
 
+    boolean requireCalculation = true;
     boolean previewEnabled = false;
     boolean drawCenter = false;
 
@@ -49,10 +50,18 @@ public class GamePanel extends JComponent implements Observer {
     int x0, y0;
     double innerRadius, outerRadius;
 
-    boolean requireCalculation = true;
 
     private final float evolveHighlightThickness = 6.0f;
     private final float feedHighlightThickness = 6.0f;
+
+    // Dessin des formes dans le cercle
+    private final double circleHexagonHeight = 0.04708;
+    private final double circleInterHexagonDistance = 0.04077;
+    private double circleStoneDistance;
+    int circleStoneImageSize;
+    double circleStoneOffset;
+
+    private final Point2D.Double[] shapeOriginPoints;
 
     private final imageRatio[] shapePositionRatios = new imageRatio[]{
             new imageRatio(0.48825, 0.07045), // 0
@@ -69,13 +78,6 @@ public class GamePanel extends JComponent implements Observer {
             new imageRatio(0.29032, 0.11066), // 11
     };
 
-    private Point2D.Double[] shapeOriginPoints;
-
-    private final double circleHexagonHeight = 0.04708;
-    private final double circleInterHexagonDistance = 0.04077;
-    private double circleStoneDistance;
-    int circleStoneImageSize;
-    double circleStoneOffset;
 
     private final Map<Integer, Integer> circleShapeType = Map.ofEntries(
             entry(0, 0),
@@ -249,7 +251,13 @@ public class GamePanel extends JComponent implements Observer {
         if (n==-1 || m==-1) return false;
         int contentType = match.getContentAt(m, n);
         if(contentType > 0 || contentType == -3)
+        {
+            if(contentType > 0){
+                Critter critter = match.getCritterAtCoord(new Coordinate(n, m));
+                drawCircleShape(g2d, critter.type(), critter.player());
+            }
             return false;
+        }
 
         Point drawPos = getStoneDrawPositions(n, m);
 
