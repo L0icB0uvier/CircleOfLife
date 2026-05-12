@@ -27,7 +27,8 @@ public class GamePanel extends JComponent implements Observer {
             imgStonePlayer2,
             imgStonePlayer1Preview,
             imgStonePlayer2Preview,
-            imgStoneDisabled;
+            imgStoneDisabled,
+            imgStoneHover;
 
     int imgSrcHeight, imgSrcWidth;
     double imageWidth, imageHeight;
@@ -126,6 +127,7 @@ public class GamePanel extends JComponent implements Observer {
         imgStonePlayer1Preview = (BufferedImage) readImage("Blue_Stone_transparent");
         imgStonePlayer2Preview = (BufferedImage) readImage("Red_Stone_transparent");
         imgStoneDisabled = (BufferedImage) readImage("Disabled_Stone");
+        imgStoneHover = (BufferedImage) readImage("stone_hover");
     }
 
     @Override
@@ -254,7 +256,7 @@ public class GamePanel extends JComponent implements Observer {
         {
             if(contentType > 0){
                 Critter critter = match.getCritterAtCoord(new Coordinate(n, m));
-                drawCircleShape(g2d, critter.type(), critter.player());
+                drawCircleShape(g2d, critter.type(), imgStoneHover);
             }
             return false;
         }
@@ -280,13 +282,13 @@ public class GamePanel extends JComponent implements Observer {
         return true;
     }
 
-    private void drawCircleShape(Graphics2D g2d, int shapeType, int playerIndex){
+    private void drawCircleShape(Graphics2D g2d, int shapeType, Image img){
         Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(shapeType, circleShapeType.get(shapeType));
 
         for(Coordinate coord : coords){
             int x = (int) Math.round(shapeOriginPoints[shapeType].x + (coord.col() * circleStoneDistance - coord.line() * circleStoneDistance / 2) - circleStoneOffset) ;
             int y = (int) Math.round((shapeOriginPoints[shapeType].y + ((Math.sqrt(3) * circleStoneDistance * coord.line()) / 2)) - circleStoneOffset);
-            drawStone(g2d, playerIndex == 0? imgStonePlayer1 : imgStonePlayer2, x, y, circleStoneImageSize);
+            drawStone(g2d, img, x, y, circleStoneImageSize);
         }
     }
 
@@ -322,13 +324,17 @@ public class GamePanel extends JComponent implements Observer {
                 }
             }
             if(eatenShape >= 0)
-                drawCircleShape(g2d, eatenShape, match.getOpponentPlayerIndex());
+                drawCircleShape(g2d, eatenShape, getPlayerImage(match.getOpponentPlayerIndex()));
         }
 
         if(showEvolveFeedback)
             drawHighlight(g2d, evolveCoords,  Color.yellow, evolveHighlightThickness);
 
-        drawCircleShape(g2d, evolveInto, match.getCurrentPlayerIndex());
+        drawCircleShape(g2d, evolveInto, getPlayerImage(match.getCurrentPlayerIndex()));
+    }
+
+    private Image getPlayerImage(int player){
+        return player == 0? imgStonePlayer1 : imgStonePlayer2;
     }
 
 
