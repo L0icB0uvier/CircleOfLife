@@ -64,6 +64,10 @@ public class GamePanel extends JComponent implements Observer {
             new imageRatio(0.29032, 0.11066), // 11
     };
 
+    private final double circleHexagonHeight = 0.04708;
+    private final double circleInterHexagonDistance = 0.04077;
+
+
     private final Map<Integer, Integer> circleShapeType = Map.ofEntries(
             entry(0, 0),
             entry(1, 2),
