@@ -1,13 +1,12 @@
 package Model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ShapeUtils {
     private static final Map<Set<Coordinate>, Integer> shapes;
 
     static {
-        Map<Set<Coordinate>, Integer> tempShapes = new HashMap<>();
+        Map<Set<Coordinate>, Integer> tempShapes = new LinkedHashMap<>();
 
         // ID 0
         tempShapes.put(Set.of(new Coordinate(0, 0)), 0);
@@ -144,5 +143,17 @@ public class ShapeUtils {
         if(id >= keys.size()) return null;
 
         return new Critter(keys.get(id), player);
+    }
+
+    public static Set<Coordinate> getShapeCoordinatesForId(int type, int id){
+        List<Set<Coordinate>> keys = shapes.entrySet().stream()
+                .filter(entry -> Objects.equals(entry.getValue(), type))
+                .map(Map.Entry::getKey)
+                .toList();
+
+        if(id >= keys.size())
+            return Collections.emptySet();
+
+        return keys.get(id);
     }
 }

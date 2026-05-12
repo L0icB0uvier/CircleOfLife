@@ -3,9 +3,8 @@ package View.CustomComponents;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -13,6 +12,9 @@ import javax.swing.JComponent;
 import Global.Configuration;
 import Model.*;
 import Patterns.Observer;
+import View.Utils.imageRatio;
+
+import static java.util.Map.entry;
 
 public class GamePanel extends JComponent implements Observer {
     Game game;
@@ -31,20 +33,51 @@ public class GamePanel extends JComponent implements Observer {
     int nSelected, mSelected;
 
     boolean previewEnabled = false;
-    boolean drawCenter = true;
+    boolean drawCenter = false;
 
     double alpha = 1;
     double oneMinusAlpha;
 
-    double x0Ratio = 0.35505, y0Ratio = 0.24893;
-    double ratioDistanceX = 0.07248;
-    double hexagonHeightRatio = 0.08461;
+    private final imageRatio boardOriginRatio = new imageRatio(0.35505, 0.24893);
+    private final double ratioDistanceX = 0.07248;
+    private final double hexagonHeightRatio = 0.08461;
     double distance;
     int stoneImageSize;
     int x0, y0;
     double innerRadius, outerRadius;
+
     private final float evolveHighlightThickness = 6.0f;
     private final float feedHighlightThickness = 6.0f;
+
+    private final imageRatio[] shapePositionRatios = new imageRatio[]{
+            new imageRatio(1, 1), // 0
+            new imageRatio(1, 1), // 1
+            new imageRatio(1, 1), // 2
+            new imageRatio(1, 1), // 3
+            new imageRatio(1, 1), // 4
+            new imageRatio(1, 1), // 5
+            new imageRatio(1, 1), // 6
+            new imageRatio(1, 1), // 7
+            new imageRatio(1, 1), // 8
+            new imageRatio(1, 1), // 9
+            new imageRatio(1, 1), // 10
+            new imageRatio(1, 1), // 11
+    };
+
+    private final Map<Integer, Integer> circleShapeType = Map.ofEntries(
+            entry(0, 0),
+            entry(1, 2),
+            entry(2, 1),
+            entry(3, 1),
+            entry(4, 1),
+            entry(5, 0),
+            entry(6, 3),
+            entry(7, 6),
+            entry(8, 1),
+            entry(9, 2),
+            entry(10, 3),
+            entry(11, 1)
+    );
 
     public GamePanel(Game game) {
         this.game = game;
@@ -130,8 +163,8 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         // Calcul du centre de la case 0:0 du plateau
-        x0 = (int) Math.round(x + (x0Ratio * imageWidth));
-        y0 = (int) Math.round(y + (y0Ratio * imageHeight));
+        x0 = (int) Math.round(x + (boardOriginRatio.xRatio() * imageWidth));
+        y0 = (int) Math.round(y + (boardOriginRatio.yRatio() * imageHeight));
         distance = ratioDistanceX * imageWidth;
 
         // Calcule taille de l'image des pierres
@@ -222,6 +255,14 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         return true;
+    }
+
+    private void drawCircleShape(int shapeType, int playerIndex){
+
+    }
+
+    private void drawCircleShapeHexagon(int x, int y){
+
     }
 
     private void drawFeedforward(Graphics2D g2d){
