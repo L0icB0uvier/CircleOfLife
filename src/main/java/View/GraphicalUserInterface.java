@@ -44,24 +44,24 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     @Override
     public void updateSettings() {
 
-        if(graphicalNewGame.player1Button.isSelected()) {
+        if(graphicalNewGame.player1Choice.getValue().equals("Joueur")) {
             Configuration.setPlayer1Settings(null);
         } else {
-            if (Objects.equals(graphicalNewGame.AI1ComboBox.getSelectedItem(), "Facile")) {
+            if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Facile")) {
                 Configuration.setPlayer1Settings(AILevel.EASY);
-            } else if (Objects.equals(graphicalNewGame.AI1ComboBox.getSelectedItem(), "Moyen")) {
+            } else if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Moyen")) {
                 Configuration.setPlayer1Settings(AILevel.MEDIUM);
             } else {
                 Configuration.setPlayer1Settings(AILevel.HARD);
             }
         }
-        if(graphicalNewGame.player2Button.isSelected()) {
+        if(graphicalNewGame.player2Choice.getValue().equals("Joueur")) {
             Configuration.setPlayer2Settings(null);
 
         }else {
-            if (Objects.equals(graphicalNewGame.AI2ComboBox.getSelectedItem(), "Facile")) {
+            if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Facile")) {
                 Configuration.setPlayer2Settings(AILevel.EASY);
-            } else if (Objects.equals(graphicalNewGame.AI2ComboBox.getSelectedItem(), "Moyen")) {
+            } else if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Moyen")) {
                 Configuration.setPlayer2Settings(AILevel.MEDIUM);
             } else {
                 Configuration.setPlayer2Settings(AILevel.HARD);

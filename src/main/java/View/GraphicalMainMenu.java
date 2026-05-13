@@ -1,6 +1,7 @@
 package View;
 
 import View.Utils.UIColor;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -21,6 +22,9 @@ public class GraphicalMainMenu extends JPanel {
         menuBox = Box.createVerticalBox();
         this.parent = parent;
         Map<JComponent, Integer> sizes = new HashMap<>();
+
+        MigLayout layout = new MigLayout("fill, insets 10 10 10 10", "[left][center][left][center][center][]","[10%][10%][grow][10%]" );
+        this.setLayout(layout);
 
         titleFont = new Font("Arial", Font.BOLD, Math.min(parent.getHeight(), parent.getWidth())/10);
         menuBox.add(Box.createGlue());

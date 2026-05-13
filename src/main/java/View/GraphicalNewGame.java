@@ -1,231 +1,157 @@
 package View;
 
-import View.Adapter.ToggleButtonAdapter;
+import View.Adapter.AIPlayerAdapter;
+import View.Utils.ChoiceBox;
+import View.Utils.FontScaler;
 import View.Utils.UIColor;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GraphicalNewGame extends JPanel {
-
-    class MyUI extends javax.swing.plaf.metal.MetalToggleButtonUI
-    {
-        Color selected;
-        public MyUI(Color selected) {
-            super();
-            this.selected = selected;
-        }
-
-        public Color getSelectColor(){
-            return selected;
-        }
-    }
-
-    public class CustonToggleButton extends JToggleButton {
-        String text;
-        Color selected, notSelected;
-        public CustonToggleButton(String text, Color selected, Color notSelected) {
-            super(text);
-            this.text = text;
-            this.selected = selected;
-            this.notSelected = notSelected;
-            setUI(new MyUI(selected));
-        }
-
-        public void paintComponent(Graphics g) {
-            if(!isSelected()) {
-                setBackground(notSelected);
-            }
-            super.paintComponent(g);
-        }
-    }
-    Box newGameBox;
     JFrame parent;
-    JToggleButton player1Button, AI1Button, player2Button, AI2Button;
-    ButtonGroup player1Group, player2Group;
     JButton cancelButton, startButton;
-    JComboBox<String> AI1ComboBox, AI2ComboBox;
-    final int SIZE_TEXT = 35;
-    final int SIZE_TITLE = 23;
+    ChoiceBox player1Choice, player2Choice, AI1LevelChoice, AI2LevelChoice;
 
     public GraphicalNewGame(JFrame parent){
         super(new BorderLayout());
-        newGameBox = Box.createVerticalBox();
         this.parent = parent;
-        Map<JComponent, Integer> sizes = new HashMap<>();
+        MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10", "[left]","[20%][15%, align top][15%, align top]push[10%]" );
+        this.setLayout(layoutPage);
+        JLabel titleLabel = createLabel("Paramètres de la partie");
 
-        newGameBox.add(Box.createGlue());
-        JLabel titleLabel = createLabel("Choix de la grille");
-        sizes.put(titleLabel, SIZE_TITLE);
-        newGameBox.add(titleLabel);
-        newGameBox.add(new Box.Filler(new Dimension(getWidth(), 30), new Dimension(getWidth(), 40), new Dimension(getWidth(), 75)));
+        player1Choice = new ChoiceBox("Joueur", "IA");
+        player2Choice = new ChoiceBox("Joueur", "IA");
+        player1Choice.setVisible(true);
+        player2Choice.setVisible(true);
+        AI1LevelChoice = new ChoiceBox("Facile", "Moyen", "Difficile");
+        AI2LevelChoice = new ChoiceBox("Facile", "Moyen", "Difficile");
+        JLabel player1NameLabel = createLabel("Nom :");
+        JLabel player2NameLabel = createLabel("Nom :");
+        JLabel AI1LevelLabel = createLabel("Difficulté : ");
+        JLabel AI2LevelLabel = createLabel("Difficulté : ");
 
-        Box sliderLabelsBox = Box.createHorizontalBox();
-        sliderLabelsBox.add(Box.createGlue());
-        JLabel columnsLabel = createLabel("Nombre de colonnes");
-        sizes.put(columnsLabel, SIZE_TEXT);
-        sliderLabelsBox.add(columnsLabel);
-        sliderLabelsBox.add(Box.createGlue());
-
-        JLabel linesLabel = createLabel("Nombre de lignes");
-        sizes.put(linesLabel, SIZE_TEXT);
-        sliderLabelsBox.add(linesLabel);
-        sliderLabelsBox.add(Box.createGlue());
-        newGameBox.add(sliderLabelsBox);
-
-        JLabel playersLabel = createLabel("Choix joueurs");
-        sizes.put(playersLabel, SIZE_TEXT);
-        newGameBox.add(playersLabel);
-
-        Box player1Box = Box.createHorizontalBox();
-        player1Box.add(Box.createGlue());
+        
+        String playerLayout = "fill, insets 0 10 0 10, hidemode 1";
+        String playerLayoutCol = "[5%, align right][20%][10%, align right][20%]";
+        String playerLayoutRow = "[align center, fill]";
+        JComponent player1Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
 
         JLabel player1Label = createLabel("Joueur 1 :");
         player1Label.setForeground(UIColor.RED);
-        sizes.put(player1Label, SIZE_TEXT);
-        player1Box.add(player1Label);
-        player1Box.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
-        player1Button = createToggleButton("J1", UIColor.RED, UIColor.WHITE);
-        player1Button.setBackground(UIColor.RED);
-        player1Button.setForeground(Color.BLACK);
-        player1Button.setSelected(true);
-        sizes.put(player1Button, SIZE_TEXT);
-        player1Box.add(player1Button);
-        AI1Button = createToggleButton("IA", UIColor.RED, UIColor.WHITE);
-        AI1Button.setBackground(UIColor.RED);
-        AI1Button.setForeground(Color.DARK_GRAY);
+        AI1LevelLabel.setVisible(false);
 
-        player1Group = new ButtonGroup();
-        player1Group.add(player1Button);
-        player1Group.add(AI1Button);
-        sizes.put(AI1Button, SIZE_TEXT);
-        player1Box.add(AI1Button);
+        JTextField player1NameTextField = createJTextField("joueur1");
+        AI1LevelChoice.setVisible(false);
 
-        player1Box.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
-
-        JPanel card1 = new JPanel(new GridLayout(1, 1));
-
-        AI1ComboBox = createComboBox(new String[]{"Facile", "Moyen", "Difficile"});
-        AI1ComboBox.setBackground(UIColor.RED);
-        AI1ComboBox.setBorder(BorderFactory.createLineBorder(UIColor.RED));
-        sizes.put(AI1ComboBox, SIZE_TEXT);
-
-        card1.add(AI1ComboBox);
-        card1.setMaximumSize((new Dimension(150, 40)));
-        AI1ComboBox.setVisible(false);
-
-        player1Box.add(card1);
-        player1Button.addActionListener(new ToggleButtonAdapter(player1Group, AI1Button.getModel(), AI1ComboBox, player1Box));
-        AI1Button.addActionListener(new ToggleButtonAdapter(player1Group, AI1Button.getModel(), AI1ComboBox, player1Box));
-        player1Group.setSelected(player1Button.getModel(), true);
-        player1Box.add(Box.createGlue());
-        newGameBox.add(player1Box);
-
-        Box player2Box = Box.createHorizontalBox();
-
-        player2Box.add(Box.createGlue());
+        JComponent player2Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
 
         JLabel player2Label = createLabel("Joueur 2 :");
         player2Label.setForeground(UIColor.ALT_BLUE);
-        sizes.put(player2Label, SIZE_TEXT);
-        player2Box.add(player2Label);
-        player2Box.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
+        AI2LevelLabel.setVisible(false);
 
-        player2Group = new ButtonGroup();
-        player2Button = createToggleButton("J2", UIColor.ALT_BLUE, UIColor.WHITE);
-        player2Button.setBackground(UIColor.ALT_BLUE);
-        player2Button.setForeground(Color.BLACK);
-        player2Button.setSelected(true);
-        sizes.put(player2Button, SIZE_TEXT);
-        player2Box.add(player2Button);
-        AI2Button = createToggleButton("IA", UIColor.ALT_BLUE, UIColor.WHITE);
-        AI2Button.setBackground(UIColor.ALT_BLUE);
-        AI2Button.setForeground(Color.BLACK);
-        sizes.put(AI2Button, SIZE_TEXT);
+        JTextField player2NameTextField = createJTextField("joueur2");
+        AI2LevelChoice.setVisible(false);
 
-        player2Group.add(player2Button);
-        player2Group.add(AI2Button);
-
-        player2Box.add(AI2Button);
-        player2Box.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
-
-        JPanel card2 = new JPanel(new GridLayout(1, 1));
-
-        AI2ComboBox = createComboBox(new String[]{"Facile", "Moyen", "Difficile"});
-        AI2ComboBox.setBackground(UIColor.ALT_BLUE);
-        AI2ComboBox.setBorder(BorderFactory.createLineBorder(UIColor.ALT_BLUE));
-
-        sizes.put(AI2ComboBox, SIZE_TEXT);
-        card2.add(AI2ComboBox);
-        card2.setMaximumSize((new Dimension(150, 40)));
-        AI2ComboBox.setVisible(false);
-
-        player2Button.addActionListener(new ToggleButtonAdapter(player2Group, AI2Button.getModel(), AI2ComboBox, player2Box));
-        AI2Button.addActionListener(new ToggleButtonAdapter(player2Group, AI2Button.getModel(), AI2ComboBox, player2Box));
-        player2Group.setSelected(player2Button.getModel(), true);
-
-        player2Box.add(card2);
-        player2Box.add(Box.createGlue());
-        newGameBox.add(player2Box);
-
-        Box buttonsBox = Box.createHorizontalBox();
+        MigLayout layoutButtons = new MigLayout("fill, insets 10 10 10 10", "[sg]push[sg]", "[]");
+        JComponent buttonsComp = new JPanel(layoutButtons);
 
         cancelButton = createBorderedButton("Annuler");
         cancelButton.setBackground(UIColor.RED);
-        sizes.put(cancelButton, SIZE_TEXT);
-        buttonsBox.add(cancelButton);
-        buttonsBox.add(new Box.Filler(new Dimension(50, getHeight()), new Dimension(100, getHeight()), new Dimension(150, getHeight())));
-
         startButton = createBorderedButton("Démarrer");
         startButton.setBackground(UIColor.BACKGROUND);
-        sizes.put(startButton, SIZE_TEXT);
-        buttonsBox.add(startButton);
-        newGameBox.add(buttonsBox);
-        newGameBox.add(Box.createGlue());
 
-        this.add(newGameBox);
-        this.addComponentListener(new ResizedWindow(sizes, parent));
+        player1Choice.setMinimumSize(new Dimension(0, 0));
+        player2Choice.setMinimumSize(new Dimension(0, 0));
+        AI1LevelChoice.setMinimumSize(new Dimension(0, 0));
+        AI2LevelChoice.setMinimumSize(new Dimension(0, 0));
+        player1NameLabel.setMinimumSize(new Dimension(0, 0));
+        player2NameLabel.setMinimumSize(new Dimension(0, 0));
+        AI1LevelLabel.setMinimumSize(new Dimension(0, 0));
+        AI2LevelLabel.setMinimumSize(new Dimension(0, 0));
+        player1Label.setMinimumSize(new Dimension(0, 0));
+        player2Label.setMinimumSize(new Dimension(0, 0));
+        player1NameTextField.setMinimumSize(new Dimension(0, 0));
+        player2NameTextField.setMinimumSize(new Dimension(0, 0));
+        player1Comp.setMinimumSize(new Dimension(0, 0));
+        player2Comp.setMinimumSize(new Dimension(0, 0));
+
+        player1Comp.add(player1Label, "cell 0 0");
+        player1Comp.add(player1Choice, "cell 1 0, grow");
+        player1Comp.add(player1NameLabel, "cell 2 0");
+        player1Comp.add(AI1LevelLabel, "cell 2 0");
+        player1Comp.add(player1NameTextField, "cell 3 0, growx, hmax 50%");
+        player1Comp.add(AI1LevelChoice, "cell 3 0, growx, height 100%");
+
+        player2Comp.add(player2Label, "cell 0 0");
+        player2Comp.add(player2Choice, "cell 1 0, grow");
+        player2Comp.add(player2NameLabel, "cell 2 0");
+        player2Comp.add(AI2LevelLabel, "cell 2 0");
+        player2Comp.add(player2NameTextField, "cell 3 0, growx, hmax 50%");
+        player2Comp.add(AI2LevelChoice, "cell 3 0, growx, height 100%");
+
+        buttonsComp.add(cancelButton, "cell 0 0, height 25%");
+        buttonsComp.add(startButton, "cell 1 0");
+
+        buttonsComp.setMinimumSize(new Dimension(0, 0));
+
+        this.add(titleLabel, "cell 0 0, growy");
+        this.add(player1Comp, "cell 0 1, grow");
+        this.add(player2Comp, "cell 0 2, grow");
+        this.add(buttonsComp, "cell 0 3, grow");
+        titleLabel.addComponentListener(new FontScaler(titleLabel));
+        player1Comp.addComponentListener(new FontScaler(player1Label, player2Label, player1NameLabel, player2NameLabel, AI1LevelLabel, AI2LevelLabel));
+        player1NameTextField.addComponentListener(new FontScaler(0.5f, player1NameTextField));
+        player2NameTextField.addComponentListener(new FontScaler(0.5f, player2NameTextField));
+        buttonsComp.addComponentListener(new FontScaler(cancelButton, startButton));
+
+        player1Choice.leftBtn.addActionListener(new AIPlayerAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice));
+        player1Choice.rightBtn.addActionListener(new AIPlayerAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice));
+        player2Choice.leftBtn.addActionListener(new AIPlayerAdapter(player2NameLabel, AI2LevelChoice, player2NameTextField, AI2LevelLabel, player2Choice));
+        player2Choice.rightBtn.addActionListener(new AIPlayerAdapter(player2NameLabel, AI2LevelChoice, player2NameTextField, AI2LevelLabel, player2Choice));
+
+        this.setVisible(true);
+        this.requestFocusInWindow();
+    }
+
+    private static JTextField createJTextField(String placeholder) {
+        JTextField textField = new JTextField();
+        textField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (textField.getText().equals(placeholder) && textField.getForeground().equals(Color.LIGHT_GRAY)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (textField.getText().isEmpty()) {
+                    textField.setForeground(Color.LIGHT_GRAY);
+                    textField.setText(placeholder);
+                }
+            }
+        });
+        textField.setForeground(Color.LIGHT_GRAY);
+        textField.setText(placeholder);
+        textField.requestFocus(false);
+        return textField;
     }
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setFocusable(false);
         return label;
-    }
-
-    private JToggleButton createToggleButton(String text, Color selected, Color notSelected) {
-        JToggleButton button = new CustonToggleButton(text, selected, notSelected);
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setFocusable(false);
-        return button;
     }
 
     private JButton createBorderedButton(String text) {
         JButton button = new JButton(text);
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setFocusable(false);
         return button;
-    }
-
-    private JSlider createSlider(int min, int max) {
-        JSlider slider = new JSlider(min, max);
-        slider.setMajorTickSpacing(3);
-        slider.setMinorTickSpacing(1);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-        slider.setAlignmentX(Component.CENTER_ALIGNMENT);
-        slider.setFocusable(false);
-        return slider;
-    }
-
-    private JComboBox<String> createComboBox(String[] strings) {
-        JComboBox<String> comboBox = new JComboBox<>(strings);
-        comboBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-        comboBox.setFocusable(false);
-        comboBox.setPreferredSize(new Dimension(150, 40));
-        comboBox.setMaximumSize(new Dimension(150, 40));
-        return comboBox;
     }
 }
