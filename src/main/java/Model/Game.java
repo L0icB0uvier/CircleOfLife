@@ -19,6 +19,10 @@ public class Game extends Observable {
         return match.currentPlayerIndex;
     }
 
+    public int getWinningPlayer(){
+        return match.getWinner();
+    }
+
     /**
      * Vérifie si le coup est valide dans le match en cours.
      * @param coordinate Coordonnées du coup.

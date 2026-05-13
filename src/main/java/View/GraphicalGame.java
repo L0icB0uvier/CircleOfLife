@@ -83,8 +83,8 @@ public class GraphicalGame extends JPanel {
         playerInfos.get(1).updateScore(playerData[1]);
     }
 
-    public void gameOver(){
-        gameInfo.gameOver(0);
+    public void gameOver(int winningPlayerIndex){
+        gameInfo.gameOver(winningPlayerIndex);
     }
 
 }

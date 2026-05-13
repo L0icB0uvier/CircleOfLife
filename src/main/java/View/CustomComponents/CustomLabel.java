@@ -41,6 +41,7 @@ public class CustomLabel extends JPanel {
     }
 
     public void gameOver(int winner){
+        updatePlayerTurn(winner);
         text.setText(" a gagné la partie");
     }
 }

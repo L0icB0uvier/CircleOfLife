@@ -75,7 +75,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     }
 
     public void gameOver(){
-        graphicalGame.gameOver();
+        graphicalGame.gameOver(game.getWinningPlayer());
     }
 
     @Override
@@ -123,9 +123,11 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     @Override
     public void update() {
         if (graphicalGame==null) return;
-        playerTurn(game.getCurrentPlayerIndex());
         if(game.isGameOver()){
             gameOver();
+        }
+        else{
+            playerTurn(game.getCurrentPlayerIndex());
         }
         updateScore(game.getMatch().getPlayerData());
         updateUndoRedoEnabled();
