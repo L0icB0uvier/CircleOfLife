@@ -10,8 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GraphicalNewGame extends JPanel {
     JFrame parent;
@@ -124,7 +122,7 @@ public class GraphicalNewGame extends JPanel {
         textField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (textField.getText().equals(placeholder) && textField.getForeground().equals(Color.LIGHT_GRAY)) {
+                if (textField.getForeground().equals(Color.LIGHT_GRAY)) {
                     textField.setText("");
                     textField.setForeground(Color.BLACK);
                 }

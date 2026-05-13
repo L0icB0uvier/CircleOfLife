@@ -143,6 +143,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         graphicalMainMenu.newGameButton.addActionListener(new ChangePageAdapter(this, graphicalNewGame));
         graphicalMainMenu.continueButton.addActionListener(new ContinueGameAdapter(controller, this));
+        graphicalMainMenu.loadButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de chargement
+        graphicalMainMenu.tutorialButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de tuto
+        graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
         graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this));
         graphicalNewGame.startButton.addActionListener(new NewGameAdapter(controller));
@@ -150,7 +153,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         frame.addKeyListener(new KeyboardAdapter(controller));
 
-        frame.setContentPane(graphicalNewGame);
+        frame.setContentPane(graphicalMainMenu);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
