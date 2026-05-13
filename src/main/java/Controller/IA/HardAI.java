@@ -13,7 +13,6 @@ public class HardAI extends AI {
     public HardAI(Match match) {
         super(match);
         aiLevel = AILevel.HARD;
-        Configuration.readInt("DepthAI");
     }
 
     // TODO : trouver une heuristique pour l'IA difficile en plus du score
