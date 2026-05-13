@@ -57,9 +57,14 @@ public class GamePanel extends JComponent implements Observer {
     private Color eatenColor = Color.YELLOW;
     private Color hoverColor = Color.CYAN;
 
+    private boolean showCircleHoverHighlight = true;
+    private boolean showBoardHoverHighlight = true;
+    private boolean useNeutralStoneImageForHoverInCircle = false;
+    private boolean showBoardHightlightEffect = true;
+
     private final float boardEvolveThicknessRatio = 0.006f;
     private final float boardEatenThicknessRatio = 0.003f;
-    private final float circleThicknessRatio = 0.003f;
+    private final float circleThicknessRatio = 0.0035f;
 
     private float boardEvolveHighlightThickness;
     private float boardEatenHighlightThickness;
@@ -273,10 +278,15 @@ public class GamePanel extends JComponent implements Observer {
         {
             if(contentType > 0){
                 Critter critter = match.getCritterAtCoord(new Coordinate(n, m));
-                drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), hoverColor, boardEvolveHighlightThickness);
+
+                if(showBoardHoverHighlight)
+                    drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), hoverColor, boardEvolveHighlightThickness);
+
                 Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(critter.type(), circleShapeTypeIds.get(critter.type()));
-                drawCircleShape(g2d, critter.type(), getPlayerImage(critter.player()));
-                drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, hoverColor, circleHighlightThickness);
+                drawCircleShape(g2d, critter.type(),useNeutralStoneImageForHoverInCircle? imgStoneDisabled : getPlayerImage(critter.player()));
+
+                if(showCircleHoverHighlight)
+                    drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, hoverColor, circleHighlightThickness);
             }
             return false;
         }
@@ -328,7 +338,8 @@ public class GamePanel extends JComponent implements Observer {
             if(!opponentsNeighbors.isEmpty()){
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
-                        drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), eatenColor, boardEatenHighlightThickness);
+                        if(showBoardHightlightEffect)
+                            drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), eatenColor, boardEatenHighlightThickness);
                         eatenShape = critter.type();
                     }
                 }
@@ -337,7 +348,8 @@ public class GamePanel extends JComponent implements Observer {
                 drawCircleShapeWithHighlight(g2d, eatenShape, eatenColor, circleHighlightThickness, getPlayerImage(match.getOpponentPlayerIndex()));
         }
 
-        drawBoardCritterHighlight(g2d, evolveCoords, evolveColor, boardEvolveHighlightThickness);
+        if(showBoardHightlightEffect)
+            drawBoardCritterHighlight(g2d, evolveCoords, evolveColor, boardEvolveHighlightThickness);
         drawCircleShapeWithHighlight(g2d, evolveInto, evolveColor, circleHighlightThickness, getPlayerImage(match.getCurrentPlayerIndex()));
     }
 
