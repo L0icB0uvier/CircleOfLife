@@ -1,4 +1,4 @@
 package View.Utils;
 
-public record imageRatio(double xRatio, double yRatio) {
+public record imageRatio(float xRatio, float yRatio) {
 }

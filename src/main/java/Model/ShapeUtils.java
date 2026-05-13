@@ -112,6 +112,19 @@ public class ShapeUtils {
     public static Set<Coordinate> normalizeCoordinate(Set<Coordinate> boardCoordinate) {
         if(boardCoordinate == null || boardCoordinate.isEmpty()) return null;
 
+        Coordinate topLeft = getTopLeftCoordinate(boardCoordinate);
+
+        Set<Coordinate> normalized = new HashSet<>();
+        for(Coordinate coord : boardCoordinate){
+            int normalizedLine = coord.line() - topLeft.line();
+            int normalizedCol = coord.col() - topLeft.col();
+            normalized.add(new Coordinate(normalizedCol, normalizedLine));
+        }
+
+        return normalized;
+    }
+
+    public static Coordinate getTopLeftCoordinate(Set<Coordinate> boardCoordinate){
         int minLine = Integer.MAX_VALUE;
         int minCol = Integer.MAX_VALUE;
 
@@ -124,14 +137,7 @@ public class ShapeUtils {
                 minCol = coord.col();
         }
 
-        Set<Coordinate> normalized = new HashSet<>();
-        for(Coordinate coord : boardCoordinate){
-            int normalizedLine = coord.line() - minLine;
-            int normalizedCol = coord.col() - minCol;
-            normalized.add(new Coordinate(normalizedCol, normalizedLine));
-        }
-
-        return normalized;
+        return new Coordinate(minCol, minLine);
     }
 
     public static Critter critterFromId(int type, int id, int player){
