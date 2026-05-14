@@ -10,6 +10,8 @@ import View.CustomComponents.PopUpPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public class GraphicalUserInterface implements Runnable, UserInterface, Observer {
@@ -124,6 +126,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     public void update() {
         if (graphicalGame==null) return;
         if(game.isGameOver()){
+            continueGame(game.getMatch().getCurrentPlayerIndex());
             gameOver();
         }
         else{
@@ -159,12 +162,12 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.setVisible(true);
     }
 
-    public void continueGame(int nJoueur){
+    private void continueGame(int nJoueur){
         PopUpPanel popup = new PopUpPanel(controller);
         popup.setLeftButton("Menu");
-        popup.setRightButton("Prochaine manche");
-        popup.setMainLabel("mainText");
-        popup.setSecondaryLabel("Le Joueur " + (nJoueur+1) + " a gagner la manche !");
+        popup.setRightButton("Rejouer");
+        popup.setMiddleButton("Sauvegarder la partie");
+        popup.setMainLabel("Le Joueur " + (nJoueur+1) + " a gagner la manche !");
 
         JDialog dialog = new JDialog(frame,"",true);
         dialog.setSize(800, 300);
@@ -172,8 +175,11 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         dialog.setLocationRelativeTo(frame);
         dialog.add(popup);
 
-        popup.setActionRightButton("",dialog);
-        popup.setActionLeftButton(this,graphicalMainMenu);
+        popup.setActionRightButton("NewGame",dialog);
+        popup.setActionLeftButton(this,graphicalMainMenu,dialog);
+        popup.setActionMiddleButton("Save",dialog);
+        dialog.setVisible(true);
+
     }
 
 

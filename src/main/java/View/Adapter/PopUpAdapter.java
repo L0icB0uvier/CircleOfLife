@@ -48,4 +48,7 @@ public class PopUpAdapter implements ActionListener {
     public void setActionRightButton(String action){
         popup.setActionRightButton(action,dialog);
     }
+    public void setActionMiddleButton(String action){
+        popup.setActionMiddleButton(action,dialog);
+    }
 }

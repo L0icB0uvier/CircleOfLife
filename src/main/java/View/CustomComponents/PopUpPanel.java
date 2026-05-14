@@ -4,7 +4,6 @@ import View.Adapter.ChangePageAdapter;
 import View.EventCollector;
 import View.GraphicalUserInterface;
 import View.Utils.UIColor;
-import View.Utils.UIFont;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +17,7 @@ public class PopUpPanel extends JPanel {
     private JLabel secondaryLabel;
     private JButton leftButton;
     private JButton rightButton;
+    private JButton middleButton;
     private EventCollector controller;
 
     public PopUpPanel(EventCollector controller){
@@ -33,47 +33,50 @@ public class PopUpPanel extends JPanel {
         // Initialisation of all components
         rightButton = new JButton();
         leftButton = new JButton();
+        middleButton = new JButton();
 
         JPanel buttonContainer = new JPanel();
 
         mainLabel   = new JLabel();
         secondaryLabel = new JLabel();
 
-        mainLabel.setFont(UIFont.getFont().deriveFont(50f));
-        secondaryLabel.setFont(UIFont.getFont().deriveFont(20f));
-        rightButton.setFont(UIFont.getFont().deriveFont(25f));
-        leftButton.setFont(UIFont.getFont().deriveFont(25f));
+        mainLabel.setFont(getFont().deriveFont(30f));
+        secondaryLabel.setFont(getFont().deriveFont(30f));
+        rightButton.setFont(getFont().deriveFont(15f));
+        leftButton.setFont(getFont().deriveFont(15f));
+        middleButton.setFont(getFont().deriveFont(15f));
 
         //Adding Buttons to the ButtonContainer
         buttonContainer.setLayout(new GridLayout(1,3,20,20));
         buttonContainer.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         buttonContainer.add(leftButton);
-        buttonContainer.add(new JPanel());
-
+        buttonContainer.add(middleButton);
         buttonContainer.add(rightButton);
 
+        middleButton.setVisible(false);
+
         // Adding components to the layout
-        GridBagConstraints buttonConstraints = new GridBagConstraints();
-        buttonConstraints.gridy = 0;
-        buttonConstraints.weighty=40;
-        buttonConstraints.weightx=1;
-        buttonConstraints.fill= GridBagConstraints.BOTH;
-        gbl.setConstraints(mainLabel,buttonConstraints);
+        GridBagConstraints labelConstraints = new GridBagConstraints();
+        labelConstraints.gridy = 0;
+        labelConstraints.weighty=50;
+        labelConstraints.weightx=1;
+        labelConstraints.fill= GridBagConstraints.BOTH;
+        gbl.setConstraints(mainLabel,labelConstraints);
         this.add(mainLabel);
 
-        buttonConstraints.gridy++;
-        buttonConstraints.weighty=30;
-        gbl.setConstraints(secondaryLabel,buttonConstraints);
+        labelConstraints.gridy++;
+        labelConstraints.weighty=40;
+        gbl.setConstraints(secondaryLabel,labelConstraints);
         this.add(secondaryLabel);
 
-        buttonConstraints.gridy ++;
-        buttonConstraints.weighty=30;
-        gbl.setConstraints(buttonContainer,buttonConstraints);
+        labelConstraints.gridy ++;
+        labelConstraints.weighty=10;
+        gbl.setConstraints(buttonContainer,labelConstraints);
         this.add(buttonContainer);
     }
 
-    public void setLeftButton(String leftButton) {
-        this.leftButton.setText(leftButton);
+    public void setLeftButton(String text) {
+        this.leftButton.setText(text);
     }
 
 
@@ -81,8 +84,14 @@ public class PopUpPanel extends JPanel {
         this.mainLabel.setText("<html><div style='text-align:start;width:610px;padding-left :10px;padding-right :10px'>" + mainLabel + "</div></html>");
     }
 
-    public void setRightButton(String rightButton) {
-        this.rightButton.setText(rightButton);
+    public void setRightButton(String text) {
+        this.rightButton.setText(text);
+
+    }
+
+    public void setMiddleButton(String text) {
+        middleButton    .setVisible(true);
+        this.middleButton.setText(text);
     }
 
     public void setSecondaryLabel(String secondaryLabel) {
@@ -103,8 +112,16 @@ public class PopUpPanel extends JPanel {
             });
     }
 
-    public void setActionLeftButton(GraphicalUserInterface gui,JComponent nPage){
+    public void setActionLeftButton(GraphicalUserInterface gui,JComponent nPage,JDialog dialog){
         leftButton.addActionListener(new ChangePageAdapter(gui,nPage));
+        leftButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.dispose();
+            }
+        });
+
+
     }
 
     public void setActionRightButton(String action,JDialog dialog){
@@ -116,6 +133,20 @@ public class PopUpPanel extends JPanel {
             }
         });
 
+    }
+
+    public void setActionMiddleButton(String action,JDialog dialog){
+        if(middleButton.getClass() == JButton.class){
+            ((JButton) middleButton).addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(!action.equals("Save")){
+                        dialog.dispose();
+                    }
+                    controller.performAction(action);
+                }
+            });
+        }
     }
 
 
