@@ -7,4 +7,9 @@ public record Coordinate(int col, int line) {
         char col = (char) (65 + col());
         return "(" + (line + 1) + ", " + col + ")";
     }
+
+    public String historyFormat(){
+        char col = (char) (65 + col());
+        return ""+(line + 1) + col;
+    }
 }

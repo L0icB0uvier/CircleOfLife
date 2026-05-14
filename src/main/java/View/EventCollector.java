@@ -6,7 +6,7 @@ public interface EventCollector {
      * @param l La ligne du plateau sur laquelle le joueur a cliqué.
      * @param c La colonne du plateau sur laquelle le joueur a cliqué.
      */
-    void handleClick(int l, int c);
+    int handleClick(int l, int c);
 
     /**
      * Gestion d'une demande d'action reçu depuis la vue.

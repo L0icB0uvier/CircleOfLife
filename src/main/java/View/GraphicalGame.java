@@ -15,7 +15,7 @@ public class GraphicalGame extends JPanel {
     GamePanel gamePanel;
     ArrayList<PlayerInfo> playerInfos;
     CustomLabel gameInfo;
-    GameHistory gameHistory;
+    public GameHistory gameHistory;
     GameControlBar gameControlBar;
     Game game;
 
@@ -23,11 +23,11 @@ public class GraphicalGame extends JPanel {
         this.game=game;
         playerInfos = new ArrayList<>();
 
-        MigLayout layout = new MigLayout("fill, insets 10 10 10 10, debug", "[70%][30%]","[10%][10%][grow][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 10 10 10 10, debug", "[70%][30%]","[10%][10%][70%][10%]" );
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
-        gameInfo = new CustomLabel(game);
+        gameInfo = new CustomLabel();
 
         gamePanel = new GamePanel(game);
         gamePanel.recalculate();
@@ -39,10 +39,10 @@ public class GraphicalGame extends JPanel {
         playerInfos.add(new PlayerInfo("Player2",1));
         PlayerInfo player2Info = playerInfos.get(1);
 
-        gameHistory = new GameHistory();
+        gameHistory = new GameHistory(game);
         gameHistory.setBackground(Color.WHITE);
         gameHistory.setOpaque(false);
-        gameHistory.setBorder(new RoundedBorder(15, Color.BLACK,3));
+        //gameHistory.setBorder(new RoundedBorder(15, Color.BLACK,3));
 
         gameControlBar = new GameControlBar();
         gameControlBar.setBackground(UIColor.BACKGROUND);

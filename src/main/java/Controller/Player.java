@@ -8,6 +8,10 @@ import Global.PlayerSettings;
  * Classe de base pour représenter un joueur.
  */
 public class Player {
+
+    public static final int ACTION_NULL = 0;
+    public static final int ACTION_PLACE = 1;
+    public static final int ACTION_EAT = 2;
     Game game;
     boolean isAI;
 
@@ -49,7 +53,7 @@ public class Player {
      * @param l Ligne du clic.
      * @param c Colonne du clic.
      */
-    public void handleClick(int l, int c){
-
+    public int handleClick(int l, int c){
+        return ACTION_NULL;
     }
 }

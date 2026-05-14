@@ -21,8 +21,8 @@ public class Controller implements EventCollector, Observer {
         players = new Player[2];
     }
 
-    public void handleClick(int l, int c){
-        currentPlayer.handleClick(l, c);
+    public int handleClick(int l, int c){
+         return currentPlayer.handleClick(l, c);
     }
 
     @Override

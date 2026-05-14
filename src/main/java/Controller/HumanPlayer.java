@@ -7,6 +7,9 @@ import Model.Move;
 
 public class HumanPlayer extends Player {
 
+
+
+
     public HumanPlayer(Game game){
         this.game = game;
         isAI = false;
@@ -18,11 +21,12 @@ public class HumanPlayer extends Player {
      * @param c Colonne du clic.
      */
     @Override
-    public void handleClick(int l, int c) {
+    public int handleClick(int l, int c) {
         if(!game.isMoveValid(new Coordinate(c, l))){
             Configuration.warning(String.format("Move Invalide - %d:%d", c, l));
-            return;
+            return ACTION_NULL;
         }
         game.playMove(new Move(game.getMatch(), l, c));
+        return ACTION_PLACE;
     }
 }
