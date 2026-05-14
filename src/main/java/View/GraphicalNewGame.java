@@ -15,6 +15,7 @@ public class GraphicalNewGame extends JPanel {
     JFrame parent;
     JButton cancelButton, startButton;
     ChoiceBox player1Choice, player2Choice, AI1LevelChoice, AI2LevelChoice;
+    JTextField player1NameTextField, player2NameTextField;
 
     public GraphicalNewGame(JFrame parent){
         super(new BorderLayout());
@@ -44,7 +45,7 @@ public class GraphicalNewGame extends JPanel {
         player1Label.setForeground(UIColor.RED);
         AI1LevelLabel.setVisible(false);
 
-        JTextField player1NameTextField = createJTextField("joueur1");
+        player1NameTextField = createJTextField("Joueur 1");
         AI1LevelChoice.setVisible(false);
 
         JComponent player2Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
@@ -53,7 +54,7 @@ public class GraphicalNewGame extends JPanel {
         player2Label.setForeground(UIColor.ALT_BLUE);
         AI2LevelLabel.setVisible(false);
 
-        JTextField player2NameTextField = createJTextField("joueur2");
+        player2NameTextField = createJTextField("Joueur 2");
         AI2LevelChoice.setVisible(false);
 
         MigLayout layoutButtons = new MigLayout("fill, insets 10 10 10 10", "[sg]push[sg]", "[]");

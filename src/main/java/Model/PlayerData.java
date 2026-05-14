@@ -7,8 +7,10 @@ import Global.Configuration;
  */
 public class PlayerData implements Cloneable {
     int score;
+    String name;
 
-    public PlayerData(){
+    public PlayerData(String name){
+        this.name = name;
         reset();
     }
 
@@ -20,6 +22,7 @@ public class PlayerData implements Cloneable {
         return score;
     }
 
+    public String getName() { return name; }
 
     public void reset(){
         score = 0;

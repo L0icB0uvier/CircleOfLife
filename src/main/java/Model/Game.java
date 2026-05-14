@@ -11,8 +11,8 @@ public class Game extends Observable {
     /**
      * Crée un nouveau match.
      */
-    public void createMatch(){
-        match = new Match();
+    public void createMatch(String name1, String name2){
+        match = new Match(name1, name2);
     }
 
     public int getCurrentPlayerIndex(){

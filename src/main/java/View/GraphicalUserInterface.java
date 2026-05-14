@@ -45,26 +45,26 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     public void updateSettings() {
 
         if(graphicalNewGame.player1Choice.getValue().equals("Joueur")) {
-            Configuration.setPlayer1Settings(null);
+            Configuration.setPlayer1Settings(null, graphicalNewGame.player1NameTextField.getText().isEmpty() ? "Joueur 1" : graphicalNewGame.player1NameTextField.getText());
         } else {
             if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Facile")) {
-                Configuration.setPlayer1Settings(AILevel.EASY);
+                Configuration.setPlayer1Settings(AILevel.EASY, "IA Facile");
             } else if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Moyen")) {
-                Configuration.setPlayer1Settings(AILevel.MEDIUM);
+                Configuration.setPlayer1Settings(AILevel.MEDIUM, "IA Moyenne");
             } else {
-                Configuration.setPlayer1Settings(AILevel.HARD);
+                Configuration.setPlayer1Settings(AILevel.HARD, "IA Difficile");
             }
         }
         if(graphicalNewGame.player2Choice.getValue().equals("Joueur")) {
-            Configuration.setPlayer2Settings(null);
+            Configuration.setPlayer2Settings(null, graphicalNewGame.player2NameTextField.getText().isEmpty() ? "Joueur 2" : graphicalNewGame.player2NameTextField.getText());
 
         }else {
             if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Facile")) {
-                Configuration.setPlayer2Settings(AILevel.EASY);
+                Configuration.setPlayer2Settings(AILevel.EASY, "IA Facile");
             } else if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Moyen")) {
-                Configuration.setPlayer2Settings(AILevel.MEDIUM);
+                Configuration.setPlayer2Settings(AILevel.MEDIUM, "IA Moyen");
             } else {
-                Configuration.setPlayer2Settings(AILevel.HARD);
+                Configuration.setPlayer2Settings(AILevel.HARD, "IA Difficile");
             }
         }
     }

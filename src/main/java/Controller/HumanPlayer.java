@@ -7,9 +7,10 @@ import Model.Move;
 
 public class HumanPlayer extends Player {
 
-    public HumanPlayer(Game game){
+    public HumanPlayer(Game game, String name){
         this.game = game;
         isAI = false;
+        this.name = name;
     }
 
     /**

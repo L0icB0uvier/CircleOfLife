@@ -10,6 +10,7 @@ import Global.PlayerSettings;
 public class Player {
     Game game;
     boolean isAI;
+    String name;
 
     /**
      * Indique si le joueur est une intelligence artificielle.
@@ -17,6 +18,10 @@ public class Player {
      */
     public boolean isAI(){
         return isAI;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
@@ -27,10 +32,10 @@ public class Player {
      */
     public static Player createPlayer(PlayerSettings playerSettings, Game game){
         if(playerSettings.isAI()){
-            return new AIPlayer(game, AI.createAI(game.getMatch(), playerSettings.getAiLevel()));
+            return new AIPlayer(game, AI.createAI(game.getMatch(), playerSettings.getAiLevel()), playerSettings.getName());
         }
         else{
-            return new HumanPlayer(game);
+            return new HumanPlayer(game, playerSettings.getName());
         }
     }
 
