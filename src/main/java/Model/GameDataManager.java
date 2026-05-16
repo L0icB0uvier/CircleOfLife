@@ -124,30 +124,30 @@ public class GameDataManager {
         playerTypes[0] = scanner.next();
         playerTypes[1] = scanner.next();
         if (Objects.equals(playerTypes[0], "J")) {
-            Configuration.setPlayer1Settings(null);
+            Configuration.setPlayer1Settings(null, "Joueur 1");
         } else {
             if (Objects.equals(playerTypes[0], "E")) {
-                Configuration.setPlayer1Settings(AILevel.EASY);
+                Configuration.setPlayer1Settings(AILevel.EASY, "IA Facile");
             } else if (Objects.equals(playerTypes[0], "M")) {
-                Configuration.setPlayer1Settings(AILevel.MEDIUM);
+                Configuration.setPlayer1Settings(AILevel.MEDIUM, "IA Moyenne");
             } else if (Objects.equals(playerTypes[0], "H")) {
-                Configuration.setPlayer1Settings(AILevel.HARD);
+                Configuration.setPlayer1Settings(AILevel.HARD, "IA Difficile");
             }
         }
 
         if (Objects.equals(playerTypes[1], "J")) {
-            Configuration.setPlayer2Settings(null);
+            Configuration.setPlayer2Settings(null, "Joueur 2");
         } else {
             if (Objects.equals(playerTypes[1], "E")) {
-                Configuration.setPlayer2Settings(AILevel.EASY);
+                Configuration.setPlayer2Settings(AILevel.EASY, "IA Facile");
             } else if (Objects.equals(playerTypes[1], "M")) {
-                Configuration.setPlayer2Settings(AILevel.MEDIUM);
+                Configuration.setPlayer2Settings(AILevel.MEDIUM, "IA Moyenne");
             } else if (Objects.equals(playerTypes[1], "H")) {
-                Configuration.setPlayer2Settings(AILevel.HARD);
+                Configuration.setPlayer2Settings(AILevel.HARD, "IA Difficile");
             }
         }
 
-        game.createMatch();
+        game.createMatch(Configuration.getSettings().getPlayer1Settings().getName(), Configuration.getSettings().getPlayer2Settings().getName());
         Match m = game.getMatch();
         m.initMatch();
 
