@@ -8,6 +8,7 @@ import Global.Settings;
 import View.UserInterface;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 public class Controller implements EventCollector, Observer {
     Game game;
@@ -94,6 +95,22 @@ public class Controller implements EventCollector, Observer {
         if (!GameDataManager.hasSaveFile()) return;
         try {
             GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0));
+            Settings matchSettings = Configuration.getSettings();
+            players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
+            players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
+            startGame();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Charge une partie à partir des données sauvegardées du joueur.
+     * @param gameFile le nom du fichier de la partie à charger
+     */
+    public void loadGame(String gameFile){
+        try {
+            GameDataManager.loadMatch(game, gameFile);
             Settings matchSettings = Configuration.getSettings();
             players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
             players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);

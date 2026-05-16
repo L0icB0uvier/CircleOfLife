@@ -1,5 +1,6 @@
 package View;
 
+import Controller.Controller;
 import Controller.IA.AILevel;
 import Global.Configuration;
 import Model.Game;
@@ -20,6 +21,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
     GraphicalMainMenu graphicalMainMenu;
     GraphicalNewGame graphicalNewGame;
+    GraphicalLoadGame graphicalLoadGame;
 
     public GraphicalUserInterface(Game game, EventCollector controller){
         this.game = game;
@@ -89,6 +91,15 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         //graphicalGame.gameControlBar.redoBt.setEnabled(game.getMatch().canRedo());
     }
 
+    public void startLoadPage() {
+        graphicalLoadGame = new GraphicalLoadGame((Controller) controller, this);
+
+        graphicalLoadGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
+
+        frame.setContentPane(graphicalLoadGame);
+        frame.revalidate();
+    }
+
 
     public void startGame() {
         graphicalGame = new GraphicalGame(game);
@@ -146,7 +157,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         graphicalMainMenu.newGameButton.addActionListener(new ChangePageAdapter(this, graphicalNewGame));
         graphicalMainMenu.continueButton.addActionListener(new ContinueGameAdapter(controller, this));
-        graphicalMainMenu.loadButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de chargement
+        graphicalMainMenu.loadButton.addActionListener(new LoadGamesAdapter(this));
         graphicalMainMenu.tutorialButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de tuto
         graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
