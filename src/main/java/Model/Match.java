@@ -27,8 +27,15 @@ public class Match extends History<Move> {
     int winner = -1;
 
     public Match(){
-        players[0] = new PlayerData();
-        players[1] = new PlayerData();
+        players[0] = new PlayerData("Joueur 1");
+        players[1] = new PlayerData("Joueur 2");
+
+        initMatch();
+    }
+
+    public Match(String name1, String name2){
+        players[0] = new PlayerData(name1);
+        players[1] = new PlayerData(name2);
 
         initMatch();
     }

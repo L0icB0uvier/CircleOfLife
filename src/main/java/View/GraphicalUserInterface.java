@@ -44,27 +44,27 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     @Override
     public void updateSettings() {
 
-        if(graphicalNewGame.player1Button.isSelected()) {
-            Configuration.setPlayer1Settings(null);
+        if(graphicalNewGame.player1Choice.getValue().equals("Joueur")) {
+            Configuration.setPlayer1Settings(null, graphicalNewGame.player1NameTextField.getText().isEmpty() ? "Joueur 1" : graphicalNewGame.player1NameTextField.getText());
         } else {
-            if (Objects.equals(graphicalNewGame.AI1ComboBox.getSelectedItem(), "Facile")) {
-                Configuration.setPlayer1Settings(AILevel.EASY);
-            } else if (Objects.equals(graphicalNewGame.AI1ComboBox.getSelectedItem(), "Moyen")) {
-                Configuration.setPlayer1Settings(AILevel.MEDIUM);
+            if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Facile")) {
+                Configuration.setPlayer1Settings(AILevel.EASY, "IA Facile");
+            } else if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Moyen")) {
+                Configuration.setPlayer1Settings(AILevel.MEDIUM, "IA Moyenne");
             } else {
-                Configuration.setPlayer1Settings(AILevel.HARD);
+                Configuration.setPlayer1Settings(AILevel.HARD, "IA Difficile");
             }
         }
-        if(graphicalNewGame.player2Button.isSelected()) {
-            Configuration.setPlayer2Settings(null);
+        if(graphicalNewGame.player2Choice.getValue().equals("Joueur")) {
+            Configuration.setPlayer2Settings(null, graphicalNewGame.player2NameTextField.getText().isEmpty() ? "Joueur 2" : graphicalNewGame.player2NameTextField.getText());
 
         }else {
-            if (Objects.equals(graphicalNewGame.AI2ComboBox.getSelectedItem(), "Facile")) {
-                Configuration.setPlayer2Settings(AILevel.EASY);
-            } else if (Objects.equals(graphicalNewGame.AI2ComboBox.getSelectedItem(), "Moyen")) {
-                Configuration.setPlayer2Settings(AILevel.MEDIUM);
+            if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Facile")) {
+                Configuration.setPlayer2Settings(AILevel.EASY, "IA Facile");
+            } else if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Moyen")) {
+                Configuration.setPlayer2Settings(AILevel.MEDIUM, "IA Moyen");
             } else {
-                Configuration.setPlayer2Settings(AILevel.HARD);
+                Configuration.setPlayer2Settings(AILevel.HARD, "IA Difficile");
             }
         }
     }
@@ -146,6 +146,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         graphicalMainMenu.newGameButton.addActionListener(new ChangePageAdapter(this, graphicalNewGame));
         graphicalMainMenu.continueButton.addActionListener(new ContinueGameAdapter(controller, this));
+        graphicalMainMenu.loadButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de chargement
+        graphicalMainMenu.tutorialButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de tuto
+        graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
         graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this));
         graphicalNewGame.startButton.addActionListener(new NewGameAdapter(controller));
@@ -153,7 +156,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         frame.addKeyListener(new KeyboardAdapter(controller));
 
-        frame.setContentPane(graphicalNewGame);
+        frame.setContentPane(graphicalMainMenu);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

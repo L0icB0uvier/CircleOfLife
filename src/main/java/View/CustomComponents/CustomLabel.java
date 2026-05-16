@@ -12,11 +12,13 @@ import java.awt.*;
 public class CustomLabel extends JPanel {
     JLabel playerName;
     JLabel text;
+    Game game;
 
     public CustomLabel(Game game) {
         this.setLayout(new GridBagLayout());
         //TODO : changer le texte en fonction du joueur courant
-        playerName = new JLabel("Joueur1");
+        this.game = game;
+        playerName = new JLabel(game.getMatch().getPlayerData()[0].getName());
         text = new JLabel(" prepare son coup...");
 
         playerName.setForeground(UIColor.BLUE);
@@ -36,7 +38,7 @@ public class CustomLabel extends JPanel {
     }
 
     public void updatePlayerTurn(int currentPlayer){
-        playerName.setText(currentPlayer == 0? "Joueur1" : "Joueur2");
+        playerName.setText(currentPlayer == 0? game.getMatch().getPlayerData()[0].getName() : game.getMatch().getPlayerData()[1].getName());
         playerName.setForeground(currentPlayer == 0? UIColor.BLUE : UIColor.RED);
     }
 

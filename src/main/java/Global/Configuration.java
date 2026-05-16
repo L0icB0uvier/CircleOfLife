@@ -206,16 +206,18 @@ public class Configuration {
     /**
      * Met à jour les settings relatif au premier joueur.
      * @param aiLevel Le niveau de difficulté de l'IA. Si null, le joueur est considéré comme humain.
+     * @param name Le nom du joueur
      */
-    public static void setPlayer1Settings(AILevel aiLevel){
-        instance().matchSettings.setPlayer1Settings(aiLevel);
+    public static void setPlayer1Settings(AILevel aiLevel, String name){
+        instance().matchSettings.setPlayer1Settings(aiLevel, name);
     }
 
     /**
      * Met à jour les settings relatif au deuxième joueur.
      * @param aiLevel Le niveau de difficulté de l'IA. Si null, le joueur est considéré comme humain.
+     * @param name Le nom du joueur
      */
-    public static void setPlayer2Settings(AILevel aiLevel){
-        instance().matchSettings.setPlayer2Settings(aiLevel);
+    public static void setPlayer2Settings(AILevel aiLevel, String name){
+        instance().matchSettings.setPlayer2Settings(aiLevel, name);
     }
 }
