@@ -104,4 +104,38 @@ public class MatchUtils {
 
         return score;
     }
+
+    /**
+     * Compte le nombre de critters d'un type appartenant à un joueur dans un match.
+     * @param match Le match dont la configuration actuelle sera mesurée.
+     * @param playerID L'index du joueur dont on doit compter les critters.
+     * @param type Le type de critters à compter.
+     * @return Le nombre des critters mesuré.
+     */
+    public static int countPlayerCritterType(Match match, int playerID, int type){
+        int result = 0;
+        for (Critter critter : match.critters){
+            if (critter.type() == type && critter.player() == playerID){
+                result++;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Compte le nombre de critters d'une taille appartenant à un joueur dans un match.
+     * @param match Le match dont la configuration actuelle sera mesurée.
+     * @param playerID L'index du joueur dont on doit compter les critters.
+     * @param size La taille de critter à compter.
+     * @return Le nombre des critters mesuré.
+     */
+    public static int countPlayerCritterSize(Match match, int playerID, int size){
+        int result = 0;
+        for (Critter critter : match.critters){
+            if (critter.stonesCoordinates().size() == size && critter.player() == playerID){
+                result++;
+            }
+        }
+        return result;
+    }
 }

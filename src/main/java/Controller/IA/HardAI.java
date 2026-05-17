@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Random;
 
 public class HardAI extends AI {
-    int depth = 3;
+    final long maxStateNumber = 10000000;
+    int depth;
 
     public HardAI(Match match) {
         super(match);
         aiLevel = AILevel.HARD;
+        depth = 5;
     }
 
     // TODO : trouver une heuristique pour l'IA difficile en plus du score
@@ -30,6 +32,7 @@ public class HardAI extends AI {
     public Move findMove() {
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
         Collections.shuffle(possibleMoves);
+        depth = (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size()));
         double maxEval = -Double.MAX_VALUE;
         double eval;
         Move best = null;

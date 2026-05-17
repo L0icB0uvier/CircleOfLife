@@ -34,9 +34,9 @@ public class GraphicalGame extends JPanel {
         //JPanel p = new JPanel();
         //p.setBorder(new RoundedBorder(15,Color.BLACK,3));
 
-        playerInfos.add(new PlayerInfo("Player1",0));
+        playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[0].getName(),0));
         PlayerInfo player1Info = playerInfos.get(0);
-        playerInfos.add(new PlayerInfo("Player2",1));
+        playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[1].getName(),1));
         PlayerInfo player2Info = playerInfos.get(1);
 
         gameHistory = new GameHistory();

@@ -81,7 +81,7 @@ public class Controller implements EventCollector, Observer {
     private void createNewGame() {
         view.updateSettings();
         Settings matchSettings = Configuration.getSettings();
-        game.createMatch();
+        game.createMatch(matchSettings.getPlayer1Settings().getName(), matchSettings.getPlayer2Settings().getName());
         players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
         players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
         startGame();
