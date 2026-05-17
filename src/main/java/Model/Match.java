@@ -79,7 +79,7 @@ public class Match extends History<Move> {
      */
     void pickStartingPlayer() {
         currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
-        Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
+//        Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
     }
 
     @Override
@@ -159,7 +159,7 @@ public class Match extends History<Move> {
         // on met la case à jour
         boardState[l][c] = (byte) (currentPlayerIndex + 1); // playerOne <-> 1 ; playerTwo <-> 2
         Coordinate newStoneCoordinate = new Coordinate(c, l);
-        Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
+//        Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
 
         // update Critters : evolve or reproduce
         var newCritter = updateCritters(newStoneCoordinate);
@@ -189,15 +189,15 @@ public class Match extends History<Move> {
 
         if(neighbors.isEmpty()){
             newCritter = new Critter(Set.of(coord), currentPlayerIndex);
-            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
+//            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
         }
         else{
             newCritter = evolve(neighbors, coord);
             if(neighbors.size() == 1){
-                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
+//                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
             }
             else{
-                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
+//                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
             }
         }
 
@@ -254,7 +254,7 @@ public class Match extends History<Move> {
      * @param c Le Critter à effacer.
      */
     private void eatCritter(Critter c) {
-        Configuration.info(String.format("Player %d eats critter of type() %d", currentPlayerIndex + 1, c.type()));
+//        Configuration.info(String.format("Player %d eats critter of type() %d", currentPlayerIndex + 1, c.type()));
         for (Coordinate coord : c.stonesCoordinates()){
             boardState[coord.line()][coord.col()] = 0;
         }

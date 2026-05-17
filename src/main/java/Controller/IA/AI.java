@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 public abstract class AI {
     protected Match match;
     public AILevel aiLevel;
-    int minWait = 100, maxWait = 200;
+    int minWait = 0, maxWait = 10;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -109,8 +109,16 @@ public abstract class AI {
      */
     double minimax(Match match, int depth, int playerID, double alpha, double beta, boolean isMax){
         // cas de base : si la partie est terminée ou la profondeur max atteinte, on évalue l'état du match
-        if (depth == 0 || match.winByFillUp() || match.winByScore()){
+        if (depth == 0){
             return evaluate(match, playerID);
+        }
+        if (match.isGameOver()) {
+            if (match.getWinner() == playerID){
+                return Double.MAX_VALUE;
+            }
+            else if (match.getWinner() == (playerID + 1)%2){
+                return -Double.MAX_VALUE;
+            }
         }
 
         double eval;
