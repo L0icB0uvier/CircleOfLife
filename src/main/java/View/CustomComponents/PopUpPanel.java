@@ -20,9 +20,12 @@ public class PopUpPanel extends JPanel {
     private JButton middleButton;
     private EventCollector controller;
 
-    public PopUpPanel(EventCollector controller){
+    private Dialog dialog;
+
+    public PopUpPanel(EventCollector controller, JDialog dialog){
 
         this.controller = controller;
+        this.dialog = dialog;
         init();
     }
 
@@ -90,7 +93,7 @@ public class PopUpPanel extends JPanel {
     }
 
     public void setMiddleButton(String text) {
-        middleButton    .setVisible(true);
+        middleButton.setVisible(true);
         this.middleButton.setText(text);
     }
 
@@ -100,7 +103,7 @@ public class PopUpPanel extends JPanel {
         this.secondaryLabel.setVerticalAlignment(SwingConstants.NORTH);
     }
 
-    public void setActionLeftButton(String action,JDialog dialog){
+    public void setActionLeftButton(String action){
             leftButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -112,7 +115,7 @@ public class PopUpPanel extends JPanel {
             });
     }
 
-    public void setActionLeftButton(GraphicalUserInterface gui,JComponent nPage,JDialog dialog){
+    public void setActionLeftButton(GraphicalUserInterface gui,JComponent nPage){
         leftButton.addActionListener(new ChangePageAdapter(gui,nPage));
         leftButton.addActionListener(new ActionListener() {
             @Override
@@ -124,7 +127,7 @@ public class PopUpPanel extends JPanel {
 
     }
 
-    public void setActionRightButton(String action,JDialog dialog){
+    public void setActionRightButton(String action){
         rightButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -135,9 +138,15 @@ public class PopUpPanel extends JPanel {
 
     }
 
-    public void setActionMiddleButton(String action,JDialog dialog){
+    public void setActionRightButton(ActionListener al) {
+        rightButton.addActionListener(al);
+
+    }
+
+
+        public void setActionMiddleButton(String action){
         if(middleButton.getClass() == JButton.class){
-            ((JButton) middleButton).addActionListener(new ActionListener() {
+            middleButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if(!action.equals("Save")){

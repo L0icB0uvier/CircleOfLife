@@ -23,7 +23,7 @@ public class GraphicalGame extends JPanel {
         this.game=game;
         playerInfos = new ArrayList<>();
 
-        MigLayout layout = new MigLayout("fill, insets 10 10 10 10, debug", "[70%][30%]","[10%][10%][grow][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 10 10 10 10 ", "[70%][30%]","[10%][10%][grow][10%]" );
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 

@@ -12,7 +12,7 @@ public class PopUpAdapter implements ActionListener {
     JFrame parent;
     String mainText,secondaryText,leftButtonText,rightButtonText;
     PopUpPanel popup;
-    JDialog dialog;
+    public JDialog dialog;
 
     public PopUpAdapter(JFrame parent,EventCollector controller, String mainText,String secondaryText,String leftButtonText,String rightButtonText){
         this.parent = parent;
@@ -23,17 +23,18 @@ public class PopUpAdapter implements ActionListener {
         this.rightButtonText = rightButtonText;
         init();
     }
-    public void init(){
-        popup = new PopUpPanel(controller);
+    private void init(){
+        dialog = new JDialog(parent,"",true);
+        dialog.setSize(800, 300);
+        dialog.setResizable(false);
+        dialog.setLocationRelativeTo(parent);
+
+        popup = new PopUpPanel(controller,dialog);
         popup.setLeftButton(leftButtonText);
         popup.setRightButton(rightButtonText);
         popup.setMainLabel(mainText);
         popup.setSecondaryLabel(secondaryText);
 
-        dialog = new JDialog(parent,"",true);
-        dialog.setSize(800, 300);
-        dialog.setResizable(false);
-        dialog.setLocationRelativeTo(parent);
         dialog.add(popup);
     }
     @Override
@@ -42,13 +43,18 @@ public class PopUpAdapter implements ActionListener {
     }
 
     public void setActionLeftButton(String action){
-        popup.setActionLeftButton(action,dialog);
+        popup.setActionLeftButton(action);
     }
 
     public void setActionRightButton(String action){
-        popup.setActionRightButton(action,dialog);
+        popup.setActionRightButton(action);
     }
-    public void setActionMiddleButton(String action){
-        popup.setActionMiddleButton(action,dialog);
+    public void setActionRightButton(ActionListener al){
+        popup.setActionRightButton(al);
+    }
+
+    public void setActionMiddleButton(String action, String label){
+        popup.setMiddleButton(label);
+        popup.setActionMiddleButton(action);
     }
 }
