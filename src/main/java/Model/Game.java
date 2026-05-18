@@ -66,6 +66,12 @@ public class Game extends Observable {
         update();
     }
 
+    public void giveUp(){
+        match.toggleCurrentPlayer();
+        match.gameOver();
+        update();
+    }
+
     /**
      * Refait le dernier Move annulé puis appel update pour notifier les observateurs.
      */

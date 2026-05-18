@@ -102,23 +102,21 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         updateUndoRedoEnabled();
         PopUpAdapter pua;
 
-        pua = new PopUpAdapter(frame, controller, "Voulez-vous sauvegarder la partie en cours ?", "", "annuler", "continuer");
+        pua = new PopUpAdapter(frame, controller,3, "Voulez-vous sauvegarder la partie en cours ?", "");
         graphicalGame.gameControlBar.saveBt.addActionListener(pua);
-        pua.setActionLeftButton("annuler");
-        pua.setActionRightButton("Save");
+        pua.setActionButton(0,"Annuler",true);
+        pua.setButtonLabel(0,"Annuler");
+        pua.setActionButton(2,"Save",true);
+        pua.setButtonLabel(2,"Sauvegarder");
+        pua.setButtonVisibility(1,false);
 
-        pua = new PopUpAdapter(frame, controller, "Voulez-vous abandonner la manche en cours ?", "Attention les données non sauvegardées seront supprimées !", "Annuler", "Valider");
+        pua = new PopUpAdapter(frame, controller, 3,"Voulez-vous abandonner la manche en cours ?", "Attention les données non sauvegardées seront supprimées !");
         graphicalGame.gameControlBar.forfeitBt.addActionListener(pua);
-        pua.setActionLeftButton("annuler");
-        pua.setActionRightButton("GiveUp");
-        PopUpAdapter finalPua = pua;
-        pua.setActionRightButton(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                continueGame(game.getCurrentPlayerIndex());
-                finalPua.dialog.dispose();
-            }
-        });
+        pua.setActionButton(0,"Annuler",true);
+        pua.setButtonLabel(0,"Annuler");
+        pua.setActionButton(2,"GiveUp",true);
+        pua.setButtonLabel(2,"Abandonner");
+        pua.setButtonVisibility(1,false);
 
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);
@@ -173,25 +171,20 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     }
 
     private void continueGame(int nJoueur) {
-        JDialog dialog = new JDialog(frame, "", true);
-        dialog.setSize(800, 300);
-        dialog.setResizable(false);
-        dialog.setLocationRelativeTo(frame);
 
-        PopUpPanel popup = new PopUpPanel(controller,dialog);
+        PopUpAdapter pua = new PopUpAdapter(frame,controller,5,"Le Joueur " + (nJoueur + 1) + " a gagner la manche !","");
 
-        popup.setMainLabel("Le Joueur " + (nJoueur + 1) + " a gagner la manche !");
-        popup.setLeftButton("Menu");
-        popup.setRightButton("Rejouer");
-        popup.setMiddleButton("Sauvegarder la partie");
+        pua.setButtonLabel(0,"Menu");
+        pua.setButtonLabel(1,"Sauvegarder");
+        pua.setButtonVisibility(2,false);
+        pua.setButtonLabel(3,"Analyser");
+        pua.setButtonLabel(4,"Rejouer");
 
+        pua.setActionButton(0,this, graphicalMainMenu);
+        pua.setActionButton(1,"Save",false);
+        // pua.setActionButton(1,"Save",true); TODO: faire le replay de la partie
+        pua.setActionButton(4,"ContinueGame",true);
 
-        dialog.add(popup);
-
-        popup.setActionRightButton("ContinueGame");
-        popup.setActionLeftButton(this, graphicalMainMenu);
-        popup.setActionMiddleButton("Save");
-        dialog.setVisible(true);
-
+        pua.show();
     }
 }

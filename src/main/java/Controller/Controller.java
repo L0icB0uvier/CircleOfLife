@@ -38,6 +38,7 @@ public class Controller implements EventCollector, Observer {
                 continueGame();
                 break;
             case "GiveUp":
+                giveUp();
                 break;
             case "Quit":
                 break;
@@ -109,6 +110,10 @@ public class Controller implements EventCollector, Observer {
     public void startGame(){
         updateCurrentPlayer();
         currentPlayer.startTurn();
+    }
+
+    public void giveUp(){
+        game.giveUp();
     }
 
     @Override
