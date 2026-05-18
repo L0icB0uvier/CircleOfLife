@@ -18,9 +18,9 @@ public class MediumAI extends AI {
     double evaluate(Match match, int playerID){
         int[] ids = new int[]{playerID, (playerID+1)%2};
         PlayerData[] data = match.getPlayerData();
-        return 100*((double)data[ids[0]].getScore() - (double)data[ids[1]].getScore())
-                + 5 * (MatchUtils.countPlayerCritterSize(match, ids[0], 4) -
-                MatchUtils.countPlayerCritterSize(match, ids[1], 4));
+        double evaluation = 100 * ((double)data[ids[0]].getScore() - (double)data[ids[1]].getScore());
+        evaluation += 5 * ((double) MatchUtils.countPlayerCritterSize(match, ids[0], 4) - (double) MatchUtils.countPlayerCritterSize(match, ids[1], 4));
+        return evaluation;
     }
 
     /**
@@ -40,6 +40,7 @@ public class MediumAI extends AI {
             // copie profonde du match et simulation du coup
             Match newMatch = MatchUtils.copy(match);
             newMatch.playMove(move.line(), move.col());
+            newMatch.endTurn();
 
             // évaluation Minimax et mise à jour du coup optimal
             eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
