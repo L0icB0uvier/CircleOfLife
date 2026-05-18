@@ -1,9 +1,5 @@
 package View.CustomComponents;
 
-
-import Global.Configuration;
-import View.Utils.UIColor;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
