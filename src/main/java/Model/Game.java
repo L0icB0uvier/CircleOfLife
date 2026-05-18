@@ -66,10 +66,21 @@ public class Game extends Observable {
      * Annule le dernier Move puis appel update pour notifier les observateurs.
      */
     public void undo(){
-        if(!match.canUndo()) return;
+        if(canUndo() == false) return;
+
         match.undo();
         match.toggleCurrentPlayer();
         update();
+    }
+
+    public boolean canUndo(){
+        if (match.isReviewModeActive()) {
+            return match.getPastCount() > 1;
+        }
+
+        else{
+            return match.canUndo();
+        }
     }
 
     /**
@@ -83,8 +94,7 @@ public class Game extends Observable {
     }
 
     public void giveUp(){
-        match.toggleCurrentPlayer();
-        match.gameOver();
+        match.gameOver(match.getOpponentPlayerIndex());
         update();
     }
 

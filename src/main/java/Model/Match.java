@@ -102,7 +102,7 @@ public class Match extends History<Move> {
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
             wonByScore = true;
-            gameOver();
+            gameOver(currentPlayerIndex);
             return;
         }
 
@@ -111,17 +111,17 @@ public class Match extends History<Move> {
         // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
         if(winByFillUp()){
             wonByScore = false;
-            gameOver();
+            gameOver(currentPlayerIndex);
         }
     }
 
     /**
      * Met fin à la partie.
      */
-    void gameOver(){
+    void gameOver(int winner){
         gameOver = true;
-        winner = currentPlayerIndex;
-        Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
+        this.winner = winner;
+        Configuration.info(String.format("Player %d won!", winner + 1));
     }
 
     void enterReviewMode(){

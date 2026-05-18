@@ -15,4 +15,9 @@ public class UIColor {
     static public Color LIGHT_RED = new Color(255,0,15,25);
     static public Color ALT_BLUE = new Color(77, 178, 255);
     static public Color BACKGROUND = new Color(237, 223, 198);
+
+    static public Color evolveColor = Color.GREEN;
+    static public Color eatenColor = Color.YELLOW;
+    static public Color hoverColor = Color.CYAN;
+    static public Color lastMoveColor = Color.MAGENTA;
 }

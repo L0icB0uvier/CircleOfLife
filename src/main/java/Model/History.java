@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 public class History<E extends Command> {
     Deque<E> past, future;
+    private int pastCount, futureCount;
 
     public History() {
         reset();
@@ -52,6 +53,8 @@ public class History<E extends Command> {
      */
     public E undo() {
         var cmd = transfer(past, future);
+        pastCount--;
+        futureCount++;
         cmd.desexecute();
         return cmd;
     }
@@ -62,6 +65,8 @@ public class History<E extends Command> {
      */
     public E redo() {
         var cmd = transfer(future, past);
+        futureCount--;
+        pastCount++;
         cmd.execute();
         return cmd;
     }
@@ -73,8 +78,10 @@ public class History<E extends Command> {
     public void apply(E newMove) {
         newMove.execute();
         past.addFirst(newMove);
+        pastCount++;
         while (!future.isEmpty()) {
             future.removeFirst();
+            futureCount = 0;
         }
     }
 
@@ -103,5 +110,13 @@ public class History<E extends Command> {
 
     public E getLastMove(){
         return past.getFirst();
+    }
+
+    public int getPastCount(){
+        return pastCount;
+    }
+
+    public int getFutureCount() {
+        return futureCount;
     }
 }
