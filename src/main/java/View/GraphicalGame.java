@@ -73,7 +73,7 @@ public class GraphicalGame extends JPanel {
     public void updateGameInfo(){
         if (game.isGameOver()) {
             if(game.isReviewModeActive()){
-                gameInfo.updateMessage(game.getOpponentPlayerIndex(), " a joué.");
+                gameInfo.updateMessage(game.getMatch().wonByScore? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
             }
             else{
                 gameInfo.updateMessage(game.getWinningPlayer(), " a gagné la partie.");

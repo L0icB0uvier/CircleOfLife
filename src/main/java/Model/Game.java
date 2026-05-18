@@ -88,8 +88,21 @@ public class Game extends Observable {
      */
     public void redo(){
         if(!match.canRedo()) return;
-        match.redo();
-        match.toggleCurrentPlayer();
+
+        if(match.isReviewModeActive()){
+            if(match.wonByScore){
+                match.toggleCurrentPlayer();
+                match.redo();
+            }
+            else{
+                match.redo();
+                match.toggleCurrentPlayer();
+            }
+        }
+        else{
+            match.redo();
+            match.toggleCurrentPlayer();
+        }
         update();
     }
 

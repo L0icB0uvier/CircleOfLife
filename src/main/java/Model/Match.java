@@ -21,12 +21,14 @@ public class Match extends History<Move> {
 
     List<Critter> previouslyEatenCritters;
 
+    private int winScore = 4;
+
     private boolean gameOver = false;
     private boolean reviewModeActive;
 
     private final int boardSize = 9;
     int winner = -1;
-    boolean wonByScore = false;
+    public boolean wonByScore = false;
 
     public Match(){
         players[0] = new PlayerData("Joueur 1");
@@ -381,7 +383,7 @@ public class Match extends History<Move> {
      * @return true si le joueur actif a atteint ou dépassé 20 points, faux sinon.
      */
     public boolean winByScore(){
-        return (players[currentPlayerIndex].getScore() >= 20);
+        return (players[currentPlayerIndex].getScore() >= winScore);
     }
 
     /**

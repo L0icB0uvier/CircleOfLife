@@ -119,6 +119,7 @@ public class Controller implements EventCollector, Observer {
     }
 
     private void giveUp(){
+        currentPlayer.endTurn();
         game.giveUp();
     }
 
