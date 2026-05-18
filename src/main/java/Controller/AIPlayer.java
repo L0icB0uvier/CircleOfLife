@@ -16,9 +16,11 @@ public class AIPlayer extends Player {
 
     @Override
     public void startTurn() {
-        ai.play().thenAccept(move -> {
-            game.playMove(move);
-        });
+        if (!game.getMatch().canRedo()) {
+            ai.play().thenAccept(move -> {
+                game.playMove(move);
+            });
+        }
     }
 
     @Override

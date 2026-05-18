@@ -537,4 +537,8 @@ public class Match extends History<Move> {
     public int getWinner() {
         return winner;
     }
+
+    public int getRedoNumber(){
+        return future.size();
+    }
 }
