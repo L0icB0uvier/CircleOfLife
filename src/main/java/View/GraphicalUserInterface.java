@@ -22,6 +22,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     GraphicalMainMenu graphicalMainMenu;
     GraphicalNewGame graphicalNewGame;
     GraphicalLoadGame graphicalLoadGame;
+    GraphicalTutorial graphicalTutorial;
 
     public GraphicalUserInterface(Game game, EventCollector controller){
         this.game = game;
@@ -154,11 +155,12 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         graphicalMainMenu = new GraphicalMainMenu(frame);
         graphicalNewGame = new GraphicalNewGame(frame);
+        graphicalTutorial = new GraphicalTutorial(this);
 
         graphicalMainMenu.newGameButton.addActionListener(new ChangePageAdapter(this, graphicalNewGame));
         graphicalMainMenu.continueButton.addActionListener(new ContinueGameAdapter(controller, this));
         graphicalMainMenu.loadButton.addActionListener(new LoadGamesAdapter(this));
-        graphicalMainMenu.tutorialButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de tuto
+        graphicalMainMenu.tutorialButton.addActionListener(new ChangePageAdapter(this, graphicalTutorial));
         graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
         graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this));
