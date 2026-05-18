@@ -32,7 +32,7 @@ public class HardAI extends AI {
     public Move findMove() {
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
         Collections.shuffle(possibleMoves);
-        depth = (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size()));
+        depth = Math.max(4, (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size())));
         double maxEval = -Double.MAX_VALUE;
         double eval;
         Move best = null;
@@ -46,7 +46,7 @@ public class HardAI extends AI {
 
             // évaluation Minimax et mise à jour du coup optimal
             eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
-            if (eval > maxEval){
+            if (eval >= maxEval){
                 maxEval = eval;
                 best = new Move(match, move.line(), move.col());
             }

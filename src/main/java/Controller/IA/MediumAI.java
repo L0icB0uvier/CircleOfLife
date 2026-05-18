@@ -44,7 +44,7 @@ public class MediumAI extends AI {
 
             // évaluation Minimax et mise à jour du coup optimal
             eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
-            if (eval > maxEval){
+            if (eval >= maxEval){
                 maxEval = eval;
                 best = new Move(match, move.line(), move.col());
             }
