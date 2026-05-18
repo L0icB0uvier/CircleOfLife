@@ -45,10 +45,11 @@ public class EasyAI extends AI{
             // copie profonde du match et simulation du coup
             Match newMatch = MatchUtils.copy(match);
             newMatch.playMove(move.line(), move.col());
+            newMatch.endTurn();
 
             // évaluation Minimax et mise à jour du coup optimal
             eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
-            if (eval > maxEval){
+            if (eval >= maxEval){
                 maxEval = eval;
                 best = new Move(match, move.line(), move.col());
             }

@@ -98,7 +98,7 @@ public class Match extends History<Move> {
     /**
      * Met fin au tour actuel. Vérifie les conditions de victoires et change de joueur.
      */
-    void endTurn(){
+    public void endTurn(){
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
             wonByScore = true;
@@ -185,6 +185,9 @@ public class Match extends History<Move> {
 
         // mise à jour de l'état du plateau
         updateBoard(newCritter, eatenCritters);
+
+        Configuration.info("Nombre de critters de taille 4 du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.countPlayerCritterSize(this, currentPlayerIndex, 4));
+        Configuration.info("Distance moyenne entre critters du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.meanPlayerCritterDistance(this, currentPlayerIndex));
     }
 
     /**

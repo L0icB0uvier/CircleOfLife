@@ -130,6 +130,7 @@ public abstract class AI {
                 // copie profonde du match et simulation d'un coup
                 Match newMatch = MatchUtils.copy(match);
                 newMatch.playMove(move.line(), move.col());
+                newMatch.endTurn();
 
                 // appel récursif : on suppose que l'adversaire jouera le pire coup selon l'évaluation choisie par l'IA
                 eval = minimax(newMatch, depth - 1, playerID, alpha, beta, false);

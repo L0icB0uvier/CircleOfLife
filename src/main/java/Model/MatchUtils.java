@@ -1,5 +1,6 @@
 package Model;
 
+import java.util.Iterator;
 import java.util.Set;
 
 public class MatchUtils {
@@ -138,4 +139,32 @@ public class MatchUtils {
         }
         return result;
     }
+
+    /**
+     * Mesure la distance moyenne entre les critters d'un joueur.
+     * @param match Le match dont la configuration actuelle sera mesurée.
+     * @param playerID L'index du joueur dont on doit mesurer la distance inter critter.
+     * @return La distance moyenne entre critters du même joueur.
+     */
+    public static double meanPlayerCritterDistance(Match match, int playerID){
+        double result = 0;
+        int counter = 0;
+        for (Critter critter1 : match.critters){
+            if (critter1.player() == playerID) {
+                for (Critter critter2 : match.critters) {
+                    if (critter2.player() == playerID && critter2 != critter1) {
+                        for (Coordinate coordinate1 : critter1.stonesCoordinates()) {
+                            for (Coordinate coordinate2 : critter2.stonesCoordinates()) {
+                                result += hexagonalManhattanDistance(coordinate1, coordinate2);
+                                counter++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        result /= counter;
+        return result;
+    }
+
 }
