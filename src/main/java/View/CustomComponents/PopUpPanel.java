@@ -101,7 +101,7 @@ public class PopUpPanel extends JPanel {
         this.listButton.get(button).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if(Objects.equals(action,"Save") && !dispose) {
+                    if(action.equals("Save") && !dispose) {
                         ((JButton) (e.getSource())).setEnabled(false);
                     }else{
                         dialog.dispose();
@@ -109,10 +109,9 @@ public class PopUpPanel extends JPanel {
                             button.setEnabled(true);
                         }
                     }
-                    if (!Objects.equals(action, "Annuler")) {
+                    if (!action.equals("Annuler")) {
                         controller.performAction(action);
                     }
-
                 }
             });
     }

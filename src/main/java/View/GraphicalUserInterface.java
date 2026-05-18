@@ -6,12 +6,9 @@ import Model.Game;
 import Model.PlayerData;
 import Patterns.Observer;
 import View.Adapter.*;
-import View.CustomComponents.PopUpPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public class GraphicalUserInterface implements Runnable, UserInterface, Observer {
@@ -71,14 +68,6 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         }
     }
 
-    @Override
-    public void playerTurn(int nPlayer) {
-        graphicalGame.playerTurn(nPlayer);
-    }
-
-    public void gameOver() {
-        graphicalGame.gameOver(game.getWinningPlayer());
-    }
 
     @Override
     public void updateScore(PlayerData[] playerData) {
@@ -125,20 +114,22 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         Configuration.info("Changement de page vers " + graphicalGame.getClass());
         frame.setContentPane(graphicalGame);
         frame.revalidate();
-        playerTurn(game.getCurrentPlayerIndex());
+
+        graphicalGame.updateGameInfo();
     }
 
     @Override
     public void update() {
         if (graphicalGame == null) return;
-        if (game.isGameOver()) {
-            continueGame(game.getMatch().getCurrentPlayerIndex());
-            gameOver();
-        } else {
-            playerTurn(game.getCurrentPlayerIndex());
-        }
-        updateScore(game.getMatch().getPlayerData());
+        graphicalGame.updateGameInfo();
         updateUndoRedoEnabled();
+
+        if(game.isReviewModeActive()){
+            graphicalGame.updateGameInfo();
+        }
+
+        else if(game.isGameOver())
+            displayGameOverPopup(game.getWinningPlayer());
     }
 
     @Override
@@ -170,9 +161,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.setVisible(true);
     }
 
-    private void continueGame(int nJoueur) {
+    private void displayGameOverPopup(int nJoueur) {
 
-        PopUpAdapter pua = new PopUpAdapter(frame,controller,5,"Le Joueur " + (nJoueur + 1) + " a gagner la manche !","");
+        PopUpAdapter pua = new PopUpAdapter(frame,controller,5,"Le Joueur " + (nJoueur + 1) + " a gagné la manche !","");
 
         pua.setButtonLabel(0,"Menu");
         pua.setButtonLabel(1,"Sauvegarder");
@@ -180,10 +171,10 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setButtonLabel(3,"Analyser");
         pua.setButtonLabel(4,"Rejouer");
 
-        pua.setActionButton(0,this, graphicalMainMenu);
-        pua.setActionButton(1,"Save",false);
-        // pua.setActionButton(1,"Save",true); TODO: faire le replay de la partie
-        pua.setActionButton(4,"ContinueGame",true);
+        pua.setActionButton(0, this, graphicalMainMenu);
+        pua.setActionButton(1, "Save",false);
+        pua.setActionButton(3, "Review", true);
+        pua.setActionButton(4, "Replay",true);
 
         pua.show();
     }

@@ -37,14 +37,14 @@ public class CustomLabel extends JPanel {
         this.addComponentListener(new FontScaler(text,playerName));
     }
 
+    public void updateMessage(int currentPlayer, String message){
+        updatePlayerTurn(currentPlayer);
+        text.setText(message);
+    }
+
     public void updatePlayerTurn(int currentPlayer){
         playerName.setText(currentPlayer == 0? game.getMatch().getPlayerData()[0].getName() : game.getMatch().getPlayerData()[1].getName());
         playerName.setForeground(currentPlayer == 0? UIColor.BLUE : UIColor.RED);
-    }
-
-    public void gameOver(int winner){
-        updatePlayerTurn(winner);
-        text.setText(" a gagné la partie");
     }
 }
 

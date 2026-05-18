@@ -22,9 +22,11 @@ public class Match extends History<Move> {
     List<Critter> previouslyEatenCritters;
 
     private boolean gameOver = false;
+    private boolean reviewModeActive;
 
     private final int boardSize = 9;
     int winner = -1;
+    boolean wonByScore = false;
 
     public Match(){
         players[0] = new PlayerData("Joueur 1");
@@ -44,6 +46,7 @@ public class Match extends History<Move> {
      * Initialise le match en supprimant l'historique, en initialisant le plateau de jeu et en choisissant un nouveau joueur de manière aléatoire.
      */
     public void initMatch() {
+        Configuration.info("Initialisation du match");
         reset();
         InitializeBoard();
         resetScores();
@@ -98,6 +101,7 @@ public class Match extends History<Move> {
     void endTurn(){
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
+            wonByScore = true;
             gameOver();
             return;
         }
@@ -106,6 +110,7 @@ public class Match extends History<Move> {
 
         // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
         if(winByFillUp()){
+            wonByScore = false;
             gameOver();
         }
     }
@@ -117,6 +122,11 @@ public class Match extends History<Move> {
         gameOver = true;
         winner = currentPlayerIndex;
         Configuration.info(String.format("Player %d won!", currentPlayerIndex + 1));
+    }
+
+    void enterReviewMode(){
+        Configuration.info("Début du mode review");
+        reviewModeActive = true;
     }
 
     /**
@@ -536,6 +546,10 @@ public class Match extends History<Move> {
 
     public int getWinner() {
         return winner;
+    }
+
+    public boolean isReviewModeActive() {
+        return reviewModeActive;
     }
 
     public int getRedoNumber(){

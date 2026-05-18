@@ -19,6 +19,8 @@ public class Game extends Observable {
         return match.currentPlayerIndex;
     }
 
+    public int getOpponentPlayerIndex() {return match.getOpponentPlayerIndex();}
+
     public int getWinningPlayer(){
         return match.getWinner();
     }
@@ -44,6 +46,10 @@ public class Game extends Observable {
         return match.isGameOver();
     }
 
+    public boolean isReviewModeActive(){
+        return match.isReviewModeActive();
+    }
+
     /**
      * Joue un move puis appel update pour notifier les observateurs.
      * @param move
@@ -66,12 +72,6 @@ public class Game extends Observable {
         update();
     }
 
-    public void giveUp(){
-        match.toggleCurrentPlayer();
-        match.gameOver();
-        update();
-    }
-
     /**
      * Refait le dernier Move annulé puis appel update pour notifier les observateurs.
      */
@@ -79,6 +79,22 @@ public class Game extends Observable {
         if(!match.canRedo()) return;
         match.redo();
         match.toggleCurrentPlayer();
+        update();
+    }
+
+    public void giveUp(){
+        match.toggleCurrentPlayer();
+        match.gameOver();
+        update();
+    }
+
+    public void enterReviewMode(){
+        match.enterReviewMode();
+        update();
+    }
+
+    public void replay(){
+        match.initMatch();
         update();
     }
 }

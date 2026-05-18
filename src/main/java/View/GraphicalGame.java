@@ -66,25 +66,27 @@ public class GraphicalGame extends JPanel {
         updateScore(game.getMatch().getPlayerData());
     }
 
-
-
     public GamePanel getGamePanel() {
         return gamePanel;
     }
 
-    public void playerTurn(int nPlayer){
-        //TODO: changer playerInfo et gameInfo
-        gameInfo.updatePlayerTurn(nPlayer);
-        //PlayerInfo.playerTurn(nPlayer);
+    public void updateGameInfo(){
+        if (game.isGameOver()) {
+            if(game.isReviewModeActive()){
+                gameInfo.updateMessage(game.getOpponentPlayerIndex(), " a joué.");
+            }
+            else{
+                gameInfo.updateMessage(game.getWinningPlayer(), " a gagné la partie.");
+            }
+        } else {
+            gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
+        }
+
+        updateScore(game.getMatch().getPlayerData());
     }
 
     public void updateScore(PlayerData[] playerData) {
         playerInfos.get(0).updateScore(playerData[0]);
         playerInfos.get(1).updateScore(playerData[1]);
     }
-
-    public void gameOver(int winningPlayerIndex){
-        gameInfo.gameOver(winningPlayerIndex);
-    }
-
 }

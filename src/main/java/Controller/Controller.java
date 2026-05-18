@@ -40,6 +40,12 @@ public class Controller implements EventCollector, Observer {
             case "GiveUp":
                 giveUp();
                 break;
+            case "Replay":
+                replay();
+                break;
+            case "Review":
+                review();
+                break;
             case "Quit":
                 break;
             case "Undo":
@@ -107,13 +113,21 @@ public class Controller implements EventCollector, Observer {
     /**
      * Lance la partie.
      */
-    public void startGame(){
+    private void startGame(){
         updateCurrentPlayer();
         currentPlayer.startTurn();
     }
 
-    public void giveUp(){
+    private void giveUp(){
         game.giveUp();
+    }
+
+    private void replay(){
+        game.replay();
+    }
+
+    private void review(){
+        game.enterReviewMode();
     }
 
     @Override
@@ -125,6 +139,9 @@ public class Controller implements EventCollector, Observer {
     public void update() {
         if(currentPlayer == null) return;
         currentPlayer.endTurn();
+
+        if(game.isGameOver() || game.isReviewModeActive()) return;
+
         updateCurrentPlayer();
         currentPlayer.startTurn();
     }
