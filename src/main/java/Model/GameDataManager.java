@@ -8,12 +8,10 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -39,8 +37,16 @@ public class GameDataManager {
 
         // écrit settings
         writer.write(getPlayerType(settings.getPlayer1Settings()));
-        writer.write(' ');
+        if (!settings.getPlayer1Settings().isAI()) { // écrit nom
+            writer.write(sep);
+            writer.write(match.getPlayerData()[0].getName().replaceAll(" ", "_"));
+        }
+        writer.write(sep);
         writer.write(getPlayerType(settings.getPlayer2Settings()));
+        if (!settings.getPlayer2Settings().isAI()) { // écrit nom
+            writer.write(sep);
+            writer.write(match.getPlayerData()[1].getName().replaceAll(" ", "_"));
+        }
         writer.write(sep);
 
         // écrit le joueur courant
@@ -122,9 +128,9 @@ public class GameDataManager {
         // Read player type
         String[] playerTypes = new String[2];
         playerTypes[0] = scanner.next();
-        playerTypes[1] = scanner.next();
         if (Objects.equals(playerTypes[0], "J")) {
-            Configuration.setPlayer1Settings(null, "Joueur 1");
+            String namePlayer1 = scanner.next().replaceAll("_", " ");
+            Configuration.setPlayer1Settings(null, namePlayer1);
         } else {
             if (Objects.equals(playerTypes[0], "E")) {
                 Configuration.setPlayer1Settings(AILevel.EASY, "IA Facile");
@@ -134,9 +140,10 @@ public class GameDataManager {
                 Configuration.setPlayer1Settings(AILevel.HARD, "IA Difficile");
             }
         }
-
+        playerTypes[1] = scanner.next();
         if (Objects.equals(playerTypes[1], "J")) {
-            Configuration.setPlayer2Settings(null, "Joueur 2");
+            String namePlayer2 = scanner.next().replaceAll("_", " ");
+            Configuration.setPlayer2Settings(null, namePlayer2);
         } else {
             if (Objects.equals(playerTypes[1], "E")) {
                 Configuration.setPlayer2Settings(AILevel.EASY, "IA Facile");
@@ -147,7 +154,8 @@ public class GameDataManager {
             }
         }
 
-        game.createMatch(Configuration.getSettings().getPlayer1Settings().getName(), Configuration.getSettings().getPlayer2Settings().getName());
+        game.createMatch(Configuration.getSettings().getPlayer1Settings().getName(),
+                Configuration.getSettings().getPlayer2Settings().getName());
         Match m = game.getMatch();
         m.initMatch();
 
@@ -218,14 +226,17 @@ public class GameDataManager {
      */
     public static String getFileName(Match m, Settings settings) {
         String sep = "_";
-        String sepTime = "-";
+        String sepAlt = "-";
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern(
                 "EEEE d MMMM yyyy HH:mm:ss", Locale.FRENCH);
+        char joueur1 = getPlayerType(settings.getPlayer1Settings());
+        char joueur2 = getPlayerType(settings.getPlayer2Settings());
         PlayerData[] pd = m.getPlayerData();
-        String playerDataString = playerDataToString(pd[0]) + sep + getPlayerType(settings.getPlayer1Settings()) + sep
-                + playerDataToString(pd[1]) + sep + getPlayerType(settings.getPlayer2Settings());
-        return ZonedDateTime.now().format(fmt).replaceAll(" ", sep).replaceAll(":", sepTime) + sep
-                + playerDataString.toLowerCase() + ".save";
+        String playerDataString = playerDataToString(pd[0]) + sep
+                + (joueur1 == 'J' ? "J" + sepAlt + pd[0].getName().replaceAll(" ", sepAlt) : joueur1) + sep + playerDataToString(pd[1]) + sep
+                + (joueur2 == 'J' ? "J" + sepAlt + pd[1].getName().replaceAll(" ", sepAlt) : joueur2);
+        return ZonedDateTime.now().format(fmt).replaceAll(" ", sep).replaceAll(":", sepAlt) + sep
+                + playerDataString + ".save";
     }
 
     /**
@@ -241,7 +252,7 @@ public class GameDataManager {
      * Renvoie la liste de tous les fichiers ayant l'extension ".save" dans le
      * répertoire courant (l'extension "".save" étant supprimée).
      * 
-     * @return Une Liste des Strings de nom de fichier avec l'enxtension ".save"
+     * @return Une Liste des Strings de nom de fichier avec l'extension ".save"
      *         supprimée.
      */
     public static List<String> getSaveFiles() {
@@ -260,18 +271,20 @@ public class GameDataManager {
         return res;
     }
 
-    private static String parsePlayerType(String s) {
+    private static String parsePlayer(String s, char numPlayer) {
+        if (s.length() != 1)
+            return s.substring(2).replaceAll("-", " ");
+        String res = numPlayer == '1' ? "Joueur 1 " : "Joueur 2 ";
         char playerType = s.charAt(0);
         switch (playerType) {
+            case 'E':
+                return res + "(IA facile)";
 
-            case 'e':
-                return "(IA facile)";
+            case 'M':
+                return res + "(IA moyenne)";
 
-            case 'm':
-                return "(IA moyenne)";
-
-            case 'h':
-                return "(IA difficile)";
+            case 'H':
+                return res + "(IA difficile)";
 
             default:
                 return "";
@@ -294,10 +307,10 @@ public class GameDataManager {
         res[0] = String.join(" ", date);
 
         // parse player 1
-        res[1] = "Joueur 1 " + parsePlayerType(game[1]);
+        res[1] = parsePlayer(game[1], '1');
 
         // parse player 2
-        res[2] = "Joueur 2 " + parsePlayerType(game[3]);
+        res[2] = parsePlayer(game[3], '2');
 
         // parse score (joueur 1 score - joueur 2 score)
         res[3] = game[0] + " - " + game[2];
