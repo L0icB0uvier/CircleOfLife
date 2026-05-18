@@ -100,4 +100,8 @@ public class History<E extends Command> {
     public Iterator<E> futurIterator(){
         return future.iterator();
     }
+
+    public E getLastMove(){
+        return past.getFirst();
+    }
 }
