@@ -1,8 +1,6 @@
 package View.Utils;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class UIColor {
     static public Color BLUE = new Color(15,0,225);
@@ -16,8 +14,9 @@ public class UIColor {
     static public Color ALT_BLUE = new Color(77, 178, 255);
     static public Color BACKGROUND = new Color(237, 223, 198);
 
-    static public Color evolveColor = Color.GREEN;
-    static public Color eatenColor = Color.YELLOW;
-    static public Color hoverColor = Color.CYAN;
-    static public Color lastMoveColor = Color.MAGENTA;
+    static public Color EVOLVE_COLOR = Color.GREEN;
+    static public Color EATEN_COLOR = Color.YELLOW;
+    static public Color HOVER_COLOR = Color.CYAN;
+    static public Color LAST_MOVE_COLOR = Color.MAGENTA;
+    static public Color BLOCKING_CRITTER_COLOR = Color.WHITE;
 }

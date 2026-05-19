@@ -59,9 +59,10 @@ public class GamePanel extends JComponent implements Observer {
     private boolean useNeutralStoneImageForHoverInCircle = false;
     private boolean showBoardHightlightEffect = true;
     private boolean showCircleShape = true;
+    private boolean showBlockingCrittersHighlight = true;
 
     private final float lastMoveThicknessRatio = 0.005f;
-    private final float boardThicknessRatio = 0.008f;
+    private final float boardThicknessRatio = 0.005f;
     private final float circleThicknessRatio = 0.0035f;
 
     private float lastMoveHighlighThickness;
@@ -308,31 +309,38 @@ public class GamePanel extends JComponent implements Observer {
     private void drawLastMoveHighlight(Graphics2D g2d){
         var lastMove = match.getLastMove();
         Point2D.Float origin = new Point2D.Float(nToX(lastMove.getColumn(), lastMove.getLine()), mToY(lastMove.getLine()));
-        drawHighlight(g2d, Set.of(new Coordinate(0, 0)), origin, boardHexagonInnerRadius, boardHexagonOuterRadius, lastMoveStroke.getLineWidth() / 2, UIColor.lastMoveColor, lastMoveStroke);
+        drawHighlight(g2d, Set.of(new Coordinate(0, 0)), origin, boardHexagonInnerRadius, boardHexagonOuterRadius, lastMoveStroke.getLineWidth() / 2, UIColor.LAST_MOVE_COLOR, lastMoveStroke);
     }
 
     /**
      * Dessine la pierre sous le curseur du joueur actif.
      * @param g2d Le Graphic à utiliser pour dessiner.
+     * @return true si a dessiné une pierre, faux sinon
      */
     private boolean drawSelected(Graphics2D g2d){
         int m = getmSelected();
         int n = getnSelected();
-        if (n==-1 || m==-1) return false;
+        if (n == -1 || m == -1) return false;
+
+        Coordinate selectedCoordinate = new Coordinate(n, m);
+
         int contentType = match.getContentAt(m, n);
         if(contentType > 0 || contentType == -3)
         {
             if(contentType > 0){
-                Critter critter = match.getCritterAtCoord(new Coordinate(n, m));
+                Critter critter = match.getCritterAtCoord(selectedCoordinate);
 
                 if(showBoardHoverHighlight)
-                    drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.hoverColor, boardHighlightStroke);
+                    drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
 
                 Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(critter.type(), circleShapeTypeIds.get(critter.type()));
                 drawCircleShape(g2d, critter.type(),useNeutralStoneImageForHoverInCircle? imgStoneDisabled : getPlayerImage(critter.player()));
 
                 if(showCircleHoverHighlight)
-                    drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, 0, UIColor.hoverColor, circleHighlightStroke);
+                    drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, 0, UIColor.HOVER_COLOR, circleHighlightStroke);
+            }
+            if(contentType == -3){
+                drawBlockingCrittersHighlight(g2d, selectedCoordinate);
             }
             return false;
         }
@@ -345,17 +353,30 @@ public class GamePanel extends JComponent implements Observer {
                 break;
             case -1:
                 if(match.getCurrentPlayerIndex() == 0)
+                {
+                    drawBlockingCrittersHighlight(g2d, selectedCoordinate);
                     return false;
+                }
                 drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, boardStoneImageSize);
                 break;
             case -2:
-                if(match.getCurrentPlayerIndex() == 1)
+                if(match.getCurrentPlayerIndex() == 1){
+                    drawBlockingCrittersHighlight(g2d, selectedCoordinate);
                     return false;
+                }
                 drawStone(g2d, match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview, drawPos.x, drawPos.y, boardStoneImageSize);
                 break;
         }
 
         return true;
+    }
+
+    private void drawBlockingCrittersHighlight(Graphics2D g2d, Coordinate selectedCoordinate) {
+        if(showBlockingCrittersHighlight == false) return;
+        var neighborCritters = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
+        for (Critter critter : neighborCritters) {
+            drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.BLOCKING_CRITTER_COLOR, boardHighlightStroke);
+        }
     }
 
     private void drawFeedforward(Graphics2D g2d){
@@ -385,20 +406,20 @@ public class GamePanel extends JComponent implements Observer {
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
                         if(showBoardHightlightEffect)
-                            drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.eatenColor, boardHighlightStroke);
+                            drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, boardHighlightStroke);
                         eatenShape = critter.type();
                     }
                 }
             }
             if(showCircleShape && eatenShape > 0)
-                drawCircleShapeWithHighlight(g2d, eatenShape, UIColor.eatenColor, getPlayerImage(match.getOpponentPlayerIndex()));
+                drawCircleShapeWithHighlight(g2d, eatenShape, UIColor.EATEN_COLOR, getPlayerImage(match.getOpponentPlayerIndex()));
         }
 
         if(showBoardHightlightEffect)
-            drawBoardCritterHighlight(g2d, evolveCoords, UIColor.evolveColor, boardHighlightStroke);
+            drawBoardCritterHighlight(g2d, evolveCoords, UIColor.EVOLVE_COLOR, boardHighlightStroke);
 
         if(showCircleShape)
-            drawCircleShapeWithHighlight(g2d, evolveInto, UIColor.evolveColor, getPlayerImage(match.getCurrentPlayerIndex()));
+            drawCircleShapeWithHighlight(g2d, evolveInto, UIColor.EVOLVE_COLOR, getPlayerImage(match.getCurrentPlayerIndex()));
     }
 
     private void drawCircleShape(Graphics2D g2d, int shapeType, Image img){
