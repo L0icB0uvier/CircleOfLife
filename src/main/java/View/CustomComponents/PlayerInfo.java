@@ -1,5 +1,6 @@
 package View.CustomComponents;
 
+import Global.Configuration;
 import Model.PlayerData;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
@@ -14,6 +15,7 @@ public class PlayerInfo extends JPanel {
     private final String name;
     int nPlayer;
     JLabel scoreLabel, nameLabel;
+    private int winScore;
 
     public PlayerInfo(String name, int nPlayer){
         this.name = name;
@@ -25,6 +27,7 @@ public class PlayerInfo extends JPanel {
         Font sizedFont = UIFont.getFont();
         //TODO modifier la font du projet
 
+        winScore = Configuration.readInt("WinScore");
         Color color = nPlayer ==  0 ? UIColor.BLUE:UIColor.RED;
         GridBagLayout gbl = new GridBagLayout();
         this.setLayout(gbl);
@@ -73,7 +76,7 @@ public class PlayerInfo extends JPanel {
     }
 
     public void updateScore(PlayerData data){
-        scoreLabel.setText(String.valueOf(data.getScore()) + "/20");
+        scoreLabel.setText(String.valueOf(data.getScore()) + "/" + winScore);
         repaint();
     }
 

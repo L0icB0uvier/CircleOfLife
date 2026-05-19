@@ -21,7 +21,7 @@ public class Match extends History<Move> {
 
     List<Critter> previouslyEatenCritters;
 
-    private int winScore = 4;
+    private int winScore;
 
     private boolean gameOver = false;
     private boolean reviewModeActive;
@@ -33,14 +33,14 @@ public class Match extends History<Move> {
     public Match(){
         players[0] = new PlayerData("Joueur 1");
         players[1] = new PlayerData("Joueur 2");
-
+        winScore = Configuration.readInt("WinScore");
         initMatch();
     }
 
     public Match(String name1, String name2){
         players[0] = new PlayerData(name1);
         players[1] = new PlayerData(name2);
-
+        winScore = Configuration.readInt("WinScore");
         initMatch();
     }
 
