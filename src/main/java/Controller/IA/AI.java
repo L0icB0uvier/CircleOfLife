@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 public abstract class AI {
     protected Match match;
     public AILevel aiLevel;
-    int minWait = 0, maxWait = 10;
+    int minWait = 10, maxWait = 100;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -49,7 +49,7 @@ public abstract class AI {
         futureMove = new CompletableFuture<>();
 
         long randomWait = ThreadLocalRandom.current().nextLong(minWait, maxWait + 1);
-        Configuration.info("AI waiting " + randomWait + " milliseconds");
+        //Configuration.info("AI waiting " + randomWait + " milliseconds");
 
         scheduledTask = scheduler.schedule(() -> {
             try {

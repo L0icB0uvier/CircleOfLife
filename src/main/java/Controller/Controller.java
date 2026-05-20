@@ -160,9 +160,13 @@ public class Controller implements EventCollector, Observer {
     @Override
     public void update() {
         if(currentPlayer == null) return;
-        currentPlayer.endTurn();
 
-        if(game.isGameOver() || game.isReviewModeActive()) return;
+        if(game.isGameOver() || game.isReviewModeActive()) {
+            currentPlayer = null;
+            return;
+        }
+
+        currentPlayer.endTurn();
 
         updateCurrentPlayer();
         currentPlayer.startTurn();
