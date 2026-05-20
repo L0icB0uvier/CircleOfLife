@@ -57,7 +57,7 @@ public class GamePanel extends JComponent implements Observer {
     private boolean showCircleHoverHighlight = true;
     private boolean showBoardHoverHighlight = true;
     private boolean useNeutralStoneImageForHoverInCircle = false;
-    private boolean showBoardHightlightEffect = true;
+    private boolean showBoardHighlightEffect = true;
     private boolean showCircleShape = true;
     private boolean showBlockingCrittersHighlight = true;
 
@@ -417,7 +417,7 @@ public class GamePanel extends JComponent implements Observer {
             if(!opponentsNeighbors.isEmpty()){
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
-                        if(showBoardHightlightEffect)
+                        if(showBoardHighlightEffect)
                             drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, boardHighlightStroke);
                         eatenShape = critter.type();
                     }
@@ -427,7 +427,7 @@ public class GamePanel extends JComponent implements Observer {
                 drawCircleShapeWithHighlight(g2d, eatenShape, UIColor.EATEN_COLOR, getPlayerImage(match.getOpponentPlayerIndex()));
         }
 
-        if(showBoardHightlightEffect)
+        if(showBoardHighlightEffect)
             drawBoardCritterHighlight(g2d, evolveCoords, UIColor.EVOLVE_COLOR, boardHighlightStroke);
 
         if(showCircleShape)

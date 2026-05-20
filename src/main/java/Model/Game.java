@@ -1,5 +1,6 @@
 package Model;
 
+import Global.Configuration;
 import Patterns.Observable;
 
 /**
@@ -55,10 +56,15 @@ public class Game extends Observable {
      * @param move
      */
     public void playMove(Move move){
-        if(match.isGameOver())
+        if(match.isGameOver()){
+            Configuration.info(String.format("Player %d won!", match.winner + 1));
             return;
+        }
         match.apply(move);
         match.endTurn();
+        if(match.isGameOver()){
+            Configuration.info(String.format("Player %d won!", match.winner + 1));
+        }
         update();
     }
 
@@ -70,6 +76,7 @@ public class Game extends Observable {
 
         match.undo();
         match.toggleCurrentPlayer();
+        Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
         update();
     }
 
@@ -92,16 +99,19 @@ public class Game extends Observable {
         if(match.isReviewModeActive()){
             if(match.wonByScore){
                 match.toggleCurrentPlayer();
+                Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
                 match.redo();
             }
             else{
                 match.redo();
                 match.toggleCurrentPlayer();
+                Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
             }
         }
         else{
             match.redo();
             match.toggleCurrentPlayer();
+            Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
         }
         update();
     }
@@ -119,5 +129,9 @@ public class Game extends Observable {
     public void replay(){
         match.initMatch();
         update();
+    }
+
+    public int getNumberOfMovePlayed(){
+        return match.getPastCount();
     }
 }

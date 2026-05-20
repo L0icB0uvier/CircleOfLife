@@ -70,12 +70,6 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         }
     }
 
-
-    @Override
-    public void updateScore(PlayerData[] playerData) {
-        graphicalGame.updateScore(playerData);
-    }
-
     public void updateUndoRedoEnabled() {
         //TODO : ajouter les images des boutons grisés
         //graphicalGame.gameControlBar.undoBt.setEnabled(game.getMatch().canUndo());
