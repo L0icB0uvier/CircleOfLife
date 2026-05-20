@@ -329,4 +329,13 @@ public class GameDataManager {
 
         return res;
     }
+
+    public static boolean deleteMatch(String fileName) {
+        File fileToDelete = new File(savePath + fileName + ".save");
+        return fileToDelete.delete();
+    }
+
+    public static void renameMatch(String filename, String newName) {
+        //TODO Implémenter la fonction
+    }
 }

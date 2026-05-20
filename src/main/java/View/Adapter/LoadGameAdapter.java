@@ -6,10 +6,11 @@ import View.EventCollector;
 import View.GraphicalUserInterface;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class LoadGameAdapter extends MouseAdapter {
+public class LoadGameAdapter implements ActionListener {
     Controller controller;
     GraphicalUserInterface userInterface;
     String gameFile;
@@ -21,7 +22,7 @@ public class LoadGameAdapter extends MouseAdapter {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void actionPerformed(ActionEvent e) {
         controller.loadGame(gameFile);
         userInterface.startGame();
     }

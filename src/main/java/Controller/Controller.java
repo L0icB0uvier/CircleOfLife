@@ -127,6 +127,10 @@ public class Controller implements EventCollector, Observer {
         }
     }
 
+    public void deleteGame(String gameFile) {
+        if(GameDataManager.deleteMatch(gameFile)) Configuration.warning("Pas de fichier à supprimer trouve pour " + gameFile + ".save");
+    }
+
     /**
      * Lance la partie.
      */
