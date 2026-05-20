@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -190,14 +189,14 @@ public class GameDataManager {
         for (int i = 0; i < lenFuture; i++) {
             game.undo();
         }
-        
+
+        // read reviewMode
         boolean reviewModeActive = false;
-        if (scanner.hasNext()) 
+        if (scanner.hasNext())
             reviewModeActive = scanner.nextBoolean();
 
         if (reviewModeActive || m.isGameOver())
-                m.enterReviewMode();
-        
+            m.enterReviewMode();
 
         scanner.close();
     }
@@ -243,7 +242,8 @@ public class GameDataManager {
         char joueur2 = getPlayerType(settings.getPlayer2Settings());
         PlayerData[] pd = m.getPlayerData();
         String playerDataString = playerDataToString(pd[0]) + sep
-                + (joueur1 == 'J' ? "J" + sepAlt + pd[0].getName().replaceAll(" ", sepAlt) : joueur1) + sep + playerDataToString(pd[1]) + sep
+                + (joueur1 == 'J' ? "J" + sepAlt + pd[0].getName().replaceAll(" ", sepAlt) : joueur1) + sep
+                + playerDataToString(pd[1]) + sep
                 + (joueur2 == 'J' ? "J" + sepAlt + pd[1].getName().replaceAll(" ", sepAlt) : joueur2);
         return ZonedDateTime.now().format(fmt).replaceAll(" ", sep).replaceAll(":", sepAlt) + sep
                 + playerDataString + ".save";
@@ -276,8 +276,8 @@ public class GameDataManager {
                     .filter(filename -> filename.endsWith(".save"))
                     .forEach(filename -> res.add(filename.replaceAll(".save", "")));
         } catch (IOException e) {
-            //e.printStackTrace();
-            //Configuration.info("Pas de fichiers de sauvegardes trouvées");
+            // e.printStackTrace();
+            // Configuration.info("Pas de fichiers de sauvegardes trouvées");
             return new ArrayList<>();
         }
         return res;
@@ -304,13 +304,14 @@ public class GameDataManager {
     }
 
     public static String[] parseFileName(String filename) {
-        String[] res = new String[4];
+        String[] res = new String[5];
         String sep = "_";
-        if (filename.endsWith(".save"))
-            filename.replaceAll(".save", "");
+        filename = filename.replaceAll(".save", "");
 
         String arr[] = filename.split(sep);
-
+        if (hasName(filename)) {
+            arr = Arrays.copyOfRange(arr, 1, arr.length);
+        } 
         String date[] = Arrays.copyOfRange(arr, 0, arr.length - 4);
         String game[] = Arrays.copyOfRange(arr, arr.length - 4, arr.length);
 
@@ -327,7 +328,18 @@ public class GameDataManager {
         // parse score (joueur 1 score - joueur 2 score)
         res[3] = game[0] + " - " + game[2];
 
+        //name game
+        res[4] = getName(filename);
+
         return res;
+    }
+
+    public static boolean saveFileExists(String filename) {
+        filename = filename.replaceAll(".save", "");
+        List<String> temp = getSaveFiles();
+
+        return temp.contains(filename);
+
     }
 
     public static boolean deleteMatch(String fileName) {
@@ -335,7 +347,59 @@ public class GameDataManager {
         return fileToDelete.delete();
     }
 
-    public static void renameMatch(String filename, String newName) {
-        //TODO Implémenter la fonction
+    //on suppose que le jeu est nommé si le premier élément de son nom n'est pas un nombre (cad l'année)
+    private static boolean hasName(String filename) {
+        String sep = "_";
+        try {
+            String[] temp = filename.split(sep);
+            if (temp.length == 0)
+                return false;
+            Integer.parseInt(temp[0]);
+        } catch (NumberFormatException e)  {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static String getName(String filename) {
+        if (filename == null)
+            return "";
+        if (!hasName(filename))
+            return "";
+        String sep = "_";
+        String sepAlt = "-";
+        return filename.split(sep)[0].replaceAll(sepAlt, " ");
+    }
+
+    private static String constNewName(String filename, String newName) {
+        if (!filename.endsWith(".save"))
+            filename += ".save";
+        String sep = "_";
+        String sepAlt = "-";
+        if (!hasName(filename))
+            return newName.replaceAll(" ", sepAlt) + sep + filename;
+        else {
+            String[] temp = filename.split(sep);
+            return newName.replaceAll(" ", sepAlt) + sep + String.join(sep, Arrays.copyOfRange(temp, 1, temp.length));
+        }
+    }
+
+    public static String renameMatch(String filename, String newName) {
+        if (!saveFileExists(filename))
+            return "";
+        if (!filename.endsWith(".save"))
+            filename += ".save";
+        Path source = Paths.get(savePath + filename);
+        String newNameRes = constNewName(filename, newName);
+        try {
+            Files.move(source,
+                    source.resolveSibling(newNameRes));
+        } catch (IOException e) {
+            // e.printStackTrace();
+            // Configuration.info("Erreur lors de rennomage du fichier");
+            return filename;
+        }
+        return newNameRes.replaceAll(".save", "");
     }
 }
