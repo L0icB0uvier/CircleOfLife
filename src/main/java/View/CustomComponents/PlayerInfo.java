@@ -7,6 +7,8 @@ import View.Utils.UIColor;
 import View.Utils.UIFont;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class PlayerInfo extends JPanel {
@@ -31,32 +33,32 @@ public class PlayerInfo extends JPanel {
 
         // GridBagConstraints for all components
         GridBagConstraints nameConstraints = new GridBagConstraints();
-        nameConstraints.weighty=0.1;
-        nameConstraints.weightx=0.1;
-        nameConstraints.insets = new Insets(0,20,0,0);
-        nameConstraints.fill= GridBagConstraints.BOTH;
-        nameConstraints.anchor = GridBagConstraints.WEST;
+        nameConstraints.gridx = 0;
+        nameConstraints.gridy = 0;
+        nameConstraints.anchor = GridBagConstraints.CENTER;
+        nameConstraints.fill = GridBagConstraints.HORIZONTAL;
 
         GridBagConstraints scoreConstraints = new GridBagConstraints();
-        scoreConstraints.weighty=0.1;
-        scoreConstraints.weightx=0.1;
-        scoreConstraints.insets = new Insets(0,0,0,20);
-        scoreConstraints.fill= GridBagConstraints.BOTH;
-        scoreConstraints.anchor = GridBagConstraints.EAST;
-
+        scoreConstraints.gridx = 0;
+        scoreConstraints.gridy = 1;
+        scoreConstraints.anchor = GridBagConstraints.CENTER;
+        scoreConstraints.fill = GridBagConstraints.HORIZONTAL;
 
         // Initialisation of all components
         nameLabel = new JLabel();
         nameLabel.setText(this.name);
-        nameLabel.setHorizontalAlignment(JLabel.LEFT);
+        nameLabel.setHorizontalAlignment(JLabel.CENTER);
         nameLabel.setVerticalAlignment(JLabel.CENTER);
         nameLabel.setForeground(color);
 
         scoreLabel = new JLabel();
         scoreLabel.setText("0/20");
-        scoreLabel.setHorizontalAlignment(JLabel.RIGHT);
-        nameLabel.setVerticalAlignment(JLabel.CENTER);
+        scoreLabel.setHorizontalAlignment(JLabel.CENTER);
+        scoreLabel.setVerticalAlignment(JLabel.CENTER);
         scoreLabel.setForeground(color);
+
+        Border padding = new EmptyBorder(0,0,RoundedBorder.SHADOW_SIZE_BOTTOM,0);
+        scoreLabel.setBorder(padding);
 
         // Adding components to the layout
         gbl.setConstraints(nameLabel,nameConstraints);
@@ -66,7 +68,7 @@ public class PlayerInfo extends JPanel {
 
         this.setBackground(nPlayer == 0 ? UIColor.LIGHT_BLUE : UIColor.LIGHT_RED);
         this.setOpaque(false);
-        this.setBorder(new RoundedBorder(15));
+        this.setBorder(new RoundedBorder(15,true));
 
         this.addComponentListener(new FontScaler(nameLabel,scoreLabel));
 

@@ -44,13 +44,14 @@ public class  ImageButton extends JButton {
         if(getParent().getWidth() == 0){
             width = getWidth();
         }else {
-            width = getParent().getWidth() / 4;
+            width = getParent().getWidth();
         }
         if(getParent().getHeight() == 0){
             height = getHeight();
         }else {
             height = getParent().getHeight();
         }
+
 
         int size = Math.min(width,height);
         int x = (getWidth() - size) / 2;

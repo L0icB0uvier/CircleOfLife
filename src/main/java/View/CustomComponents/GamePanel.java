@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import Global.Configuration;
 import Model.*;
 import Patterns.Observer;
+import View.Utils.UIColor;
 import View.Utils.imageRatio;
 
 import static java.util.Map.entry;
@@ -147,6 +148,13 @@ public class GamePanel extends JComponent implements Observer {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(this.getBackground());
+        g2d.fillRoundRect(5, 5, getWidth()-10, getHeight()-10, 15, 15);
+
+
         if(requireCalculation)
             recalculate();
 
@@ -159,6 +167,12 @@ public class GamePanel extends JComponent implements Observer {
             drawFeedforward(g2d);
 
         //drawEaten(g2d);
+
+        super.paintBorder(g2d);
+
+        g2d.dispose();
+
+
     }
 
     public void recalculate(){
@@ -560,4 +574,6 @@ public class GamePanel extends JComponent implements Observer {
         }
         return null;
     }
+
+
 }

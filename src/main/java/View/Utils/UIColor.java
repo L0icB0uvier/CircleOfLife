@@ -11,8 +11,8 @@ public class UIColor {
     static public Color WHITE = new Color(255,249,240);
     static public Color ORANGE = new Color(244,126,82);
     static public Color GREEN = new Color(0,155,78);
-    static public Color LIGHT_BLUE = new Color(0,0,145,25);
-    static public Color LIGHT_RED = new Color(255,0,15,25);
+    static public Color LIGHT_BLUE = new Color(204,199,221);
+    static public Color LIGHT_RED = new Color(249,199,195);
     static public Color ALT_BLUE = new Color(77, 178, 255);
     static public Color BACKGROUND = new Color(237, 223, 198);
 }
