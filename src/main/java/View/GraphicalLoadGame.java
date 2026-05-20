@@ -67,7 +67,7 @@ public class GraphicalLoadGame extends JPanel {
         gamePanel.setBackground(UIColor.BACKGROUND);
 
         String[] dates = gameData[0].split(" ");
-        String date = dates[1] + " " + dates[2] + " " + dates[3] + ", à " + dates[4];
+        String date = dates[0] + "/" + dates[1] + "/" + dates[2] + ", à " + dates[3];
         JLabel dateLabel = new JLabel(date);
         dateLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 

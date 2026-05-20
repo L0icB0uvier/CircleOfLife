@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * Représente l'état d'une partie de jeu et gère toute la logique relative au déroulement d'une partie.
  */
-public class Match extends History<Move> {
+public class Match extends History<Move> implements Cloneable {
     public final static int playerOneIndex = 0;
     public final static int playerTwoIndex = 1;
 
@@ -48,7 +48,7 @@ public class Match extends History<Move> {
      * Initialise le match en supprimant l'historique, en initialisant le plateau de jeu et en choisissant un nouveau joueur de manière aléatoire.
      */
     public void initMatch() {
-//        Configuration.info("Initialisation du match");
+        Configuration.info("Initialisation du match");
         reset();
         InitializeBoard();
         resetScores();
@@ -123,7 +123,6 @@ public class Match extends History<Move> {
     void gameOver(int winner){
         gameOver = true;
         this.winner = winner;
-//        Configuration.info(String.format("Player %d won!", winner + 1));
     }
 
     void enterReviewMode(){
@@ -188,8 +187,8 @@ public class Match extends History<Move> {
         // mise à jour de l'état du plateau
         updateBoard(newCritter, eatenCritters);
 
-//        Configuration.info("Nombre de critters de taille 4 du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.countPlayerCritterSize(this, currentPlayerIndex, 4));
-//        Configuration.info("Distance moyenne entre critters du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.meanPlayerCritterDistance(this, currentPlayerIndex));
+        //Configuration.info("Nombre de critters de taille 4 du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.countPlayerCritterSize(this, currentPlayerIndex, 4));
+        //Configuration.info("Distance moyenne entre critters du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.meanPlayerCritterDistance(this, currentPlayerIndex));
     }
 
     /**
@@ -375,7 +374,6 @@ public class Match extends History<Move> {
      */
     void toggleCurrentPlayer(){
         currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
-//        Configuration.info("Player " + (currentPlayerIndex + 1) + " turn");
     }
 
     /**
@@ -559,5 +557,35 @@ public class Match extends History<Move> {
 
     public int getRedoNumber(){
         return future.size();
+    }
+
+    @Override
+    public Match clone() {
+        try {
+            Match clone = (Match) super.clone();
+
+            clone.players = new PlayerData[2];
+            if (this.players[0] != null) clone.players[0] = this.players[0].clone();
+            if (this.players[1] != null) clone.players[1] = this.players[1].clone();
+
+            if (this.boardState != null) {
+                clone.boardState = new byte[this.boardSize][];
+                for (int i = 0; i < this.boardSize; i++) {
+                    clone.boardState[i] = this.boardState[i].clone();
+                }
+            }
+
+            if (this.critters != null) {
+                clone.critters = new HashSet<>(this.critters);
+            }
+
+            if (this.previouslyEatenCritters != null) {
+                clone.previouslyEatenCritters = new ArrayList<>(this.previouslyEatenCritters);
+            }
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(); // Ne devrait jamais arriver puisque Match implémente Cloneable
+        }
     }
 }

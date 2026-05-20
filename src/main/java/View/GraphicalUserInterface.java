@@ -70,12 +70,6 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         }
     }
 
-
-    @Override
-    public void updateScore(PlayerData[] playerData) {
-        graphicalGame.updateScore(playerData);
-    }
-
     public void updateUndoRedoEnabled() {
         //TODO : ajouter les images des boutons grisés
         //graphicalGame.gameControlBar.undoBt.setEnabled(game.getMatch().canUndo());
@@ -95,28 +89,29 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     public void startGame() {
         graphicalGame = new GraphicalGame(game);
 
-        graphicalGame.gameControlBar.undoBt.addActionListener(new ControlButtonAdapter(controller, "Undo"));
-        graphicalGame.gameControlBar.redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
-        graphicalGame.gameControlBar.saveBt.addActionListener(new ControlButtonAdapter(controller, "Save"));
+        graphicalGame.undoBt.addActionListener(new ControlButtonAdapter(controller, "Undo"));
+        graphicalGame.redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
 
         updateUndoRedoEnabled();
         PopUpAdapter pua;
 
-        pua = new PopUpAdapter(frame, controller,3, "Voulez-vous sauvegarder la partie en cours ?", "");
+        pua = new PopUpAdapter(frame, controller, 3, "Voulez-vous sauvegarder la partie en cours ?", "");
         graphicalGame.gameControlBar.saveBt.addActionListener(pua);
-        pua.setActionButton(0,"Annuler",true);
-        pua.setButtonLabel(0,"Annuler");
-        pua.setActionButton(2,"Save",true);
-        pua.setButtonLabel(2,"Sauvegarder");
-        pua.setButtonVisibility(1,false);
+        pua.setActionButton(0, "Annuler", true);
+        pua.setButtonLabel(0, "Annuler");
+        pua.setActionButton(2, "Save", true);
+        pua.setButtonLabel(2, "Sauvegarder");
+        pua.setButtonVisibility(1, false);
 
-        pua = new PopUpAdapter(frame, controller, 3,"Voulez-vous abandonner la manche en cours ?", "Attention les données non sauvegardées seront supprimées !");
+        pua = new PopUpAdapter(frame, controller, 4, "Voulez-vous quittez la partie en cours ?", "Attention les données non sauvegardées seront supprimées !");
         graphicalGame.gameControlBar.forfeitBt.addActionListener(pua);
-        pua.setActionButton(0,"Annuler",true);
-        pua.setButtonLabel(0,"Annuler");
-        pua.setActionButton(2,"GiveUp",true);
-        pua.setButtonLabel(2,"Abandonner");
-        pua.setButtonVisibility(1,false);
+        pua.setActionButton(0, "Annuler", true);
+        pua.setButtonLabel(0, "Annuler");
+        pua.setActionButton(2, "ContinueGame", true);
+        pua.setButtonLabel(2, "Rejouer");
+        pua.setActionButton(3, this, graphicalMainMenu);
+        pua.setButtonLabel(3, "Menu");
+        pua.setButtonVisibility(1, false);
 
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);
@@ -135,12 +130,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalGame.updateGameInfo();
         updateUndoRedoEnabled();
 
-        if(game.isReviewModeActive()){
+        if (game.isReviewModeActive()) {
             graphicalGame.updateGameInfo();
-        }
-
-        else if(game.isGameOver())
-            displayGameOverPopup(game.getWinningPlayer());
+        } else if (game.isGameOver()); //TODO : ajouter un bouton review qui apparait une fois la partie fini;
     }
 
     @Override
