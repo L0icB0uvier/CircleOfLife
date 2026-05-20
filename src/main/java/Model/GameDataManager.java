@@ -71,6 +71,8 @@ public class GameDataManager {
 
         }
 
+        writer.write(match.isReviewModeActive() + sep);
+
         writer.close();
     }
 
@@ -188,6 +190,14 @@ public class GameDataManager {
         for (int i = 0; i < lenFuture; i++) {
             game.undo();
         }
+        
+        boolean reviewModeActive = false;
+        if (scanner.hasNext()) 
+            reviewModeActive = scanner.nextBoolean();
+
+        if (reviewModeActive || m.isGameOver())
+                m.enterReviewMode();
+        
 
         scanner.close();
     }
@@ -266,7 +276,9 @@ public class GameDataManager {
                     .filter(filename -> filename.endsWith(".save"))
                     .forEach(filename -> res.add(filename.replaceAll(".save", "")));
         } catch (IOException e) {
-            Configuration.error("Erreur lors d'acces a des fichiers de sauvegardes");
+            //e.printStackTrace();
+            //Configuration.info("Pas de fichiers de sauvegardes trouvées");
+            return new ArrayList<>();
         }
         return res;
     }
