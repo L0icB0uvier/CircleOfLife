@@ -157,6 +157,10 @@ public class Configuration {
         return logger;
     }
 
+    public static void setLoggerLevel(Level loggerLevel){
+        instance().logger().setLevel(loggerLevel);
+    }
+
     /**
      * Log une info dans la console en utilisant un Logger.
       * @param s Message à afficher.

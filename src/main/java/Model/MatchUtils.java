@@ -75,17 +75,7 @@ public class MatchUtils {
      * @return Un match ayant un état, des joueurs, des critters et un joueur actif égaux à celui donné en argument
      */
     public static Match copy(Match match){
-        Match newMatch = new Match();
-        newMatch.boardState = match.getBoardState();
-        newMatch.players = match.getPlayerData();
-        for (Critter critter : match.critters){
-            newMatch.critters.add(new Critter(critter));
-        }
-        newMatch.currentPlayerIndex = match.currentPlayerIndex;
-        for (Critter critter : match.previouslyEatenCritters){
-            newMatch.previouslyEatenCritters.add(new Critter(critter));
-        }
-        return newMatch;
+        return match.clone();
     }
 
     /**

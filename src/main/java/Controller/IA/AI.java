@@ -49,7 +49,7 @@ public abstract class AI {
         futureMove = new CompletableFuture<>();
 
         long randomWait = ThreadLocalRandom.current().nextLong(minWait, maxWait + 1);
-        Configuration.info("AI waiting " + randomWait + " milliseconds");
+        //Configuration.info("AI waiting " + randomWait + " milliseconds");
 
         scheduledTask = scheduler.schedule(() -> {
             try {
