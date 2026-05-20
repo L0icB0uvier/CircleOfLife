@@ -1,5 +1,6 @@
 package View;
 
+import Model.GameDataManager;
 import View.Utils.FontScaler;
 import net.miginfocom.swing.MigLayout;
 
@@ -48,7 +49,6 @@ public class GraphicalMainMenu extends JPanel {
 
         titleLabel.addComponentListener(new FontScaler(0.5f, titleLabel));
         newGameButton.addComponentListener(new FontScaler(0.5f, newGameButton, continueButton, loadButton, tutorialButton, quitButton));
-
     }
 
     private JButton createButton(String text) {
@@ -57,5 +57,13 @@ public class GraphicalMainMenu extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         button.setContentAreaFilled(false);
         return button;
+    }
+
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        continueButton.setEnabled(GameDataManager.hasSaveFile());
+        loadButton.setEnabled(GameDataManager.hasSaveFile());
     }
 }
