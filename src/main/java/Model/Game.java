@@ -130,4 +130,8 @@ public class Game extends Observable {
         match.initMatch();
         update();
     }
+
+    public int getNumberOfMovePlayed(){
+        return match.getPastCount();
+    }
 }

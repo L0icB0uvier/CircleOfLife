@@ -123,6 +123,7 @@ public class AnalyseIAView implements Observer, UserInterface {
             System.out.println("Partie terminée");
             extractGameData();
             gamePlayedCounts++;
+            System.out.println(String.format("Nombre de parties jouées: %d", gamePlayedCounts));
             if(gamePlayedCounts < numberOfGames)
                 startNewGame();
 
@@ -137,8 +138,13 @@ public class AnalyseIAView implements Observer, UserInterface {
     private void extractGameData(){
         System.out.println("Extraction des données.");
         winCount[game.getWinningPlayer()].winCount++;
-        if(game.getMatch().winByScore())
+        if(game.getMatch().winByScore()){
             winCount[game.getWinningPlayer()].winByScoreCount++;
+            winCount[game.getWinningPlayer()].numberOfMoveWinByScore += game.getNumberOfMovePlayed();
+        }
+        else{
+            winCount[game.getWinningPlayer()].numberOfMoveWinByFill += game.getNumberOfMovePlayed();
+        }
     }
 
     private void writeGameStats() {
@@ -180,9 +186,22 @@ public class AnalyseIAView implements Observer, UserInterface {
         // On utilise writer.write(String.format(...)) pour tout le monde
         writer.write(String.format(formatLigneStr, "Métrique", "IA Joueur 1", "IA Joueur 2"));
         writer.write(String.format(formatLigneStr, "Difficulté IA", convertAILevelToText(aiLevel1), convertAILevelToText(aiLevel2)));
-        writer.write(String.format(formatLigneInt, "Nb victoires", winCount[0].winCount, winCount[1].winCount));
-        writer.write(String.format(formatLigneInt, "Victoires par score", winCount[0].winByScoreCount, winCount[1].winByScoreCount));
-        writer.write(String.format(formatLigneInt, "Victoires par remplissage", remplissage0, remplissage1));
+        writer.write(String.format(formatLigneStr, "Nb victoires",
+                String.format("%d (%d%%)", winCount[0].winCount, (winCount[0].winCount * 100) / numberOfGames),
+                String.format("%d (%d%%)", winCount[1].winCount, (winCount[1].winCount * 100) / numberOfGames)));
+        writer.write(String.format(formatLigneStr, "Victoires par score",
+                String.format("%d (%d%%)", winCount[0].winByScoreCount, (winCount[0].winByScoreCount * 100) / winCount[0].winCount),
+                String.format("%d (%d%%)", winCount[1].winByScoreCount, (winCount[1].winByScoreCount * 100) / winCount[1].winCount)));
+        writer.write(String.format(formatLigneInt, "   Nombre moyen de coups",
+                winCount[0].winByScoreCount > 0? winCount[0].numberOfMoveWinByScore / winCount[0].winByScoreCount : 0,
+                winCount[1].winByScoreCount > 0? winCount[1].numberOfMoveWinByScore / winCount[1].winByScoreCount : 0));
+        writer.write(String.format(formatLigneStr, "Victoires par remplissage",
+                String.format("%d (%d%%)", remplissage0, (remplissage0 * 100) / winCount[0].winCount),
+                String.format("%d (%d%%)", remplissage1, (remplissage1 * 100) / winCount[1].winCount)));
+        writer.write(String.format(formatLigneInt, "   Nombre moyen de coups",
+                remplissage0 > 0? winCount[0].numberOfMoveWinByFill / remplissage0 : 0,
+                remplissage1 > 0? winCount[1].numberOfMoveWinByFill / remplissage1 : 0));
+        ;
     }
 
     private String convertAILevelToText(AILevel aiLevel){
@@ -208,5 +227,7 @@ public class AnalyseIAView implements Observer, UserInterface {
     public class winStat{
         public int winCount;
         public int winByScoreCount;
+        public int numberOfMoveWinByScore;
+        public int numberOfMoveWinByFill;
     }
 }
