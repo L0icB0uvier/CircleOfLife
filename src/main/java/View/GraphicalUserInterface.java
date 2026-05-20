@@ -139,8 +139,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         if (game.isReviewModeActive()) {
             graphicalGame.updateGameInfo();
-        } else if (game.isGameOver())
-            controller.performAction("Replay");
+        } else if (game.isGameOver()); //TODO : ajouter un bouton review qui apparait une fois la partie fini;
     }
 
     @Override
@@ -171,7 +170,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-}
+
 
     /*private void continueGame(int nJoueur) {
 
@@ -189,5 +188,5 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setActionButton(4,"ContinueGame",true);
 
         pua.show();
-    }
+    }*/
 }
