@@ -141,18 +141,19 @@ public class MatchUtils {
     }
 
     /**
-     * Mesure la distance moyenne entre les critters d'un joueur.
+     * Mesure la distance moyenne entre les critters de deux joueurs (potentiellement le même).
      * @param match Le match dont la configuration actuelle sera mesurée.
-     * @param playerID L'index du joueur dont on doit mesurer la distance inter critter.
-     * @return La distance moyenne entre critters du même joueur.
+     * @param playerID1 L'index du premier joueur.
+     * @param playerID2 L'index du deuxième joueur.
+     * @return La distance moyenne entre critters des deux joueurs.
      */
-    public static double meanPlayerCritterDistance(Match match, int playerID){
+    public static double meanPlayersCritterDistance(Match match, int playerID1, int playerID2){
         double result = 0;
         int counter = 0;
         for (Critter critter1 : match.critters){
-            if (critter1.player() == playerID) {
+            if (critter1.player() == playerID1) {
                 for (Critter critter2 : match.critters) {
-                    if (critter2.player() == playerID && critter2 != critter1) {
+                    if (critter2.player() == playerID2 && critter2 != critter1) {
                         for (Coordinate coordinate1 : critter1.stonesCoordinates()) {
                             for (Coordinate coordinate2 : critter2.stonesCoordinates()) {
                                 result += hexagonalManhattanDistance(coordinate1, coordinate2);

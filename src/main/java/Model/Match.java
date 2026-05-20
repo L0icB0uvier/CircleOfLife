@@ -48,7 +48,7 @@ public class Match extends History<Move> {
      * Initialise le match en supprimant l'historique, en initialisant le plateau de jeu et en choisissant un nouveau joueur de manière aléatoire.
      */
     public void initMatch() {
-        Configuration.info("Initialisation du match");
+//        Configuration.info("Initialisation du match");
         reset();
         InitializeBoard();
         resetScores();
@@ -123,7 +123,7 @@ public class Match extends History<Move> {
     void gameOver(int winner){
         gameOver = true;
         this.winner = winner;
-        Configuration.info(String.format("Player %d won!", winner + 1));
+//        Configuration.info(String.format("Player %d won!", winner + 1));
     }
 
     void enterReviewMode(){
@@ -188,8 +188,8 @@ public class Match extends History<Move> {
         // mise à jour de l'état du plateau
         updateBoard(newCritter, eatenCritters);
 
-        Configuration.info("Nombre de critters de taille 4 du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.countPlayerCritterSize(this, currentPlayerIndex, 4));
-        Configuration.info("Distance moyenne entre critters du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.meanPlayerCritterDistance(this, currentPlayerIndex));
+//        Configuration.info("Nombre de critters de taille 4 du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.countPlayerCritterSize(this, currentPlayerIndex, 4));
+//        Configuration.info("Distance moyenne entre critters du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.meanPlayerCritterDistance(this, currentPlayerIndex));
     }
 
     /**
@@ -375,7 +375,7 @@ public class Match extends History<Move> {
      */
     void toggleCurrentPlayer(){
         currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
-        Configuration.info("Player " + (currentPlayerIndex + 1) + " turn");
+//        Configuration.info("Player " + (currentPlayerIndex + 1) + " turn");
     }
 
     /**
