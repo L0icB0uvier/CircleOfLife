@@ -97,7 +97,6 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         graphicalGame.undoBt.addActionListener(new ControlButtonAdapter(controller, "Undo"));
         graphicalGame.redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
-        graphicalGame.gameControlBar.saveBt.addActionListener(new ControlButtonAdapter(controller, "Save"));
 
         updateUndoRedoEnabled();
         PopUpAdapter pua;
@@ -171,10 +170,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.setVisible(true);
     }
 
+    private void displayGameOverPopup(int nJoueur) {
 
-    /*private void continueGame(int nJoueur) {
-
-        PopUpAdapter pua = new PopUpAdapter(frame,controller,5,"Le Joueur " + (nJoueur + 1) + " a gagner la manche !","");
+        PopUpAdapter pua = new PopUpAdapter(frame,controller,5,"Le Joueur " + (nJoueur + 1) + " a gagné la manche !","");
 
         pua.setButtonLabel(0,"Menu");
         pua.setButtonLabel(1,"Sauvegarder");
@@ -182,11 +180,11 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setButtonLabel(3,"Analyser");
         pua.setButtonLabel(4,"Rejouer");
 
-        pua.setActionButton(0,this, graphicalMainMenu);
-        pua.setActionButton(1,"Save",false);
-        // pua.setActionButton(1,"Replay",true);
-        pua.setActionButton(4,"ContinueGame",true);
+        pua.setActionButton(0, this, graphicalMainMenu);
+        pua.setActionButton(1, "Save",false);
+        pua.setActionButton(3, "Review", true);
+        pua.setActionButton(4, "Replay",true);
 
         pua.show();
-    }*/
+    }
 }

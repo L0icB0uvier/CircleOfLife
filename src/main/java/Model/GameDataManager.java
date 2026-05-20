@@ -238,7 +238,7 @@ public class GameDataManager {
         String sep = "_";
         String sepAlt = "-";
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern(
-                "EEEE d MMMM yyyy HH:mm:ss", Locale.FRENCH);
+                "yyyy MM dd HH:mm:ss");
         char joueur1 = getPlayerType(settings.getPlayer1Settings());
         char joueur2 = getPlayerType(settings.getPlayer2Settings());
         PlayerData[] pd = m.getPlayerData();
