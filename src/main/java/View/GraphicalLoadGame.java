@@ -41,9 +41,6 @@ public class GraphicalLoadGame extends JPanel {
         }
 
         scrollPane.setWheelScrollingEnabled(true);
-        SwingUtilities.invokeLater(()->{
-            scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-        });
 
         cancelButton = createBorderedButton("Revenir au menu");
         cancelButton.setPreferredSize(new Dimension(300, 75));
