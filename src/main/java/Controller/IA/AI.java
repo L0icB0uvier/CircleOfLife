@@ -7,6 +7,7 @@ import Model.MatchUtils;
 import Model.Move;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public abstract class AI {
@@ -22,6 +23,21 @@ public abstract class AI {
     public AI(Match match){
         this.match = match;
     }
+
+    public static final Map<Integer, Integer> critterBaseScore = Map.ofEntries(
+            Map.entry(0, 10),
+            Map.entry(1, 10),
+            Map.entry(2, 10),
+            Map.entry(3, 10),
+            Map.entry(4, 10),
+            Map.entry(5, 10),
+            Map.entry(6, 10),
+            Map.entry(7, 10),
+            Map.entry(8, 10),
+            Map.entry(9, 10),
+            Map.entry(10, 10),
+            Map.entry(11, 10)
+    );
 
     /**
      * Méthode helper permettant de créer une instance de l'IA correspondant à la difficulté voulue.

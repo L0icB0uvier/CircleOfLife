@@ -2,10 +2,8 @@ package Controller.IA;
 
 import Model.*;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class EasyAI extends AI{
     int depth = 1; // profondeur de la recherche Minimax dans l'arbre des états
