@@ -157,12 +157,24 @@ public class MatchUtils {
         return result;
     }
 
-    public static boolean isOpponentGreyTile(Match match, Coordinate coordinate, int currentPlayer) {
-        return (match.boardState[coordinate.line()][coordinate.col()] == -currentPlayer);
+    /**
+     * Détermine si l'adversaire du joueur actif peut jouer dans une case donnée.
+     * @param match Le match sur lequel la mesure est faite.
+     * @param coordinate La position de la case.
+     * @return true si l'adversaire ne peut PAS jouer sur cette case, false sinon.
+     */
+    public static boolean isOpponentGreyTile(Match match, Coordinate coordinate) {
+        return (match.boardState[coordinate.line()][coordinate.col()] == -match.getOpponentPlayerIndex());
     }
 
-    public static boolean isEvolutionTile(Match match, Coordinate coordinate, int currentPlayer) {
-        Set<Critter> neighbors = match.getPlayerNeighborsCritters(currentPlayer, coordinate);
+    /**
+     * Détermine si jouer dans une case donnée case mènera à une évolution pour le joueur actif.
+     * @param match Le match sur lequel la mesure est faite.
+     * @param coordinate La position de la case.
+     * @return true si jouer sur cette case mène à une évolution, false sinon.
+     */
+    public static boolean isEvolutionTile(Match match, Coordinate coordinate) {
+        Set<Critter> neighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), coordinate);
         for (Critter critter : neighbors){
             if (critter.stonesCoordinates().size() < 4){
                 return true;

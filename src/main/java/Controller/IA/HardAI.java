@@ -55,7 +55,12 @@ public class HardAI extends AI {
         return best;
     }
 
-    void sortPossibleMoves(List<Coordinate> possibleMoves, Match match){
+    /**
+     * Trie les coups possibles pour le joueur actif d'un match donné, en utilisant une méthode de drapeau multicolore
+     * @param match Le match sur lequel les coups possibles peuvent être joués.
+     * @param possibleMoves Une List contenant l'ensemble des coups jouables par le joueur actif.
+     */
+    void sortPossibleMoves(Match match, List<Coordinate> possibleMoves){
         Coordinate[] movesArray = possibleMoves.toArray(new Coordinate[0]);
         int currentPlayer = match.getCurrentPlayerIndex();
         byte[][] boardstate = match.getBoardState();
@@ -63,14 +68,19 @@ public class HardAI extends AI {
         int id2 = movesArray.length - 1;
         int id3 = movesArray.length - 1;
         while (id1 <= id2){
-            if (MatchUtils.isOpponentGreyTile(match, movesArray[id1], currentPlayer)){
+            // Cas le plus prioritaire
+            if (MatchUtils.isOpponentGreyTile(match, movesArray[id1])){ // l'adversaire ne peut pas jouer ici
                 id1++;
             }
-            else if (MatchUtils.isEvolutionTile(match, movesArray[id1], currentPlayer)){
+
+            // Deuxième cas le plus prioritaire
+            else if (MatchUtils.isEvolutionTile(match, movesArray[id1])){ // jouer ici fera évoluer un(des) critter(s)
                 switchMoves(movesArray, id1, id2);
                 id2--;
             }
-            else{
+
+            // Cas le moins prioritaire
+            else{ // choix par défaut
                 switchMoves(movesArray, id1, id2);
                 switchMoves(movesArray, id2, id3);
                 id2--;
@@ -82,6 +92,12 @@ public class HardAI extends AI {
         }
     }
 
+    /**
+     * Échange deux coups dans une table des coups donnée.
+     * @param movesArray La table de coups.
+     * @param id1 L'indice du premier coup dans la table.
+     * @param id2 L'indice du deuxième coup dans la table.
+     */
     void switchMoves(Coordinate[] movesArray, int id1, int id2){
         Coordinate temp = movesArray[id1];
         movesArray[id1] = movesArray[id2];
