@@ -223,14 +223,14 @@ public class AnalyseIAView implements Observer, UserInterface {
                 String.format("%d (%d%%)", gameStats[0].winCount, (gameStats[0].winCount * 100) / numberOfGames),
                 String.format("%d (%d%%)", gameStats[1].winCount, (gameStats[1].winCount * 100) / numberOfGames)));
         writer.write(String.format(formatLigneStr, "Victoires par score",
-                String.format("%d (%d%%)", gameStats[0].winByScoreCount, (gameStats[0].winByScoreCount * 100) / gameStats[0].winCount),
-                String.format("%d (%d%%)", gameStats[1].winByScoreCount, (gameStats[1].winByScoreCount * 100) / gameStats[1].winCount)));
+                String.format("%d (%d%%)", gameStats[0].winByScoreCount, gameStats[0].winCount > 0? (gameStats[0].winByScoreCount * 100) / gameStats[0].winCount : 0),
+                String.format("%d (%d%%)", gameStats[1].winByScoreCount, gameStats[1].winCount > 0? (gameStats[1].winByScoreCount * 100) / gameStats[1].winCount : 0)));
         writer.write(String.format(formatLigneInt, "   Nombre moyen de coups",
                 gameStats[0].winByScoreCount > 0? gameStats[0].numberOfMoveWinByScore / gameStats[0].winByScoreCount : 0,
                 gameStats[1].winByScoreCount > 0? gameStats[1].numberOfMoveWinByScore / gameStats[1].winByScoreCount : 0));
         writer.write(String.format(formatLigneStr, "Victoires par remplissage",
-                String.format("%d (%d%%)", remplissage0, (remplissage0 * 100) / gameStats[0].winCount),
-                String.format("%d (%d%%)", remplissage1, (remplissage1 * 100) / gameStats[1].winCount)));
+                String.format("%d (%d%%)", remplissage0, gameStats[0].winCount > 0? (remplissage0 * 100) / gameStats[0].winCount : 0),
+                String.format("%d (%d%%)", remplissage1, gameStats[1].winCount > 0? (remplissage1 * 100) / gameStats[1].winCount : 0)));
         writer.write(String.format(formatLigneInt, "   Nombre moyen de coups",
                 remplissage0 > 0? gameStats[0].numberOfMoveWinByFill / remplissage0 : 0,
                 remplissage1 > 0? gameStats[1].numberOfMoveWinByFill / remplissage1 : 0));

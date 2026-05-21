@@ -2,6 +2,7 @@ package Controller.IA;
 
 import Global.Configuration;
 import Model.*;
+import com.sun.jdi.connect.ListeningConnector;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ public class HardAI extends AI {
     public HardAI(Match match) {
         super(match);
         aiLevel = AILevel.HARD;
-        depth = 5;
+        depth = 4;
     }
 
     // TODO : trouver une heuristique pour l'IA difficile en plus du score
@@ -31,8 +32,11 @@ public class HardAI extends AI {
     @Override
     public Move findMove() {
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
-        Collections.shuffle(possibleMoves);
-        depth = Math.max(4, (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size())));
+//        Collections.shuffle(possibleMoves);
+        sortPossibleMoves(match, possibleMoves);
+//        if (possibleMoves.size()!= 1) {
+//            depth = Math.max(4, (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size())));
+//        }
         double maxEval = -Double.MAX_VALUE;
         double eval;
         Move best = null;
@@ -53,4 +57,6 @@ public class HardAI extends AI {
         }
         return best;
     }
+
+
 }
