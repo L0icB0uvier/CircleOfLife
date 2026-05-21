@@ -21,10 +21,15 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     GraphicalMainMenu graphicalMainMenu;
     GraphicalNewGame graphicalNewGame;
     GraphicalLoadGame graphicalLoadGame;
+    GraphicalTutorial graphicalTutorial;
 
-    public GraphicalUserInterface(Game game, EventCollector controller) {
+    public GraphicalUserInterface(Game game, EventCollector controller){
         this.game = game;
         this.controller = controller;
+    }
+
+    public GraphicalTutorial getGraphicalTutorial() {
+        return graphicalTutorial;
     }
 
     public static void start(Game game, EventCollector controller) {
@@ -45,7 +50,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     @Override
     public void updateSettings() {
 
-        if (graphicalNewGame.player1Choice.getValue().equals("Joueur")) {
+        if(graphicalNewGame.player1Choice.getValue().equals("Joueur")) {
             Configuration.setPlayer1Settings(null, graphicalNewGame.player1NameTextField.getText().isEmpty() ? "Joueur 1" : graphicalNewGame.player1NameTextField.getText());
         } else {
             if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Facile")) {
@@ -56,10 +61,10 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
                 Configuration.setPlayer1Settings(AILevel.HARD, "IA Difficile");
             }
         }
-        if (graphicalNewGame.player2Choice.getValue().equals("Joueur")) {
+        if(graphicalNewGame.player2Choice.getValue().equals("Joueur")) {
             Configuration.setPlayer2Settings(null, graphicalNewGame.player2NameTextField.getText().isEmpty() ? "Joueur 2" : graphicalNewGame.player2NameTextField.getText());
 
-        } else {
+        }else {
             if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Facile")) {
                 Configuration.setPlayer2Settings(AILevel.EASY, "IA Facile");
             } else if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Moyen")) {
@@ -145,11 +150,12 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         graphicalMainMenu = new GraphicalMainMenu(frame);
         graphicalNewGame = new GraphicalNewGame(frame);
+        graphicalTutorial = new GraphicalTutorial(this);
 
         graphicalMainMenu.newGameButton.addActionListener(new ChangePageAdapter(this, graphicalNewGame));
         graphicalMainMenu.continueButton.addActionListener(new ContinueGameAdapter(controller, this));
         graphicalMainMenu.loadButton.addActionListener(new LoadGamesAdapter(this));
-        graphicalMainMenu.tutorialButton.addActionListener(new ChangePageAdapter(this, null)); //TODO Ajouter la page de tuto
+        graphicalMainMenu.tutorialButton.addActionListener(new TutorialAdapter(this));
         graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
         graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this));
