@@ -1,6 +1,5 @@
 package Model;
 
-import java.util.Iterator;
 import java.util.Set;
 
 public class MatchUtils {
@@ -158,4 +157,17 @@ public class MatchUtils {
         return result;
     }
 
+    public static boolean isOpponentGreyTile(Match match, Coordinate coordinate, int currentPlayer) {
+        return (match.boardState[coordinate.line()][coordinate.col()] == -currentPlayer);
+    }
+
+    public static boolean isEvolutionTile(Match match, Coordinate coordinate, int currentPlayer) {
+        Set<Critter> neighbors = match.getPlayerNeighborsCritters(currentPlayer, coordinate);
+        for (Critter critter : neighbors){
+            if (critter.stonesCoordinates().size() < 4){
+                return true;
+            }
+        }
+        return false;
+    }
 }

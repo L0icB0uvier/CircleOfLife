@@ -2,6 +2,7 @@ package Controller.IA;
 
 import Global.Configuration;
 import Model.*;
+import com.sun.jdi.connect.ListeningConnector;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,4 +54,38 @@ public class HardAI extends AI {
         }
         return best;
     }
+
+    void sortPossibleMoves(List<Coordinate> possibleMoves, Match match){
+        Coordinate[] movesArray = possibleMoves.toArray(new Coordinate[0]);
+        int currentPlayer = match.getCurrentPlayerIndex();
+        byte[][] boardstate = match.getBoardState();
+        int id1 = 0;
+        int id2 = movesArray.length - 1;
+        int id3 = movesArray.length - 1;
+        while (id1 <= id2){
+            if (MatchUtils.isOpponentGreyTile(match, movesArray[id1], currentPlayer)){
+                id1++;
+            }
+            else if (MatchUtils.isEvolutionTile(match, movesArray[id1], currentPlayer)){
+                switchMoves(movesArray, id1, id2);
+                id2--;
+            }
+            else{
+                switchMoves(movesArray, id1, id2);
+                switchMoves(movesArray, id2, id3);
+                id2--;
+                id3--;
+            }
+        }
+        for (int i = 0; i< possibleMoves.size(); i++){
+            possibleMoves.set(i, movesArray[i]);
+        }
+    }
+
+    void switchMoves(Coordinate[] movesArray, int id1, int id2){
+        Coordinate temp = movesArray[id1];
+        movesArray[id1] = movesArray[id2];
+        movesArray[id2] = temp;
+    }
+
 }
