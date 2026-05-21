@@ -131,6 +131,10 @@ public class Controller implements EventCollector, Observer {
         if(GameDataManager.deleteMatch(gameFile)) Configuration.warning("Pas de fichier à supprimer trouve pour " + gameFile + ".save");
     }
 
+    public void renameGame(String fileName, String newName) {
+        GameDataManager.renameMatch(fileName, newName);
+    }
+
     /**
      * Lance la partie.
      */
