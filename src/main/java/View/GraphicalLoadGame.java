@@ -1,6 +1,7 @@
 package View;
 
 import Controller.Controller;
+import Global.Configuration;
 import Model.Game;
 import Model.GameDataManager;
 import View.Adapter.LoadGameAdapter;
@@ -12,8 +13,11 @@ import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -44,13 +48,14 @@ public class GraphicalLoadGame extends JPanel {
         contentPanel.setBackground(UIColor.BACKGROUND);
         scrollPane.setViewportView(contentPanel);
         scrollPane.setBackground(UIColor.BACKGROUND);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         for(String game: GameDataManager.getSaveFiles()) {
-            addGame(game, controller, userInterface);
+            addGame(game);
         }
 
         scrollPane.setWheelScrollingEnabled(true);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         MigLayout layoutBtns = new MigLayout("fill", "10%[15%, sg]push[15%, sg]push[15%, sg]push[15%, sg]10%", "");
         JPanel buttonComp = new JPanel(layoutBtns);
@@ -58,26 +63,24 @@ public class GraphicalLoadGame extends JPanel {
         cancelButton = createBorderedButton("Revenir au menu");
         cancelButton.setPreferredSize(new Dimension(250, 75));
         cancelButton.setMaximumSize(new Dimension(250, 75));
-        cancelButton.setBackground(Color.GRAY);
+        cancelButton.setBackground(Color.DARK_GRAY);
+        cancelButton.setForeground(Color.WHITE);
 
-        renameBtn = createBorderedButton("Renommer");
+        renameBtn = createDisabledButton("Renommer", UIColor.BROWN);
         renameBtn.setPreferredSize(new Dimension(250, 75));
         renameBtn.setMaximumSize(new Dimension(250, 75));
-        renameBtn.setBackground(UIColor.BROWN);
         renameBtn.addActionListener(e -> renameGame());
         renameBtn.setEnabled(false);
 
-        deleteBtn = createBorderedButton("Supprimer");
+        deleteBtn = createDisabledButton("Supprimer", UIColor.RED);
         deleteBtn.setPreferredSize(new Dimension(250, 75));
         deleteBtn.setMaximumSize(new Dimension(250, 75));
-        deleteBtn.setBackground(UIColor.RED);
         deleteBtn.addActionListener(e -> deleteGame());
         deleteBtn.setEnabled(false);
 
-        loadBtn = createBorderedButton("Charger");
+        loadBtn = createDisabledButton("Charger", UIColor.GREEN);
         loadBtn.setPreferredSize(new Dimension(250, 75));
         loadBtn.setMaximumSize(new Dimension(250, 75));
-        loadBtn.setBackground(UIColor.GREEN);
         loadBtn.addActionListener(e -> loadGame());
         loadBtn.setEnabled(false);
 
@@ -105,7 +108,66 @@ public class GraphicalLoadGame extends JPanel {
     }
 
     private void renameGame() {
+        JLabel gameLabel = (JLabel) currentGamePanel.getComponent(0);
 
+        Configuration.info("Renommage du fichier " + gameLabel.getText());
+
+        MigLayout layoutPopup = new MigLayout("fill, insets 10", "[20%]push[20%]", "[50%][50%]");
+        JDialog renameMenu = new JDialog(userInterface.frame, "", true);
+        renameMenu.setLayout(layoutPopup);
+        renameMenu.setResizable(false);
+        renameMenu.setLocationRelativeTo(userInterface.frame);
+        renameMenu.setSize(new Dimension(500, 150));
+
+        JLabel renameLabel = new JLabel("Nouveau nom :\t ");
+        renameLabel.setFocusable(true);
+        JTextField renameTextField = createJTextField(gameLabel.getText());
+
+        JButton cancelButton = createBorderedButton("Annuler");
+        cancelButton.addActionListener(e-> {
+            renameMenu.dispose();
+        });
+        JButton confirmButton = createBorderedButton("Renommer");
+        confirmButton.addActionListener(e -> {
+            if(!renameTextField.getText().equals(gameLabel.getText())) controller.renameGame(currentGame, renameTextField.getText());
+            gameLabel.setText(renameTextField.getText());
+            renameMenu.dispose();
+        });
+
+        renameMenu.add(renameLabel, "cell 0 0, span 2 1");
+        renameMenu.add(renameTextField, "cell 0 0, span 2 1, grow");
+        renameMenu.add(cancelButton, "cell 0 1, grow");
+        renameMenu.add(confirmButton, "cell 1 1, grow");
+
+        renameTextField.addComponentListener(new FontScaler(0.3f, renameLabel, renameTextField));
+        cancelButton.addComponentListener(new FontScaler(cancelButton, confirmButton));
+
+        renameMenu.setVisible(true);
+        renameLabel.requestFocusInWindow();
+    }
+
+    private static JTextField createJTextField(String placeholder) {
+        JTextField textField = new JTextField();
+        textField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (textField.getForeground().equals(Color.LIGHT_GRAY)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (textField.getText().isEmpty()) {
+                    textField.setForeground(Color.LIGHT_GRAY);
+                    textField.setText(placeholder);
+                }
+            }
+        });
+        textField.setForeground(Color.LIGHT_GRAY);
+        textField.setText(placeholder);
+        textField.requestFocus(false);
+        return textField;
     }
 
     private void deleteGame() {
@@ -138,7 +200,7 @@ public class GraphicalLoadGame extends JPanel {
     }
 
 
-    public void addGame(String game, Controller controller, GraphicalUserInterface userInterface) {
+    public void addGame(String game) {
         String[] gameData = GameDataManager.parseFileName(game);
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[70%, align left][30%]",
@@ -152,9 +214,10 @@ public class GraphicalLoadGame extends JPanel {
         gamePanel.setName(game);
 
         String[] dates = gameData[0].split(" ");
-        String date = dates[0] + "/" + dates[1] + "/" + dates[2] + ", à " + dates[3];
-        JLabel dateLabel = new JLabel(date);
-        dateLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        String name = dates[0] + "/" + dates[1] + "/" + dates[2] + ", à " + dates[3];
+        if(!gameData[4].isEmpty()) name = gameData[4];
+        JLabel nameLabel = new JLabel(name);
+        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         String player1 = gameData[1] + " " + gameData[3].substring(0, gameData[3].indexOf(' '));
         String sep = "|";
@@ -166,12 +229,12 @@ public class GraphicalLoadGame extends JPanel {
         JLabel player2Label = new JLabel(player2);
         player2Label.setForeground(UIColor.RED);
 
-        gamePanel.add(dateLabel, "cell 0 0, grow");
+        gamePanel.add(nameLabel, "cell 0 0, grow");
         gamePanel.add(player1Label, "cell 0 1, growy");
         gamePanel.add(sepLabel, "cell 0 1, growy");
         gamePanel.add(player2Label, "cell 0 1, growy");
 
-        dateLabel.addComponentListener(new FontScaler(0.7f, dateLabel));
+        nameLabel.addComponentListener(new FontScaler(0.7f, nameLabel));
         player1Label.addComponentListener(new FontScaler(0.7f, player1Label, sepLabel, player2Label));
 
         gamePanel.addMouseListener(new MouseAdapter() {
@@ -196,5 +259,27 @@ public class GraphicalLoadGame extends JPanel {
                 deselectGame();
             }
         };
+    }
+
+    private JButton createDisabledButton(String text, Color enabledColor) {
+        JButton button = new JButton();
+        button.setFocusable(false);
+        button.setIcon(new ImageIcon(getImage(enabledColor,500,1000)));
+        button.setDisabledIcon(new ImageIcon(getImage(Color.LIGHT_GRAY,500,1000)));
+        button.setText(text);
+        button.setVerticalTextPosition(SwingConstants.CENTER);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        return button;
+    }
+
+    private BufferedImage getImage(Color color, int w, int h) {
+        BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+        Graphics g = bi.getGraphics();
+        g.setColor(color);
+        g.fillRect(0,0,w,h);
+        g.setColor(Color.BLACK);
+        g.dispose();
+
+        return bi;
     }
 }

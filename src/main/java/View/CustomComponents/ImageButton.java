@@ -40,7 +40,7 @@ public class  ImageButton extends JButton {
         if(getParent().getWidth() == 0){
             width = getWidth();
         }else {
-            width = getParent().getWidth();
+            width = getWidth();
         }
         if(getParent().getHeight() == 0){
             height = getHeight();
