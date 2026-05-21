@@ -10,6 +10,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 
 public class AnalyseIAView implements Observer, UserInterface {
 
@@ -21,7 +23,13 @@ public class AnalyseIAView implements Observer, UserInterface {
     private int gamePlayedCounts;
     private String analyseFileDir = "analyses/";
     private Path outputPath;
-    private winStat[] winCount = new winStat[2];
+    private gameStats[] gameStats = new gameStats[2];
+    private boolean sampleTime = false;
+    private int currentPlayer;
+    Instant toolStartTime;
+    double analyseTime = 0;
+
+    long startTime;
 
     public AnalyseIAView(Game game, EventCollector control, String[] args){
         this.game = game;
@@ -33,8 +41,10 @@ public class AnalyseIAView implements Observer, UserInterface {
             System.exit(1); // Arrête le programme avec un code d'erreur
         }
 
-        winCount[0] = new winStat();
-        winCount[1] = new winStat();
+        toolStartTime = Instant.now();
+
+        gameStats[0] = new gameStats();
+        gameStats[1] = new gameStats();
 
         Configuration.config("Arguments parsés avec succès.");
         //Configuration.setLoggerLevel(Level.WARNING);
@@ -49,6 +59,10 @@ public class AnalyseIAView implements Observer, UserInterface {
     private void startNewGame(){
         System.out.println("Début d'une nouvelle partie.");
         control.performAction("NewGame");
+        if(sampleTime){
+            startTime = System.nanoTime();
+            currentPlayer = game.getCurrentPlayerIndex();
+        }
     }
 
     private boolean parseArgs(String[] args){
@@ -67,6 +81,19 @@ public class AnalyseIAView implements Observer, UserInterface {
         } catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());
             return false;
+        }
+
+        if(args.length > 4){
+            for (int i = 4; i < args.length; i++) {
+                switch (args[i]) {
+                    case "-t":
+                        sampleTime = true;
+                        break;
+                    default:
+                        System.err.println("Erreur : Option inconnue : " + args[i]);
+                        return false;
+                }
+            }
         }
 
         return true;
@@ -105,15 +132,15 @@ public class AnalyseIAView implements Observer, UserInterface {
     private static void showUsage() {
         System.out.println();
         System.out.println("=== MODE D'EMPLOI ===");
-        System.out.println("Usage : java AnaylyseIA <Difficulté IA 1> <Difficulté IA 2> <Nombre de parties> <Chemin fichier de sortie>");
+        System.out.println("Usage : java AnaylyseIA <Difficulté IA 1> <Difficulté IA 2> <Nombre de parties> <Chemin fichier de sortie> <options>");
         System.out.println();
         System.out.println("Arguments attendus :");
         System.out.println("  <Difficulté IA 1>             : La difficulté de la première IA. Choisir entre 'F' 'M' et 'D' pour \"Facile\", \"Moyen\" et \"Difficile\"");
         System.out.println("  <Difficulté IA 1>             : La difficulté de la deuxième IA. Choisir entre 'F' 'M' et 'D' pour \"Facile\", \"Moyen\" et \"Difficile\"");
         System.out.println("  <Nombre de parties>           : Le nombre de parties que doivent jouer les IA. Maximum 1000 parties.");
         System.out.println("  <Chemin fichier de sortie>    : Le chemin du fichier d'analyse des parties");
+        System.out.println("  <options>                     : -t pour avoir des statistiques sur le temps moyen d'un tour pour chaque IA");
         System.out.println();
-        System.out.println("Exemple valide : java GestionArguments document.txt 5");
         System.out.println("=====================");
     }
 
@@ -128,22 +155,32 @@ public class AnalyseIAView implements Observer, UserInterface {
                 startNewGame();
 
             else{
+                Instant end = Instant.now();
+                Duration duration = Duration.between(toolStartTime, end);
+                analyseTime = duration.toMillis() / 1000.0;
                 writeGameStats();
-                System.out.println("Fin de l'analyse. Fermeture du programme.");
                 System.exit(0);
             }
+        }
+        else if(sampleTime){
+            long endTime = System.nanoTime();
+            long durationNano = endTime - startTime;
+            gameStats[currentPlayer].gameDuration += durationNano;
+            gameStats[currentPlayer].turnPlayed++;
+            startTime = endTime;
+            currentPlayer = game.getCurrentPlayerIndex();
         }
     }
 
     private void extractGameData(){
         System.out.println("Extraction des données.");
-        winCount[game.getWinningPlayer()].winCount++;
+        gameStats[game.getWinningPlayer()].winCount++;
         if(game.getMatch().winByScore()){
-            winCount[game.getWinningPlayer()].winByScoreCount++;
-            winCount[game.getWinningPlayer()].numberOfMoveWinByScore += game.getNumberOfMovePlayed();
+            gameStats[game.getWinningPlayer()].winByScoreCount++;
+            gameStats[game.getWinningPlayer()].numberOfMoveWinByScore += game.getNumberOfMovePlayed();
         }
         else{
-            winCount[game.getWinningPlayer()].numberOfMoveWinByFill += game.getNumberOfMovePlayed();
+            gameStats[game.getWinningPlayer()].numberOfMoveWinByFill += game.getNumberOfMovePlayed();
         }
     }
 
@@ -170,38 +207,40 @@ public class AnalyseIAView implements Observer, UserInterface {
         }
 
         System.out.println("============================================================================");
-
-        // 3. FERMETURE PROPRE
-        System.out.println("\nFin de l'analyse. Fermeture du programme.");
-        System.exit(0);
     }
 
     private void printTableToDestination(java.io.Writer writer) throws IOException {
         String formatLigneStr = "%-30s\t%-18s\t%-18s\n";
         String formatLigneInt = "%-30s\t%-18d\t%-18d\n";
 
-        int remplissage0 = winCount[0].winCount - winCount[0].winByScoreCount;
-        int remplissage1 = winCount[1].winCount - winCount[1].winByScoreCount;
+        int remplissage0 = gameStats[0].winCount - gameStats[0].winByScoreCount;
+        int remplissage1 = gameStats[1].winCount - gameStats[1].winByScoreCount;
 
         // On utilise writer.write(String.format(...)) pour tout le monde
         writer.write(String.format(formatLigneStr, "Métrique", "IA Joueur 1", "IA Joueur 2"));
         writer.write(String.format(formatLigneStr, "Difficulté IA", convertAILevelToText(aiLevel1), convertAILevelToText(aiLevel2)));
         writer.write(String.format(formatLigneStr, "Nb victoires",
-                String.format("%d (%d%%)", winCount[0].winCount, (winCount[0].winCount * 100) / numberOfGames),
-                String.format("%d (%d%%)", winCount[1].winCount, (winCount[1].winCount * 100) / numberOfGames)));
+                String.format("%d (%d%%)", gameStats[0].winCount, (gameStats[0].winCount * 100) / numberOfGames),
+                String.format("%d (%d%%)", gameStats[1].winCount, (gameStats[1].winCount * 100) / numberOfGames)));
         writer.write(String.format(formatLigneStr, "Victoires par score",
-                String.format("%d (%d%%)", winCount[0].winByScoreCount, (winCount[0].winByScoreCount * 100) / winCount[0].winCount),
-                String.format("%d (%d%%)", winCount[1].winByScoreCount, (winCount[1].winByScoreCount * 100) / winCount[1].winCount)));
+                String.format("%d (%d%%)", gameStats[0].winByScoreCount, (gameStats[0].winByScoreCount * 100) / gameStats[0].winCount),
+                String.format("%d (%d%%)", gameStats[1].winByScoreCount, (gameStats[1].winByScoreCount * 100) / gameStats[1].winCount)));
         writer.write(String.format(formatLigneInt, "   Nombre moyen de coups",
-                winCount[0].winByScoreCount > 0? winCount[0].numberOfMoveWinByScore / winCount[0].winByScoreCount : 0,
-                winCount[1].winByScoreCount > 0? winCount[1].numberOfMoveWinByScore / winCount[1].winByScoreCount : 0));
+                gameStats[0].winByScoreCount > 0? gameStats[0].numberOfMoveWinByScore / gameStats[0].winByScoreCount : 0,
+                gameStats[1].winByScoreCount > 0? gameStats[1].numberOfMoveWinByScore / gameStats[1].winByScoreCount : 0));
         writer.write(String.format(formatLigneStr, "Victoires par remplissage",
-                String.format("%d (%d%%)", remplissage0, (remplissage0 * 100) / winCount[0].winCount),
-                String.format("%d (%d%%)", remplissage1, (remplissage1 * 100) / winCount[1].winCount)));
+                String.format("%d (%d%%)", remplissage0, (remplissage0 * 100) / gameStats[0].winCount),
+                String.format("%d (%d%%)", remplissage1, (remplissage1 * 100) / gameStats[1].winCount)));
         writer.write(String.format(formatLigneInt, "   Nombre moyen de coups",
-                remplissage0 > 0? winCount[0].numberOfMoveWinByFill / remplissage0 : 0,
-                remplissage1 > 0? winCount[1].numberOfMoveWinByFill / remplissage1 : 0));
-        ;
+                remplissage0 > 0? gameStats[0].numberOfMoveWinByFill / remplissage0 : 0,
+                remplissage1 > 0? gameStats[1].numberOfMoveWinByFill / remplissage1 : 0));
+        if(sampleTime){
+            writer.write(String.format(formatLigneStr, "Temps moyen",
+                    String.format("%f ms", (float) (gameStats[0].gameDuration / gameStats[0].turnPlayed) / 1_000_000),
+                    String.format("%f ms", (float) (gameStats[1].gameDuration / gameStats[1].turnPlayed) / 1_000_000)));
+        }
+        writer.write("\n");
+        writer.write(String.format("Analyse effectuée en %.3f secondes.", analyseTime));
     }
 
     private String convertAILevelToText(AILevel aiLevel){
@@ -224,10 +263,12 @@ public class AnalyseIAView implements Observer, UserInterface {
         Configuration.setPlayer2Settings(aiLevel2, "AI2");
     }
 
-    public class winStat{
+    public class gameStats {
+        public int turnPlayed;
         public int winCount;
         public int winByScoreCount;
         public int numberOfMoveWinByScore;
         public int numberOfMoveWinByFill;
+        public long gameDuration;
     }
 }
