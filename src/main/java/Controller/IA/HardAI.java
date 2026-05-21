@@ -15,7 +15,7 @@ public class HardAI extends AI {
     public HardAI(Match match) {
         super(match);
         aiLevel = AILevel.HARD;
-        depth = 5;
+        depth = 4;
     }
 
     // TODO : trouver une heuristique pour l'IA difficile en plus du score
@@ -32,8 +32,11 @@ public class HardAI extends AI {
     @Override
     public Move findMove() {
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
-        Collections.shuffle(possibleMoves);
-        depth = Math.max(4, (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size())));
+//        Collections.shuffle(possibleMoves);
+        sortPossibleMoves(match, possibleMoves);
+//        if (possibleMoves.size()!= 1) {
+//            depth = Math.max(4, (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size())));
+//        }
         double maxEval = -Double.MAX_VALUE;
         double eval;
         Move best = null;
@@ -55,53 +58,5 @@ public class HardAI extends AI {
         return best;
     }
 
-    /**
-     * Trie les coups possibles pour le joueur actif d'un match donné, en utilisant une méthode de drapeau multicolore
-     * @param match Le match sur lequel les coups possibles peuvent être joués.
-     * @param possibleMoves Une List contenant l'ensemble des coups jouables par le joueur actif.
-     */
-    void sortPossibleMoves(Match match, List<Coordinate> possibleMoves){
-        Coordinate[] movesArray = possibleMoves.toArray(new Coordinate[0]);
-        int currentPlayer = match.getCurrentPlayerIndex();
-        byte[][] boardstate = match.getBoardState();
-        int id1 = 0;
-        int id2 = movesArray.length - 1;
-        int id3 = movesArray.length - 1;
-        while (id1 <= id2){
-            // Cas le plus prioritaire
-            if (MatchUtils.isOpponentGreyTile(match, movesArray[id1])){ // l'adversaire ne peut pas jouer ici
-                id1++;
-            }
-
-            // Deuxième cas le plus prioritaire
-            else if (MatchUtils.isEvolutionTile(match, movesArray[id1])){ // jouer ici fera évoluer un(des) critter(s)
-                switchMoves(movesArray, id1, id2);
-                id2--;
-            }
-
-            // Cas le moins prioritaire
-            else{ // choix par défaut
-                switchMoves(movesArray, id1, id2);
-                switchMoves(movesArray, id2, id3);
-                id2--;
-                id3--;
-            }
-        }
-        for (int i = 0; i< possibleMoves.size(); i++){
-            possibleMoves.set(i, movesArray[i]);
-        }
-    }
-
-    /**
-     * Échange deux coups dans une table des coups donnée.
-     * @param movesArray La table de coups.
-     * @param id1 L'indice du premier coup dans la table.
-     * @param id2 L'indice du deuxième coup dans la table.
-     */
-    void switchMoves(Coordinate[] movesArray, int id1, int id2){
-        Coordinate temp = movesArray[id1];
-        movesArray[id1] = movesArray[id2];
-        movesArray[id2] = temp;
-    }
 
 }
