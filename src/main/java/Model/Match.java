@@ -543,6 +543,15 @@ public class Match extends History<Move> implements Cloneable {
         return total / critterNumber;
     }
 
+    public Set<Critter> getPlayerCritters(int playerId){
+        Set<Critter> playerCritters = new HashSet<>();
+        for (Critter critter : critters) {
+            if(critter.player() == playerId)
+                playerCritters.add(critter);
+        }
+        return playerCritters;
+    }
+
     public boolean isGameOver(){
         return gameOver;
     }
