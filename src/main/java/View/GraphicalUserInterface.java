@@ -29,6 +29,10 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         this.controller = controller;
     }
 
+    public GraphicalTutorial getGraphicalTutorial() {
+        return graphicalTutorial;
+    }
+
     public static void start(Game game, EventCollector controller){
         GraphicalUserInterface vue = new GraphicalUserInterface(game, controller);
         controller.addUserInterface(vue);
@@ -160,7 +164,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalMainMenu.newGameButton.addActionListener(new ChangePageAdapter(this, graphicalNewGame));
         graphicalMainMenu.continueButton.addActionListener(new ContinueGameAdapter(controller, this));
         graphicalMainMenu.loadButton.addActionListener(new LoadGamesAdapter(this));
-        graphicalMainMenu.tutorialButton.addActionListener(new ChangePageAdapter(this, graphicalTutorial));
+        graphicalMainMenu.tutorialButton.addActionListener(new TutorialAdapter(this));
         graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
         graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this));

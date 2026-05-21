@@ -26,7 +26,7 @@ public class GraphicalTutorial extends JComponent {
     ImageButton buttonNext, buttonPrev, buttonQuit;
 
     public GraphicalTutorial(GraphicalUserInterface userInterface) {
-        MigLayout layout = new MigLayout("fill, insets 10", "[align center]", "[10%][20%][grow][10%]");
+        MigLayout layout = new MigLayout("fill, insets 10", "[align center]", "[8%][17%][grow][15%]");
         this.setLayout(layout);
 
         for(int i = 0; i < 4; i++) {
@@ -40,17 +40,14 @@ public class GraphicalTutorial extends JComponent {
 
         this.image = new ImagePanel(imagesTuto[pageNumber]);
 
-        this.buttonPrev = new ImageButton("res/Images/Undo.png", "res/Images/UndoDisabled.png");
+        this.buttonPrev = new ImageButton("res/Images/PreviousPage.png", "res/Images/PreviousPageDisabled.png");
         buttonPrev.addActionListener(e -> previousPage());
-        buttonPrev.setBorder(new RoundedBorder(15));
 
-        this.buttonNext = new ImageButton("res/Images/Redo.png", null);
+        this.buttonNext = new ImageButton("res/Images/NextPage.png", null);
         buttonNext.addActionListener(e -> nextPage());
-        buttonNext.setBorder(new RoundedBorder(15));
 
         this.buttonQuit = new ImageButton("res/Images/Quit.png", null);
         buttonQuit.addActionListener(new ChangePageAdapter(userInterface, userInterface.graphicalMainMenu));
-        buttonQuit.setBorder(new RoundedBorder(15));
 
 
         MigLayout layoutButtons = new MigLayout("fill, insets 10 10 10 10, hidemode 3", "push[sg]push[sg]push", "[]");
@@ -69,7 +66,6 @@ public class GraphicalTutorial extends JComponent {
 
         titleLabel.addComponentListener(new FontScaler(0.7f, titleLabel));
         textLabel.addComponentListener(new FontScaler(0.15f, textLabel));
-        buttonsComp.addComponentListener(new FontScaler(0.7f, buttonPrev, buttonNext, buttonQuit));
 
     }
 
@@ -102,6 +98,14 @@ public class GraphicalTutorial extends JComponent {
         buttonNext.setVisible(true);
         buttonQuit.setVisible(false);
         buttonPrev.setEnabled(pageNumber != 0);
+        repaint();
+    }
+
+    public void resetPage() {
+        pageNumber = 0;
+        buttonNext.setVisible(true);
+        buttonQuit.setVisible(false);
+        buttonPrev.setEnabled(false);
         repaint();
     }
 
