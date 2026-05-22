@@ -345,7 +345,7 @@ public class GamePanel extends JComponent implements Observer {
                 if(showBoardHoverHighlight)
                     drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
 
-                Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(critter.type(), circleShapeTypeIds.get(critter.type()));
+                Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(critter.type(), circleShapeTypeIds.get(critter.type()));
                 drawCircleShape(g2d, critter.type(),useNeutralStoneImageForHoverInCircle? imgStoneDisabled : getPlayerImage(critter.player()));
 
                 if(showCircleHoverHighlight)
@@ -404,7 +404,7 @@ public class GamePanel extends JComponent implements Observer {
                 evolveCoords.addAll(critter.stonesCoordinates());
             }
 
-            evolveInto = ShapeUtils.getShapeId(evolveCoords);
+            evolveInto = CritterUtils.getCritterId(evolveCoords);
         }
 
         if(evolveInto >= 0){
@@ -435,7 +435,7 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     private void drawCircleShape(Graphics2D g2d, int shapeType, Image img){
-        Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(shapeType, circleShapeTypeIds.get(shapeType));
+        Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(shapeType, circleShapeTypeIds.get(shapeType));
 
         for(Coordinate coord : coords){
             Point2D.Float stoneCenter = getShapeStoneCenterPosition(shapeOriginPoints[shapeType], coord, circleStoneDistance);
@@ -447,7 +447,7 @@ public class GamePanel extends JComponent implements Observer {
 
     private void drawCircleShapeWithHighlight(Graphics2D g2d, int shapeType, Color color, Image img){
         drawCircleShape(g2d, shapeType, img);
-        Set<Coordinate> coords = ShapeUtils.getShapeCoordinatesForId(shapeType, circleShapeTypeIds.get(shapeType));
+        Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(shapeType, circleShapeTypeIds.get(shapeType));
         drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleHighlightStroke);
     }
 
@@ -458,8 +458,8 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     private void drawBoardCritterHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color color, BasicStroke stroke){
-        Set<Coordinate> normalizedCoordinates = ShapeUtils.normalizeCoordinate(coordinates);
-        var shapeOriginCoordinates = ShapeUtils.getTopLeftCoordinate(coordinates);
+        Set<Coordinate> normalizedCoordinates = CritterUtils.normalizeCoordinate(coordinates);
+        var shapeOriginCoordinates = CritterUtils.getTopLeftCoordinate(coordinates);
         Point2D.Float shapeOriginPos = new Point2D.Float(
                 nToX(shapeOriginCoordinates.col(), shapeOriginCoordinates.line()),
                 mToY(shapeOriginCoordinates.line())

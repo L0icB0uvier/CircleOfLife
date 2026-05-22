@@ -2,8 +2,36 @@ package Model;
 
 import java.util.*;
 
-public class ShapeUtils {
-    private static final Map<Set<Coordinate>, Integer> shapes;
+public class CritterUtils {
+    private static final Map<Set<Coordinate>, Integer> critters;
+
+    /**
+     * Représente la distance entre les 2 pierres les plus éloignées d'un critter.
+     */
+    public static final Map<Integer, Integer> critterEvolutionMaxDistance = Map.ofEntries(
+            Map.entry(0, 0),
+            Map.entry(1, 3),
+            Map.entry(2, 2),
+            Map.entry(3, 2),
+            Map.entry(4, 3),
+            Map.entry(5, 3),
+            Map.entry(6, 3),
+            Map.entry(7, 2),
+            Map.entry(8, 1),
+            Map.entry(9, 2),
+            Map.entry(10, 2),
+            Map.entry(11, 1)
+    );
+
+    /**
+     * Retourne le type de critter mangeant le type de critter donnée.
+     * @param critterType Le type de critter pour lequel on veut trouver celui qui le mange.
+     * @return Le type de critter mangeant celui passé en paramètre.
+     */
+    public static int getEatingCritterType(int critterType){
+        return Math.floorMod(critterType - 1, 12);
+    }
+
 
     static {
         Map<Set<Coordinate>, Integer> tempShapes = new LinkedHashMap<>();
@@ -91,7 +119,7 @@ public class ShapeUtils {
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(0, 1)), 11); // 2
         tempShapes.put(Set.of(new Coordinate(0, 0), new Coordinate(1, 1)), 11); // 3
 
-        shapes = Collections.unmodifiableMap(tempShapes);
+        critters = Collections.unmodifiableMap(tempShapes);
     }
 
     /**
@@ -99,9 +127,9 @@ public class ShapeUtils {
      * @param boardCoordinates Un Set de coordonnées sur le plateau décrivant la forme.
      * @return Le type de forme.
      */
-    public static Integer getShapeId(Set<Coordinate> boardCoordinates) {
+    public static Integer getCritterId(Set<Coordinate> boardCoordinates) {
         var normalizedCoord = normalizeCoordinate(boardCoordinates);
-        return shapes.getOrDefault(normalizedCoord, -1);
+        return critters.getOrDefault(normalizedCoord, -1);
     }
 
     /**
@@ -141,7 +169,7 @@ public class ShapeUtils {
     }
 
     public static Critter critterFromId(int type, int id, int player){
-        List<Set<Coordinate>> keys = shapes.entrySet().stream()
+        List<Set<Coordinate>> keys = critters.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), type))
                 .map(Map.Entry::getKey)
                 .toList();
@@ -151,8 +179,8 @@ public class ShapeUtils {
         return new Critter(keys.get(id), player);
     }
 
-    public static Set<Coordinate> getShapeCoordinatesForId(int type, int id){
-        List<Set<Coordinate>> keys = shapes.entrySet().stream()
+    public static Set<Coordinate> getCritterTypeCoordinates(int type, int id){
+        List<Set<Coordinate>> keys = critters.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), type))
                 .map(Map.Entry::getKey)
                 .toList();

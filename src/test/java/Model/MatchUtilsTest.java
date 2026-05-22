@@ -157,25 +157,25 @@ public class MatchUtilsTest {
     @Test
     void calculatePointEarned() {
         Set<Critter> critters1 = new HashSet<>();
-        critters1.add(ShapeUtils.critterFromId(11, 1, 1));
-        critters1.add(ShapeUtils.critterFromId(10, 1, 1));
+        critters1.add(CritterUtils.critterFromId(11, 1, 1));
+        critters1.add(CritterUtils.critterFromId(10, 1, 1));
         assertEquals(5, MatchUtils.calculatePointEarned(critters1));
 
         Set<Critter> critters2 = new HashSet<>();
-        critters2.add(ShapeUtils.critterFromId(0, 0, 1));
-        critters2.add(ShapeUtils.critterFromId(1, 0, 1));
+        critters2.add(CritterUtils.critterFromId(0, 0, 1));
+        critters2.add(CritterUtils.critterFromId(1, 0, 1));
         assertEquals(5, MatchUtils.calculatePointEarned(critters2));
 
         Set<Critter> critters3 = new HashSet<>();
-        critters3.add(ShapeUtils.critterFromId(1, 0, 1));
-        critters3.add(ShapeUtils.critterFromId(2, 0, 1));
-        critters3.add(ShapeUtils.critterFromId(3, 0, 1));
+        critters3.add(CritterUtils.critterFromId(1, 0, 1));
+        critters3.add(CritterUtils.critterFromId(2, 0, 1));
+        critters3.add(CritterUtils.critterFromId(3, 0, 1));
         assertEquals(12, MatchUtils.calculatePointEarned(critters3));
 
         Set<Critter> critters4 = new HashSet<>();
-        critters4.add(ShapeUtils.critterFromId(1, 0, 1));
-        critters4.add(ShapeUtils.critterFromId(2, 0, 1));
-        critters4.add(ShapeUtils.critterFromId(12, 0, 1));
+        critters4.add(CritterUtils.critterFromId(1, 0, 1));
+        critters4.add(CritterUtils.critterFromId(2, 0, 1));
+        critters4.add(CritterUtils.critterFromId(12, 0, 1));
         assertEquals(8, MatchUtils.calculatePointEarned(critters4));
 
         assertEquals(0, MatchUtils.calculatePointEarned(null));
