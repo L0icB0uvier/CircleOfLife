@@ -124,4 +124,31 @@ class MatchTest {
         assertEquals(0, match.past.size());
         assertEquals(0, match.future.size());
     }
+
+    @Test
+    void getPlayerPlayableMovesAroundStones_0(){
+        int playerIndex = match.getCurrentPlayerIndex();
+        match.playMove( 2, 2);
+        var critters = match.getPlayerCritters(playerIndex);
+        assertEquals(1, critters.size());
+
+        var critter = critters.stream().toList();
+        assertEquals(6, match.getPlayerPlayableMovesAroundStones(critter.get(0).stonesCoordinates(), playerIndex).size());
+    }
+
+    @Test
+    void getPlayerPlayableMovesAroundStones_1(){
+        int playerIndex = match.getCurrentPlayerIndex();
+
+        for (Coordinate stonesCoordinate : CritterUtils.critterFromId(1, 0, playerIndex).stonesCoordinates()) {
+            match.playMove(4 + stonesCoordinate.line(), 4 + stonesCoordinate.col());
+        }
+
+        var critters = match.getPlayerCritters(playerIndex);
+        assertEquals(1, critters.size());
+
+        var stones = critters.stream().toList().get(0).stonesCoordinates();
+        assertEquals(0, match.getPlayerPlayableMovesAroundStones(stones, playerIndex).size());
+        assertEquals(12, match.getPlayerPlayableMovesAroundStones(stones, MatchUtils.getOtherPlayerIndex(playerIndex)).size());
+    }
 }

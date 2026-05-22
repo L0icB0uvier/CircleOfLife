@@ -182,4 +182,13 @@ public class MatchUtils {
         }
         return false;
     }
+    /**
+     * Retourne l'index de l'autre joueur.
+     * @param playerIndex l'index du joueur pour lequel on veut l'adversaire.
+     * @return L'index du joueur adverse.
+     */
+    public static int getOtherPlayerIndex(int playerIndex){
+        return (playerIndex + 1) % 2;
+    }
+
 }
