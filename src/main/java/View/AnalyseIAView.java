@@ -22,9 +22,9 @@ public class AnalyseIAView implements Observer, UserInterface {
     private AILevel aiLevel1, aiLevel2;
     private int numberOfGames;
     private int gamePlayedCounts;
-    private String analyseFileDir = "analyses/";
+    private final String analyseFileDir = "analyses/";
     private Path outputPath;
-    private gameStats[] gameStats = new gameStats[2];
+    private final gameStats[] gameStats = new gameStats[2];
     private boolean sampleTime = false;
     private int currentPlayer;
     Instant toolStartTime;
@@ -151,7 +151,7 @@ public class AnalyseIAView implements Observer, UserInterface {
             System.out.println("Partie terminée");
             extractGameData();
             gamePlayedCounts++;
-            System.out.println(String.format("Nombre de parties jouées: %d", gamePlayedCounts));
+            System.out.printf("Nombre de parties jouées: %d%n", gamePlayedCounts);
             if(gamePlayedCounts < numberOfGames)
                 startNewGame();
 
@@ -192,7 +192,7 @@ public class AnalyseIAView implements Observer, UserInterface {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputPath.toFile()))) {
             printTableToDestination(fileWriter);
             fileWriter.flush();
-            System.out.println(String.format("Statistiques des matchs écrites dans le fichier %s\n", outputPath.getFileName()));
+            System.out.printf("Statistiques des matchs écrites dans le fichier %s\n%n", outputPath.getFileName());
         } catch (IOException e) {
             System.err.println("Erreur critique lors de l'écriture du fichier : " + e.getMessage());
         }

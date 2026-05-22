@@ -54,12 +54,12 @@ public class GamePanel extends JComponent implements Observer {
     float boardHexagonInnerRadius, boardHexagonOuterRadius;
     float circleHexagonInnerRadius, circleHexagonOuterRadius;
 
-    private boolean showCircleHoverHighlight = true;
-    private boolean showBoardHoverHighlight = true;
-    private boolean useNeutralStoneImageForHoverInCircle = false;
-    private boolean showBoardHighlightEffect = true;
-    private boolean showCircleShape = true;
-    private boolean showBlockingCrittersHighlight = true;
+    private final boolean showCircleHoverHighlight = true;
+    private final boolean showBoardHoverHighlight = true;
+    private final boolean useNeutralStoneImageForHoverInCircle = false;
+    private final boolean showBoardHighlightEffect = true;
+    private final boolean showCircleShape = true;
+    private final boolean showBlockingCrittersHighlight = true;
 
     private final float lastMoveThicknessRatio = 0.005f;
     private final float boardThicknessRatio = 0.005f;
@@ -215,8 +215,8 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         // Calcul du centre de la case 0:0 du plateau
-        x0 = (int) Math.round(boardX0 + (boardOriginRatio.xRatio() * imageWidth));
-        y0 = (int) Math.round(boardY0 + (boardOriginRatio.yRatio() * imageHeight));
+        x0 = Math.round(boardX0 + (boardOriginRatio.xRatio() * imageWidth));
+        y0 = Math.round(boardY0 + (boardOriginRatio.yRatio() * imageHeight));
         distance = ratioDistanceX * imageWidth;
 
         // Calcule taille de l'image des pierres du cercle

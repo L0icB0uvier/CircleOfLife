@@ -15,10 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
-
-import Controller.IA.AILevel;
 
 public class GameDataManager {
     static String savePath = "./sauvegardes/";
@@ -28,7 +25,7 @@ public class GameDataManager {
      * 
      * @param match    Le match à sauvegarder.
      * @param settings Les settings du match à sauvegarder.
-     * @throws Exception
+     * @throws Exception Exception retournée lors de la sauvegarde du match.
      */
     public static void saveMatch(Match match, Settings settings) throws Exception {
         Files.createDirectories(Paths.get(savePath));
@@ -135,7 +132,7 @@ public class GameDataManager {
      * @param game     L'instance de game dans laquelle charger le match.
      * @param filename Le nom du fichier à partir duquel charger (sans extension
      *                 .save).
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException Exception retourné si le fichier n'est pas trouvé.
      */
     public static void loadMatch(Game game, String filename) throws FileNotFoundException {
         File file = new File(savePath + filename + ".save");
@@ -180,7 +177,6 @@ public class GameDataManager {
                 temp = readMove(m, scanner);
                 game.playMove(temp);
             } catch (Exception e) {
-                e.printStackTrace();
                 Configuration.error("Impossible de lire move");
             }
         }
@@ -209,7 +205,7 @@ public class GameDataManager {
      * @param scanner Scanner.
      * @return Un Move qui correspond à ce qui a été lu.
      */
-    private static Move readMove(Match m, Scanner scanner) throws Exception {
+    private static Move readMove(Match m, Scanner scanner) {
         int l = scanner.nextInt();
         int c = scanner.nextInt();
         return new Move(m, l, c);
@@ -255,7 +251,7 @@ public class GameDataManager {
      * @return Vrai s'il existe des données et faux sinon.
      */
     public static boolean hasSaveFile() {
-        return getSaveFiles().size() != 0;
+        return !getSaveFiles().isEmpty();
     }
 
     /**
@@ -276,8 +272,7 @@ public class GameDataManager {
                     .filter(filename -> filename.endsWith(".save"))
                     .forEach(filename -> res.add(filename.replaceAll(".save", "")));
         } catch (IOException e) {
-            // e.printStackTrace();
-            // Configuration.info("Pas de fichiers de sauvegardes trouvées");
+            Configuration.error("Pas de fichiers de sauvegardes trouvées");
             return new ArrayList<>();
         }
         return res;
@@ -288,19 +283,12 @@ public class GameDataManager {
             return s.substring(2).replaceAll("-", " ");
         String res = numPlayer == '1' ? "Joueur 1 " : "Joueur 2 ";
         char playerType = s.charAt(0);
-        switch (playerType) {
-            case 'E':
-                return res + "(IA facile)";
-
-            case 'M':
-                return res + "(IA moyenne)";
-
-            case 'H':
-                return res + "(IA difficile)";
-
-            default:
-                return "";
-        }
+        return switch (playerType) {
+            case 'E' -> res + "(IA facile)";
+            case 'M' -> res + "(IA moyenne)";
+            case 'H' -> res + "(IA difficile)";
+            default -> "";
+        };
     }
 
     public static String[] parseFileName(String filename) {
@@ -308,12 +296,12 @@ public class GameDataManager {
         String sep = "_";
         filename = filename.replaceAll(".save", "");
 
-        String arr[] = filename.split(sep);
+        String[] arr = filename.split(sep);
         if (hasName(filename)) {
             arr = Arrays.copyOfRange(arr, 1, arr.length);
         } 
-        String date[] = Arrays.copyOfRange(arr, 0, arr.length - 4);
-        String game[] = Arrays.copyOfRange(arr, arr.length - 4, arr.length);
+        String[] date = Arrays.copyOfRange(arr, 0, arr.length - 4);
+        String[] game = Arrays.copyOfRange(arr, arr.length - 4, arr.length);
 
         // parse date
         date[date.length - 1] = date[date.length - 1].replaceAll("-", ":");
@@ -396,8 +384,7 @@ public class GameDataManager {
             Files.move(source,
                     source.resolveSibling(newNameRes));
         } catch (IOException e) {
-            // e.printStackTrace();
-            // Configuration.info("Erreur lors de rennomage du fichier");
+            Configuration.error("Erreur lors de rennomage du fichier");
             return filename;
         }
         return newNameRes.replaceAll(".save", "");

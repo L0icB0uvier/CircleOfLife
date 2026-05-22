@@ -4,10 +4,10 @@ public interface Command {
     /**
      * Execute la commande associée.
      */
-    public void execute();
+    void execute();
 
     /**
      * Annule la commande associée.
      */
-    public void desexecute();
+    void desexecute();
 }

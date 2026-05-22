@@ -78,7 +78,7 @@ public class Configuration {
         } catch (IOException e) {
             // Le logger n'est pas encore en place à ce moment là
             System.err.println("Impossible de charger " + fileName);
-            System.err.println(e.toString());
+            System.err.println(e);
             System.exit(1);
         }
     }

@@ -28,14 +28,14 @@ public class ImagePanel extends JComponent {
         int oneMinusAlpha = 1 - alpha;
 
         if(width > height){
-            boardX0 = (int) ((width - ((alpha * height * imgSrcWidth) / imgSrcHeight))) / 2;
-            boardY0 = (int) (0 * height);
+            boardX0 = (width - ((alpha * height * imgSrcWidth) / imgSrcHeight)) / 2;
+            boardY0 = 0;
             imageWidth = (alpha * height * imgSrcWidth) / imgSrcHeight;
             imageHeight = alpha * height;
         }
         else{
-            boardX0 = (int) (((oneMinusAlpha) / 2) * width);
-            boardY0 = (int) ((height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2);
+            boardX0 = ((oneMinusAlpha) / 2) * width;
+            boardY0 = (height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2;
             imageWidth = alpha * width;
             imageHeight = (alpha * width * imgSrcHeight) / imgSrcWidth;
         }

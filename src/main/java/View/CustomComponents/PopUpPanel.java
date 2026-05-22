@@ -17,10 +17,10 @@ public class PopUpPanel extends JPanel {
 
     private JLabel mainLabel;
     private JLabel secondaryLabel;
-    private ArrayList<JButton> listButton;
-    private EventCollector controller;
+    private final ArrayList<JButton> listButton;
+    private final EventCollector controller;
 
-    private Dialog dialog;
+    private final Dialog dialog;
 
     public PopUpPanel(EventCollector controller, JDialog dialog,int nButtons){
 

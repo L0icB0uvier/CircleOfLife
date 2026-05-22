@@ -10,10 +10,10 @@ public class RoundedBorder implements Border {
     public static final int SHADOW_SIZE_BOTTOM = 6;
     public static final int SHADOW_SIZE_HORIZONTAL = 3;
 
-    private int radius;
+    private final int radius;
     private Color color;
-    private int thickness ;
-    private boolean shadow ;
+    private final int thickness ;
+    private final boolean shadow ;
     private Image image = null;
 
     public RoundedBorder(int radius, Color color, int thickness) {

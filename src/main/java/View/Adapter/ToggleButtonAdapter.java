@@ -21,10 +21,6 @@ public class ToggleButtonAdapter implements java.awt.event.ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(buttonGroup.getSelection() != model) {
-            this.comboBox.setVisible(false);
-        }else {
-            this.comboBox.setVisible(true);
-        }
+        this.comboBox.setVisible(buttonGroup.getSelection() == model);
     }
 }

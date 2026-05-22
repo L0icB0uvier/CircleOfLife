@@ -78,7 +78,7 @@ public class PlayerInfo extends JPanel {
     }
 
     public void updateScore(PlayerData data){
-        scoreLabel.setText(String.valueOf(data.getScore()) + "/" + winScore);
+        scoreLabel.setText(data.getScore() + "/" + winScore);
         repaint();
     }
 
