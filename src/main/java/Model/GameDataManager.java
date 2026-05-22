@@ -1,6 +1,7 @@
 package Model;
 
 import Global.Configuration;
+import Global.PlayerNumber;
 import Global.PlayerSettings;
 import Global.Settings;
 
@@ -128,39 +129,32 @@ public class GameDataManager {
 
         // Read player type
         String[] playerTypes = new String[2];
+
+        // Update Settings Joueur 1
         playerTypes[0] = scanner.next();
-        if (Objects.equals(playerTypes[0], "J")) {
-            String namePlayer1 = scanner.next().replaceAll("_", " ");
-            Configuration.setPlayer1Settings(null, namePlayer1);
-        } else {
-            if (Objects.equals(playerTypes[0], "E")) {
-                Configuration.setPlayer1Settings(AILevel.EASY, "IA Facile");
-            } else if (Objects.equals(playerTypes[0], "M")) {
-                Configuration.setPlayer1Settings(AILevel.MEDIUM, "IA Moyenne");
-            } else if (Objects.equals(playerTypes[0], "H")) {
-                Configuration.setPlayer1Settings(AILevel.HARD, "IA Difficile");
-            }
-        }
-        playerTypes[1] = scanner.next();
-        if (Objects.equals(playerTypes[1], "J")) {
-            String namePlayer2 = scanner.next().replaceAll("_", " ");
-            Configuration.setPlayer2Settings(null, namePlayer2);
-        } else {
-            if (Objects.equals(playerTypes[1], "E")) {
-                Configuration.setPlayer2Settings(AILevel.EASY, "IA Facile");
-            } else if (Objects.equals(playerTypes[1], "M")) {
-                Configuration.setPlayer2Settings(AILevel.MEDIUM, "IA Moyenne");
-            } else if (Objects.equals(playerTypes[1], "H")) {
-                Configuration.setPlayer2Settings(AILevel.HARD, "IA Difficile");
-            }
+        if(playerTypes[0].equals("J"))
+            Configuration.setPlayerSettings(PlayerNumber.PLAYER_1, null, scanner.next().replaceAll("_", " "));
+        else{
+            Configuration.updateAISettings(playerTypes[0], PlayerNumber.PLAYER_1);
         }
 
+        // Update Settings Joueur 2
+        playerTypes[1] = scanner.next();
+        if(playerTypes[1].equals("J"))
+            Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, null, scanner.next().replaceAll("_", " "));
+        else
+            Configuration.updateAISettings(playerTypes[1], PlayerNumber.PLAYER_2);
+
+        // Update Setting premier joueur
+        int currentPlayerIndex = scanner.nextInt();
+        Configuration.setStartingPlayerSetting(currentPlayerIndex);
+
         game.createMatch(Configuration.getSettings().getPlayer1Settings().getName(),
-                Configuration.getSettings().getPlayer2Settings().getName());
+                Configuration.getSettings().getPlayer2Settings().getName(), Configuration.getSettings().getStartingPlayerSetting());
+
         Match m = game.getMatch();
         m.initMatch();
 
-        int currentPlayerIndex = scanner.nextInt();
 
         int lenPast = scanner.nextInt();
         int lenFuture = scanner.nextInt();
@@ -332,6 +326,15 @@ public class GameDataManager {
         res[4] = getName(filename);
 
         return res;
+    }
+
+    private static String convertAI(String ai){
+        return switch (ai) {
+            case "E" -> "IA Facile";
+            case "M" -> "IA Moyenne";
+            case "H" -> "IA Difficile";
+            default -> null;
+        };
     }
 
     public static boolean saveFileExists(String filename) {

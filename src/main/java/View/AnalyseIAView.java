@@ -3,6 +3,7 @@ package View;
 import Controller.IA.AILevel;
 import Global.Configuration;
 import Global.PathValidator;
+import Global.PlayerNumber;
 import Model.Game;
 import Patterns.Observer;
 
@@ -259,8 +260,8 @@ public class AnalyseIAView implements Observer, UserInterface {
 
     @Override
     public void updateSettings() {
-        Configuration.setPlayer1Settings(aiLevel1, "AI1");
-        Configuration.setPlayer2Settings(aiLevel2, "AI2");
+        Configuration.setPlayerSettings(PlayerNumber.PLAYER_1, aiLevel1, "AI1");
+        Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, aiLevel2, "AI2");
     }
 
     public class gameStats {
