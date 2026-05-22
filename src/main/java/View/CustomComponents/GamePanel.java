@@ -144,13 +144,13 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     private void loadImages() {
-        imgPlateau=(BufferedImage) readImage("Plateau_fleches");
-        imgStonePlayer1 = (BufferedImage) readImage("Blue_Stone");
-        imgStonePlayer2 = (BufferedImage) readImage("Red_Stone");
-        imgStonePlayer1Preview = (BufferedImage) readImage("Blue_Stone_transparent");
-        imgStonePlayer2Preview = (BufferedImage) readImage("Red_Stone_transparent");
-        imgStoneDisabled = (BufferedImage) readImage("Disabled_Stone");
-        imgStoneHover = (BufferedImage) readImage("stone_hover");
+        imgPlateau= (BufferedImage) Configuration.loadImage("Plateau_fleches.png");
+        imgStonePlayer1 = (BufferedImage) Configuration.loadImage("Blue_Stone.png");
+        imgStonePlayer2 = (BufferedImage) Configuration.loadImage("Red_Stone.png");
+        imgStonePlayer1Preview = (BufferedImage) Configuration.loadImage("Blue_Stone_transparent.png");
+        imgStonePlayer2Preview = (BufferedImage) Configuration.loadImage("Red_Stone_transparent.png");
+        imgStoneDisabled = (BufferedImage) Configuration.loadImage("Disabled_Stone.png");
+        imgStoneHover = (BufferedImage) Configuration.loadImage("stone_hover.png");
     }
 
     @Override
@@ -694,17 +694,5 @@ public class GamePanel extends JComponent implements Observer {
 
     public void togglePreview() {
         previewEnabled = !previewEnabled;
-    }
-
-    private Image readImage(String nom) {
-        InputStream in = Configuration.open("Images/" + nom + ".png");
-        Configuration.info("Chargement de l'image " + nom);
-        try {
-            // Chargement d'une image utilisable dans Swing
-            return ImageIO.read(in);
-        } catch (Exception e) {
-            System.err.println("Impossible de charger l'image " + nom);
-        }
-        return null;
     }
 }

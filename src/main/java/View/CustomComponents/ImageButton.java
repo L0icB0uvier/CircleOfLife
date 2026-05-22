@@ -1,18 +1,26 @@
 package View.CustomComponents;
 
+import Global.Configuration;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class  ImageButton extends JButton {
     private Image imageEnabled, imageDisabled;
     boolean hovered = false;
 
     public ImageButton(String pathEnabled, String pathDisabled) {
-        this.imageEnabled = new ImageIcon(pathEnabled).getImage();
+        if(pathEnabled != null)
+            this.imageEnabled = Configuration.loadImage(pathEnabled);
+
         if(pathDisabled != null)
-            this.imageDisabled = new ImageIcon(pathDisabled).getImage();
+            this.imageDisabled = Configuration.loadImage(pathDisabled);
+
         setContentAreaFilled(false);
         setBorderPainted(false);
 

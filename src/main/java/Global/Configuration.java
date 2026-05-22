@@ -2,6 +2,8 @@ package Global;
 
 import Controller.IA.AILevel;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.*;
 import java.util.NoSuchElementException;
 import java.util.Properties;
@@ -52,6 +54,16 @@ public class Configuration {
             System.exit(1);
         }
         return in;
+    }
+
+    public static Image loadImage(String imgName) {
+        try {
+            InputStream in = Global.Configuration.open("Images/" + imgName);
+            return ImageIO.read(in);
+        } catch (IOException e) {
+            Global.Configuration.error("impossible de charger l'image");
+        }
+        return null;
     }
 
     /**
