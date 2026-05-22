@@ -30,12 +30,12 @@ public class GraphicalGame extends JPanel {
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
-        undoBt = new ImageButton("res/Images/undoIcon.png");
+        undoBt = new ImageButton("undoIcon.png");
         JPanel undoPanel = new JPanel();
         undoPanel.setOpaque(false);
         undoPanel.setLayout(new GridLayout());
         undoPanel.add(undoBt);
-        redoBt = new ImageButton("res/Images/redoIcon.png");
+        redoBt = new ImageButton("redoIcon.png");
         JPanel redoPanel = new JPanel();
         redoPanel.setOpaque(false);
         redoPanel.setLayout(new GridLayout());

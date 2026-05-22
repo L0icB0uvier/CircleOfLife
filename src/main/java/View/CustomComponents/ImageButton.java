@@ -6,8 +6,6 @@ import View.Utils.UIColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -17,7 +15,7 @@ public class  ImageButton extends JButton {
     boolean hovered = false;
 
     public ImageButton(String path) {
-        this.image = Configuration.loadImage("nomImage.png");
+        this.image = Configuration.loadImage(path);
         setContentAreaFilled(false);
         setBackground(BG_COLOR);
         setBorder(new RoundedBorder(15,true,image));
