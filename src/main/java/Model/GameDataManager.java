@@ -46,8 +46,8 @@ public class GameDataManager {
         }
         writer.write(sep);
 
-        // écrit le joueur courant
-        writer.write(match.getCurrentPlayerIndex() + sep);
+        // écrit le joueur qui a commencé la partie
+        writer.write(match.startingPlayer + sep);
 
         // écrit le nombre de coup joué dans le passé et le futur
         writer.write(match.past.size() + sep);
@@ -157,8 +157,8 @@ public class GameDataManager {
             Configuration.updateAISettings(convertAI(playerTypes[1]), PlayerNumber.PLAYER_2);
 
         // Update Setting premier joueur
-        int currentPlayerIndex = scanner.nextInt();
-        Configuration.setStartingPlayerSetting(currentPlayerIndex);
+        int startingPlayerIndex = scanner.nextInt();
+        Configuration.setStartingPlayerSetting(startingPlayerIndex);
 
         // Création du match
         game.createMatch(Configuration.getSettings().getPlayer1Settings().getName(),
