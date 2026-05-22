@@ -12,6 +12,7 @@ public class UIColor {
     static public Color LIGHT_BLUE = new Color(204,199,221);
     static public Color LIGHT_RED = new Color(249,199,195);
     static public Color ALT_BLUE = new Color(77, 178, 255);
+    static public Color ALT_RED = new Color(255, 52, 32);
     static public Color BACKGROUND = new Color(237, 223, 198);
 
     static public Color EVOLVE_COLOR = Color.GREEN;
