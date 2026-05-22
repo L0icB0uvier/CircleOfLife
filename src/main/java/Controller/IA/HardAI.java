@@ -3,9 +3,7 @@ package Controller.IA;
 import Global.Configuration;
 import Model.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HardAI extends AI {
 
@@ -35,7 +33,7 @@ public class HardAI extends AI {
     );
 
     Map<GamePhase, Integer> scoreMultiplier = Map.of(
-            GamePhase.Beginning, 0, GamePhase.Middle, 20, GamePhase.End, 10
+            GamePhase.Beginning, 1, GamePhase.Middle, 20, GamePhase.End, 10
     );
 
     Map<GamePhase, Integer> freedomBonus = Map.of(
@@ -113,7 +111,7 @@ public class HardAI extends AI {
 //        }
         double maxEval = -Double.MAX_VALUE;
         double eval;
-        Move best = null;
+        List<Move> bests = new ArrayList<>();
 
         // on parcourt les coups possibles et on trouve celui qui maximise l'évaluation de l'heuristique à l'aide d'un Minimax
         for (Coordinate move : possibleMoves){
@@ -125,12 +123,16 @@ public class HardAI extends AI {
             // évaluation Minimax et mise à jour du coup optimal
             eval = minimax(newMatch, this.depth-1, match.getCurrentPlayerIndex(), -Double.MAX_VALUE, Double.MAX_VALUE, false);
             if (eval >= maxEval){
-                maxEval = eval;
-                best = new Move(match, move.line(), move.col());
+                if (eval != maxEval){
+                    bests.clear();
+                    maxEval = eval;
+                }
+                bests.add(new Move(match, move.line(), move.col()));
             }
         }
         //Configuration.info("Fin de recherche de coup.");
-        return best;
+        Random RNG = new Random();
+        return bests.get(RNG.nextInt(bests.size()));
     }
 
     void updatePhase(int playerID){
