@@ -115,6 +115,20 @@ public class GameDataManager {
     }
 
     /**
+     * Converti le format du type d'IA lu dans le fichier vers le format attendu par updateAISettings dans configuration.
+     * @param ai Le format du type d'IA lu dans le fichier.
+     * @return Le format du type d'IA converti.
+     */
+    private static String convertAI(String ai){
+        return switch (ai) {
+            case "E" -> "Facile";
+            case "M" -> "Moyen";
+            case "H" -> "Difficile";
+            default -> "";
+        };
+    }
+
+    /**
      * Charge les données d'un match et créé un nouveau match avec ces données dans
      * Game.
      * 
@@ -135,7 +149,7 @@ public class GameDataManager {
         if(playerTypes[0].equals("J"))
             Configuration.setPlayerSettings(PlayerNumber.PLAYER_1, null, scanner.next().replaceAll("_", " "));
         else{
-            Configuration.updateAISettings(playerTypes[0], PlayerNumber.PLAYER_1);
+            Configuration.updateAISettings(convertAI(playerTypes[0]), PlayerNumber.PLAYER_1);
         }
 
         // Update Settings Joueur 2
@@ -143,29 +157,21 @@ public class GameDataManager {
         if(playerTypes[1].equals("J"))
             Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, null, scanner.next().replaceAll("_", " "));
         else
-            Configuration.updateAISettings(playerTypes[1], PlayerNumber.PLAYER_2);
+            Configuration.updateAISettings(convertAI(playerTypes[1]), PlayerNumber.PLAYER_2);
 
         // Update Setting premier joueur
         int currentPlayerIndex = scanner.nextInt();
         Configuration.setStartingPlayerSetting(currentPlayerIndex);
 
+        // Création du match
         game.createMatch(Configuration.getSettings().getPlayer1Settings().getName(),
                 Configuration.getSettings().getPlayer2Settings().getName(), Configuration.getSettings().getStartingPlayerSetting());
 
         Match m = game.getMatch();
-        m.initMatch();
 
-
+        // Reconstruction des moves
         int lenPast = scanner.nextInt();
         int lenFuture = scanner.nextInt();
-
-        // calculé le currentPlayerIndex
-        if (lenPast % 2 != 0) {
-            currentPlayerIndex = currentPlayerIndex == 0 ? 1 : 0;
-        }
-        if (m.currentPlayerIndex != currentPlayerIndex)
-            game.update();
-        m.currentPlayerIndex = currentPlayerIndex;
 
         // read past et futur
         for (int k = 0; k < lenPast + lenFuture; k++) {
@@ -326,15 +332,6 @@ public class GameDataManager {
         res[4] = getName(filename);
 
         return res;
-    }
-
-    private static String convertAI(String ai){
-        return switch (ai) {
-            case "E" -> "IA Facile";
-            case "M" -> "IA Moyenne";
-            case "H" -> "IA Difficile";
-            default -> null;
-        };
     }
 
     public static boolean saveFileExists(String filename) {
