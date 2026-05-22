@@ -112,7 +112,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalGame.gameControlBar.forfeitBt.addActionListener(pua);
         pua.setActionButton(0, "Annuler", true);
         pua.setButtonLabel(0, "Annuler");
-        pua.setActionButton(2, "ContinueGame", true);
+        pua.setActionButton(2, "Replay", true);
         pua.setButtonLabel(2, "Rejouer");
         pua.setActionButton(3, this, graphicalMainMenu);
         pua.setButtonLabel(3, "Menu");

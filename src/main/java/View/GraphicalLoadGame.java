@@ -6,6 +6,7 @@ import Model.Game;
 import Model.GameDataManager;
 import View.Adapter.LoadGameAdapter;
 import View.Adapter.LoadGamesAdapter;
+import View.CustomComponents.CustomButton;
 import View.CustomComponents.CustomLabel;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
@@ -13,6 +14,8 @@ import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
@@ -35,7 +38,7 @@ public class GraphicalLoadGame extends JPanel {
         this.controller = controller;
         this.userInterface = userInterface;
         this.currentGame = null;
-        MigLayout layout = new MigLayout("fill, insets 10", "[]", "[80%]push[15%, align center]");
+        MigLayout layout = new MigLayout("fill, insets 10", "[]", "[90%][10%, align center]");
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
@@ -44,11 +47,11 @@ public class GraphicalLoadGame extends JPanel {
         contentPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(contentPanel, BoxLayout.Y_AXIS);
         contentPanel.setLayout(boxLayout);
-        contentPanel.setBorder(new RoundedBorder(30, UIColor.BROWN, 10));
         contentPanel.setBackground(UIColor.BACKGROUND);
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
+
         scrollPane.setViewportView(contentPanel);
         scrollPane.setBackground(UIColor.BACKGROUND);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         for(String game: GameDataManager.getSaveFiles()) {
             addGame(game);
@@ -60,45 +63,70 @@ public class GraphicalLoadGame extends JPanel {
         MigLayout layoutBtns = new MigLayout("fill", "10%[15%, sg]push[15%, sg]push[15%, sg]push[15%, sg]10%", "");
         JPanel buttonComp = new JPanel(layoutBtns);
 
-        cancelButton = createBorderedButton("Revenir au menu");
-        cancelButton.setPreferredSize(new Dimension(250, 75));
-        cancelButton.setMaximumSize(new Dimension(250, 75));
-        cancelButton.setBackground(Color.DARK_GRAY);
-        cancelButton.setForeground(Color.WHITE);
+        cancelButton = createJButton("Annuler",true,UIColor.ORANGE);
+        cancelButton.setMinimumSize(new Dimension(0, 0));
+        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
+        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        cancelButton.setFocusable(false);
 
-        renameBtn = createDisabledButton("Renommer", UIColor.BROWN);
-        renameBtn.setPreferredSize(new Dimension(250, 75));
-        renameBtn.setMaximumSize(new Dimension(250, 75));
+        renameBtn = createJButton("Renommer",false,UIColor.BROWN);
+        renameBtn.setMinimumSize(new Dimension(0, 0));
         renameBtn.addActionListener(e -> renameGame());
         renameBtn.setEnabled(false);
+        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
+        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        cancelButton.setFocusable(false);
 
-        deleteBtn = createDisabledButton("Supprimer", UIColor.RED);
-        deleteBtn.setPreferredSize(new Dimension(250, 75));
-        deleteBtn.setMaximumSize(new Dimension(250, 75));
+        deleteBtn = createJButton("Supprimer",false,UIColor.RED);
+        deleteBtn.setMinimumSize(new Dimension(0, 0));
         deleteBtn.addActionListener(e -> deleteGame());
         deleteBtn.setEnabled(false);
+        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
+        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        cancelButton.setFocusable(false);
 
-        loadBtn = createDisabledButton("Charger", UIColor.GREEN);
-        loadBtn.setPreferredSize(new Dimension(250, 75));
-        loadBtn.setMaximumSize(new Dimension(250, 75));
+        loadBtn = createJButton("Charger",false,UIColor.GREEN);
+        loadBtn.setMinimumSize(new Dimension(0, 0));
         loadBtn.addActionListener(e -> loadGame());
         loadBtn.setEnabled(false);
-
-        cancelButton.addComponentListener(new FontScaler(cancelButton, renameBtn, deleteBtn, loadBtn));
+        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
+        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        cancelButton.setFocusable(false);
 
         buttonComp.setBackground(UIColor.BACKGROUND);
-        buttonComp.add(cancelButton, "cell 0 0");
-        buttonComp.add(renameBtn, "cell 1 0");
-        buttonComp.add(deleteBtn, "cell 2 0");
-        buttonComp.add(loadBtn, "cell 3 0");
+        buttonComp.add(cancelButton, "cell 0 0,grow");
+        buttonComp.add(renameBtn, "cell 1 0,grow");
+        buttonComp.add(deleteBtn, "cell 2 0,grow");
+        buttonComp.add(loadBtn, "cell 3 0,grow");
 
         this.add(scrollPane, "cell 0 0, grow");
         this.add(buttonComp, "cell 0 1, grow");
+
+        buttonComp.addComponentListener(new FontScaler(cancelButton, renameBtn, deleteBtn, loadBtn));
+
         this.addMouseListener(getMouseDeselector());
         scrollPane.addMouseListener(getMouseDeselector());
         contentPanel.addMouseListener(getMouseDeselector());
-        buttonComp.addMouseListener(getMouseDeselector());
 
+        scrollPane.getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+            int visibleHeight = scrollPane.getViewport().getHeight();
+            int panelHeight = visibleHeight / 5;
+                for (Component c : contentPanel.getComponents()) {
+
+                    if (c instanceof JPanel panel) {
+
+                        panel.setPreferredSize(new Dimension(c.getPreferredSize().width, panelHeight));
+
+                        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE,panelHeight));
+                    }
+                }
+
+
+            }
+        });
     }
 
     private void loadGame() {
@@ -203,11 +231,10 @@ public class GraphicalLoadGame extends JPanel {
     public void addGame(String game) {
         String[] gameData = GameDataManager.parseFileName(game);
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[70%, align left][30%]",
-                "push[50%]10%[30%, align center]push" );
+        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[60%, align left][40%]", "push[50%][30%, align center]push" );
         JPanel gamePanel = new JPanel(layout);
-        gamePanel.setPreferredSize(new Dimension(500, 150));
-        gamePanel.setMaximumSize(new Dimension(10000, 150));
+        gamePanel.setPreferredSize(new Dimension(500,150));
+        gamePanel.setMaximumSize(new Dimension(10000,150));
         gamePanel.setFocusable(true);
         gamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
         gamePanel.setBackground(UIColor.BACKGROUND);
@@ -246,6 +273,15 @@ public class GraphicalLoadGame extends JPanel {
         contentPanel.add(gamePanel);
     }
 
+    private JButton createJButton(String text,boolean enabled,Color bgColor){
+        CustomButton button = new CustomButton(text,bgColor);
+        button.setFocusable(false);
+        button.setVerticalTextPosition(SwingConstants.CENTER);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.setEnabled(enabled);
+        return button;
+
+    }
     private JButton createBorderedButton(String text) {
         JButton button = new JButton(text);
         button.setFocusable(false);

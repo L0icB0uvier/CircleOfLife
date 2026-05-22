@@ -40,13 +40,13 @@ public class GraphicalTutorial extends JComponent {
 
         this.image = new ImagePanel(imagesTuto[pageNumber]);
 
-        this.buttonPrev = new ImageButton("res/Images/PreviousPage.png", "res/Images/PreviousPageDisabled.png");
+        this.buttonPrev = new ImageButton("res/Images/PreviousPage.png");
         buttonPrev.addActionListener(e -> previousPage());
 
-        this.buttonNext = new ImageButton("res/Images/NextPage.png", null);
+        this.buttonNext = new ImageButton("res/Images/NextPage.png");
         buttonNext.addActionListener(e -> nextPage());
 
-        this.buttonQuit = new ImageButton("res/Images/Quit.png", null);
+        this.buttonQuit = new ImageButton("res/Images/Quit.png");
         buttonQuit.addActionListener(new ChangePageAdapter(userInterface, userInterface.graphicalMainMenu));
 
 

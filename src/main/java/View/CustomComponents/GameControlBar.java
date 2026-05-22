@@ -18,8 +18,8 @@ public class GameControlBar extends JPanel {
         //TODO: ajouter les sprites des bouttons disabled
 
         // Initialisation of all components
-        saveBt = new ImageButton("res/Images/Sauvegarde.png", null);
-        forfeitBt = new ImageButton("res/Images/Abandonner.png", null);
+        saveBt = new ImageButton("res/Images/saveIcon.png");
+        forfeitBt = new ImageButton("res/Images/logout.png");
 
         this.add(saveBt);
         this.add(forfeitBt);

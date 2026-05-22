@@ -4,6 +4,7 @@ import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
 import View.CustomComponents.*;
+import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
 import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
@@ -18,27 +19,49 @@ public class GraphicalGame extends JPanel {
     GameControlBar gameControlBar;
     CustomLabel gameInfo;
 
-    public JButton undoBt,redoBt;
+    public JButton undoBt,redoBt,replayBt,reviewBt;
     Game game;
 
     public GraphicalGame(Game game){
         this.game=game;
         playerInfos = new ArrayList<>();
 
-        MigLayout layout = new MigLayout("fill, insets 1.5% 1.5% 1.5% 1.5%", "[grow][60%][grow][15%]","[10%][10%][grow][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 1.5% 1.5% 1.5% 1.5%", "[grow]1%[58%]1%[grow]1%[14%]","[10%]1%[10%][grow][10%]1%[10%][grow][10%]" );
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
-        undoBt = new ImageButton("res/Images/Undo.png", null);
+        undoBt = new ImageButton("res/Images/undoIcon.png");
         JPanel undoPanel = new JPanel();
         undoPanel.setOpaque(false);
         undoPanel.setLayout(new GridLayout());
         undoPanel.add(undoBt);
-        redoBt = new ImageButton("res/Images/Redo.png", null);
+        redoBt = new ImageButton("res/Images/redoIcon.png");
         JPanel redoPanel = new JPanel();
         redoPanel.setOpaque(false);
         redoPanel.setLayout(new GridLayout());
         redoPanel.add(redoBt);
+
+        replayBt = new CustomButton("Rejouer",UIColor.WHITE);
+        replayBt.setOpaque(false);
+        replayBt.setBorder(BorderFactory.createEmptyBorder(0,0,RoundedBorder.SHADOW_SIZE_BOTTOM,0));
+        JPanel replayPanel = new JPanel();
+        replayPanel.setOpaque(false);
+        replayPanel.setLayout(new GridLayout());
+        replayPanel.add(replayBt);
+        replayPanel.setBackground(UIColor.WHITE);
+        replayPanel.setBorder(new RoundedBorder(15,true));
+        replayPanel.addComponentListener(new FontScaler(replayBt));
+
+        reviewBt = new CustomButton("Revoir",UIColor.WHITE);
+        reviewBt.setOpaque(false);
+        reviewBt.setBorder(BorderFactory.createEmptyBorder(0,0,RoundedBorder.SHADOW_SIZE_BOTTOM,0));
+        JPanel reviewPanel = new JPanel();
+        reviewPanel.setOpaque(false);
+        reviewPanel.setLayout(new GridLayout());
+        reviewPanel.add(reviewBt);
+        reviewPanel.setBackground(UIColor.WHITE);
+        reviewPanel.setBorder(new RoundedBorder(15,true));
+        reviewPanel.addComponentListener(new FontScaler(reviewBt));
 
         gameInfo = new CustomLabel(game);
 
@@ -56,6 +79,8 @@ public class GraphicalGame extends JPanel {
         gameControlBar = new GameControlBar();
         gameControlBar.setBackground(UIColor.BACKGROUND);
 
+        reviewPanel.setMinimumSize(new Dimension(0, 0));
+        reviewPanel.setMinimumSize(new Dimension(0, 0));
         redoBt.setMinimumSize(new Dimension(0, 0));
         undoPanel.setMinimumSize(new Dimension(0, 0));
         gameInfo.setMinimumSize(new Dimension(0, 0));
@@ -64,14 +89,16 @@ public class GraphicalGame extends JPanel {
         player2Info.setMinimumSize(new Dimension(0, 0));
         gameControlBar.setMinimumSize(new Dimension(0, 0));
 
-
         this.add(gameInfo,"cell 1 0, grow, sg top");
         this.add(player1Info,"cell 3 0, grow, sg top");
         this.add(player2Info,"cell 3 1, grow, sg top");
-        this.add(gamePanel,"cell 0 1, span 3 3, grow");
-        this.add(gameControlBar,"cell 3 3, grow, sg top, sg button");
+        this.add(gamePanel,"cell 0 1, span 3 6, grow");
+        this.add(gameControlBar,"cell 3 6, grow, sg top");
         this.add(undoPanel,"cell 0 0,  grow");
         this.add(redoPanel,"cell 2 0, grow");
+        this.add(reviewPanel,"cell 3 3, grow, sg top");
+        this.add(replayPanel,"cell 3 4, grow, sg top");
+
 
         this.setVisible(true);
 

@@ -1,22 +1,28 @@
 package View.CustomComponents;
 
+import Global.Configuration;
+import View.Utils.RoundedBorder;
+import View.Utils.UIColor;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class  ImageButton extends JButton {
-    private Image imageEnabled, imageDisabled;
+    private final Image image;
+    static private final Color BG_COLOR = UIColor.WHITE;
     boolean hovered = false;
 
-    public ImageButton(String pathEnabled, String pathDisabled) {
-        this.imageEnabled = new ImageIcon(pathEnabled).getImage();
-        if(pathDisabled != null)
-            this.imageDisabled = new ImageIcon(pathDisabled).getImage();
+    public ImageButton(String path) {
+        this.image = Configuration.loadImage("nomImage.png");
         setContentAreaFilled(false);
-        setBorderPainted(false);
+        setBackground(BG_COLOR);
+        setBorder(new RoundedBorder(15,true,image));
 
-        addMouseListener(new MouseAdapter() {
+        /*addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 hovered = true;
@@ -28,34 +34,9 @@ public class  ImageButton extends JButton {
                 hovered = false;
                 repaint();
             }
-        });
+        });*/
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        int width,height;
-
-        if(getParent().getWidth() == 0){
-            width = getWidth();
-        }else {
-            width = getWidth();
-        }
-        if(getParent().getHeight() == 0){
-            height = getHeight();
-        }else {
-            height = getParent().getHeight();
-        }
-
-
-        int size = Math.min(width,height);
-        int x = (getWidth() - size) / 2;
-        int y = (getHeight() - size) / 2;
-
-        g.drawImage(isEnabled()? imageEnabled : imageDisabled, x, y, size, size, this);
-
-    }
 
 }
 

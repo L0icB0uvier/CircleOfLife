@@ -14,6 +14,7 @@ public class RoundedBorder implements Border {
     private Color color;
     private int thickness ;
     private boolean shadow ;
+    private Image image = null;
 
     public RoundedBorder(int radius, Color color, int thickness) {
         this.radius = radius;
@@ -26,13 +27,22 @@ public class RoundedBorder implements Border {
         this.thickness = 0;
         this.shadow = shadow;
     }
+    public RoundedBorder(int radius,boolean shadow,Image image) {
+        this.radius = radius;
+        this.thickness = 0;
+        this.shadow = shadow;
+        this.image = image;
+    }
+
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 
         Graphics2D g2d = (Graphics2D) g.create();
 
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
         if(thickness > 0) {
             g2d.setColor(color);
@@ -48,8 +58,27 @@ public class RoundedBorder implements Border {
                 g2d.fillRoundRect(x, y, width - 1, height - 1, radius, radius);
             }
         }
+        if(image != null){
+            int widthContainer,heightContainer;
+            if(c.getParent().getWidth() == 0){
+                widthContainer= c.getWidth()-(shadow?2*SHADOW_SIZE_HORIZONTAL:0);
+            }else {
+                widthContainer = c.getWidth()-(shadow?2*SHADOW_SIZE_HORIZONTAL:0);
+            }
+            if(c.getParent().getHeight() == 0){
+                heightContainer = c.getHeight()-(shadow?SHADOW_SIZE_BOTTOM:0);
+            }else {
+                heightContainer= c.getParent().getHeight()-(shadow?SHADOW_SIZE_BOTTOM:0);
+            }
+            int size = (int) (Math.min(heightContainer,widthContainer)*0.8);
+            int imageX = (widthContainer - size) / 2 + (shadow?SHADOW_SIZE_HORIZONTAL:0);
+            int imageY = (heightContainer - size) / 2;
 
-        g2d.dispose();
+            g2d.drawImage(image, imageX, imageY, size, size, c);
+
+
+        }
+
     }
 
     private void paintShadow(Graphics2D g2d, int x, int y, int width, int height) {
