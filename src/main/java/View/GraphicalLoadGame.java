@@ -6,6 +6,7 @@ import Model.Game;
 import Model.GameDataManager;
 import View.Adapter.LoadGameAdapter;
 import View.Adapter.LoadGamesAdapter;
+import View.Adapter.SelectGameMouseAdapter;
 import View.CustomComponents.CustomButton;
 import View.CustomComponents.CustomLabel;
 import View.Utils.FontScaler;
@@ -157,7 +158,11 @@ public class GraphicalLoadGame extends JPanel {
         });
         JButton confirmButton = createBorderedButton("Renommer");
         confirmButton.addActionListener(e -> {
-            if(!renameTextField.getText().equals(gameLabel.getText())) controller.renameGame(currentGame, renameTextField.getText());
+            if(!renameTextField.getText().equals(gameLabel.getText())) { //on recupere et mets a jour l'ancien nom du jeu avec le nouvel
+                 currentGame = controller.renameGame(currentGame, renameTextField.getText());
+                SelectGameMouseAdapter selectMouseAdapter = (SelectGameMouseAdapter) currentGamePanel.getMouseListeners()[0];
+                selectMouseAdapter.updateGame(currentGame);
+            }
             gameLabel.setText(renameTextField.getText());
             renameMenu.dispose();
         });
@@ -207,7 +212,7 @@ public class GraphicalLoadGame extends JPanel {
         this.revalidate();
     }
 
-    private void selectGame(JPanel gamePanel, String gameFile) {
+    public void selectGame(JPanel gamePanel, String gameFile) {
         if(currentGame != null) currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
         this.currentGame = gameFile;
         this.currentGamePanel = gamePanel;
@@ -264,12 +269,7 @@ public class GraphicalLoadGame extends JPanel {
         nameLabel.addComponentListener(new FontScaler(0.7f, nameLabel));
         player1Label.addComponentListener(new FontScaler(0.7f, player1Label, sepLabel, player2Label));
 
-        gamePanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                selectGame(gamePanel, game);
-            }
-        });
+        gamePanel.addMouseListener(new SelectGameMouseAdapter(this, gamePanel, game));
         contentPanel.add(gamePanel);
     }
 
