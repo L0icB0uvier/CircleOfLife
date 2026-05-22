@@ -3,10 +3,12 @@ package View;
 import Controller.Controller;
 import Controller.IA.AILevel;
 import Global.Configuration;
+import Global.PlayerNumber;
 import Model.Game;
 import Model.PlayerData;
 import Patterns.Observer;
 import View.Adapter.*;
+import View.Utils.ChoiceBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,31 +51,22 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
     @Override
     public void updateSettings() {
+        // Update Settings Joueur 1
+        if(graphicalNewGame.player1Choice.getValue().equals("Joueur"))
+            Configuration.setPlayerSettings(PlayerNumber.PLAYER_1, null, graphicalNewGame.player1NameTextField.getText().isEmpty() ? "Joueur 1" : graphicalNewGame.player1NameTextField.getText());
+        else
+            Configuration.updateAISettings(graphicalNewGame.AI1LevelChoice.getValue(), PlayerNumber.PLAYER_1);
 
-        if(graphicalNewGame.player1Choice.getValue().equals("Joueur")) {
-            Configuration.setPlayer1Settings(null, graphicalNewGame.player1NameTextField.getText().isEmpty() ? "Joueur 1" : graphicalNewGame.player1NameTextField.getText());
-        } else {
-            if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Facile")) {
-                Configuration.setPlayer1Settings(AILevel.EASY, "IA Facile");
-            } else if (Objects.equals(graphicalNewGame.AI1LevelChoice.getValue(), "Moyen")) {
-                Configuration.setPlayer1Settings(AILevel.MEDIUM, "IA Moyenne");
-            } else {
-                Configuration.setPlayer1Settings(AILevel.HARD, "IA Difficile");
-            }
-        }
-        if(graphicalNewGame.player2Choice.getValue().equals("Joueur")) {
-            Configuration.setPlayer2Settings(null, graphicalNewGame.player2NameTextField.getText().isEmpty() ? "Joueur 2" : graphicalNewGame.player2NameTextField.getText());
+        // Update Settings Joueur 2
+        if(graphicalNewGame.player2Choice.getValue().equals("Joueur"))
+            Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, null, graphicalNewGame.player2NameTextField.getText().isEmpty() ? "Joueur 2" : graphicalNewGame.player2NameTextField.getText());
+        else
+            Configuration.updateAISettings(graphicalNewGame.AI2LevelChoice.getValue(), PlayerNumber.PLAYER_2);
 
-        }else {
-            if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Facile")) {
-                Configuration.setPlayer2Settings(AILevel.EASY, "IA Facile");
-            } else if (Objects.equals(graphicalNewGame.AI2LevelChoice.getValue(), "Moyen")) {
-                Configuration.setPlayer2Settings(AILevel.MEDIUM, "IA Moyen");
-            } else {
-                Configuration.setPlayer2Settings(AILevel.HARD, "IA Difficile");
-            }
-        }
+        // Update Setting premier joueur
+        Configuration.updateStartingPlayerSetting(graphicalNewGame.startingPlayerChoice.getValue());
     }
+
 
     public void updateUndoRedoEnabled() {
         //TODO : ajouter les images des boutons grisés

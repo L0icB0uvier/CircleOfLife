@@ -219,21 +219,52 @@ public class Configuration {
         return instance().matchSettings;
     }
 
+    public static void updateAISettings(String aiValue, PlayerNumber player){
+        switch (aiValue){
+            case "Facile":
+                setPlayerSettings(player, AILevel.EASY, "IA Facile");
+                break;
+            case "Moyen":
+                setPlayerSettings(player, AILevel.MEDIUM, "IA Moyenne");
+                break;
+            case "Difficile":
+                setPlayerSettings(player, AILevel.HARD, "IA Difficile");
+                break;
+        }
+    }
+
+    public static void updateStartingPlayerSetting(String startingPlayerValue){
+        switch (startingPlayerValue){
+            case "Aléatoire":
+                setStartingPlayerSetting(-1);
+                break;
+            case "Joueur 1":
+                setStartingPlayerSetting(0);
+                break;
+            case "Joueur 2":
+                setStartingPlayerSetting(1);
+                break;
+        }
+    }
+
     /**
      * Met à jour les settings relatif au premier joueur.
      * @param aiLevel Le niveau de difficulté de l'IA. Si null, le joueur est considéré comme humain.
      * @param name Le nom du joueur
      */
-    public static void setPlayer1Settings(AILevel aiLevel, String name){
-        instance().matchSettings.setPlayer1Settings(aiLevel, name);
+    public static void setPlayerSettings(PlayerNumber player, AILevel aiLevel, String name){
+        switch (player){
+            case PLAYER_1 -> {
+                instance().matchSettings.setPlayer1Settings(aiLevel, name);
+            }
+            case PLAYER_2 -> {
+                instance().matchSettings.setPlayer2Settings(aiLevel, name);
+            }
+            default -> Configuration.error("Mauvais numéro de joueur.");
+        }
     }
 
-    /**
-     * Met à jour les settings relatif au deuxième joueur.
-     * @param aiLevel Le niveau de difficulté de l'IA. Si null, le joueur est considéré comme humain.
-     * @param name Le nom du joueur
-     */
-    public static void setPlayer2Settings(AILevel aiLevel, String name){
-        instance().matchSettings.setPlayer2Settings(aiLevel, name);
+    public static void setStartingPlayerSetting(int startingPlayer){
+        instance().matchSettings.setStartingPlayer(startingPlayer);
     }
 }

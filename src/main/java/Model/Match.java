@@ -13,6 +13,7 @@ public class Match extends History<Move> implements Cloneable {
 
     PlayerData[] players = new PlayerData[2];
     int currentPlayerIndex;
+    int startingPlayer;
 
     byte[][] boardState; // 0 tile can be played, -1 can't be played by PayerOne, -2 can't be played by playerTwo, -3 can't be player by both players
                         // 1 is occupied by playerOne, 2 by playerTwo
@@ -21,7 +22,7 @@ public class Match extends History<Move> implements Cloneable {
 
     List<Critter> previouslyEatenCritters;
 
-    private int winScore;
+    private final int winScore;
 
     private boolean gameOver = false;
     private boolean reviewModeActive;
@@ -45,6 +46,17 @@ public class Match extends History<Move> implements Cloneable {
         players[0] = new PlayerData(name1);
         players[1] = new PlayerData(name2);
         winScore = Configuration.readInt("WinScore");
+        currentPlayerIndex = pickStartingPlayerRandom();
+        startingPlayer = currentPlayerIndex;
+        initMatch();
+    }
+
+    public Match(String name1, String name2, int firstPlayer){
+        players[0] = new PlayerData(name1);
+        players[1] = new PlayerData(name2);
+        currentPlayerIndex = firstPlayer < 0 || firstPlayer > 1? pickStartingPlayerRandom() : firstPlayer;
+        startingPlayer = currentPlayerIndex;
+        winScore = Configuration.readInt("WinScore");
         initMatch();
     }
 
@@ -58,7 +70,6 @@ public class Match extends History<Move> implements Cloneable {
         resetScores();
         critters = new HashSet<>();
         previouslyEatenCritters = new ArrayList<>();
-        pickStartingPlayer();
         gameOver = false;
         winner = -1;
     }
@@ -86,9 +97,8 @@ public class Match extends History<Move> implements Cloneable {
     /**
      * Choisi un joueur aléatoire.
      */
-    void pickStartingPlayer() {
-        currentPlayerIndex = new Random().nextInt(2) == 0? 0: 1;
-//        Configuration.info("New game: Player " + (currentPlayerIndex + 1) + " starts");
+    int pickStartingPlayerRandom() {
+        return new Random().nextInt(2) == 0? 0: 1;
     }
 
     @Override
