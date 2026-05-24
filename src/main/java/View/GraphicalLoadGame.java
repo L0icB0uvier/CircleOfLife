@@ -9,6 +9,7 @@ import View.Adapter.LoadGamesAdapter;
 import View.Adapter.SelectGameMouseAdapter;
 import View.CustomComponents.CustomButton;
 import View.CustomComponents.CustomLabel;
+import View.CustomComponents.ImageButton;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
 import View.Utils.UIColor;
@@ -136,6 +137,8 @@ public class GraphicalLoadGame extends JPanel {
         userInterface.startGame();
     }
 
+
+
     private void renameGame() {
         JLabel gameLabel = (JLabel) currentGamePanel.getComponent(0);
 
@@ -212,6 +215,14 @@ public class GraphicalLoadGame extends JPanel {
         this.revalidate();
     }
 
+    private void deleteGame(String game, JPanel gamePanel) {
+        int indexComponent = Arrays.stream(contentPanel.getComponents()).toList().indexOf(gamePanel);
+        contentPanel.remove(gamePanel);
+        contentPanel.remove(indexComponent - 1);
+        controller.deleteGame(game);
+        this.revalidate();
+    }
+
     public void selectGame(JPanel gamePanel, String gameFile) {
         if(currentGame != null) currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
         this.currentGame = gameFile;
@@ -236,7 +247,7 @@ public class GraphicalLoadGame extends JPanel {
     public void addGame(String game) {
         String[] gameData = GameDataManager.parseFileName(game);
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[60%, align left][40%]", "push[50%][30%, align center]push" );
+        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[60%, align left]push[10%]push", "push[50%][grow][30%, align center]push" );
         JPanel gamePanel = new JPanel(layout);
         gamePanel.setPreferredSize(new Dimension(500,150));
         gamePanel.setMaximumSize(new Dimension(10000,150));
@@ -261,15 +272,22 @@ public class GraphicalLoadGame extends JPanel {
         JLabel player2Label = new JLabel(player2);
         player2Label.setForeground(UIColor.RED);
 
+        ImageButton deleteBtn = new ImageButton("delete.png", UIColor.RED);
+        deleteBtn.setHorizontalAlignment(SwingConstants.CENTER);
+
+        deleteBtn.setMinimumSize(new Dimension(0, 0));
+
         gamePanel.add(nameLabel, "cell 0 0, grow");
-        gamePanel.add(player1Label, "cell 0 1, growy");
-        gamePanel.add(sepLabel, "cell 0 1, growy");
-        gamePanel.add(player2Label, "cell 0 1, growy");
+        gamePanel.add(player1Label, "cell 0 2, growy");
+        gamePanel.add(sepLabel, "cell 0 2, growy");
+        gamePanel.add(player2Label, "cell 0 2, growy");
+        gamePanel.add(deleteBtn, "cell 1 0, span 1 3, grow");
 
         nameLabel.addComponentListener(new FontScaler(0.7f, nameLabel));
         player1Label.addComponentListener(new FontScaler(0.7f, player1Label, sepLabel, player2Label));
 
         gamePanel.addMouseListener(new SelectGameMouseAdapter(this, gamePanel, game));
+        deleteBtn.addActionListener(e -> deleteGame(game, gamePanel));
         contentPanel.add(gamePanel);
     }
 
@@ -295,27 +313,5 @@ public class GraphicalLoadGame extends JPanel {
                 deselectGame();
             }
         };
-    }
-
-    private JButton createDisabledButton(String text, Color enabledColor) {
-        JButton button = new JButton();
-        button.setFocusable(false);
-        button.setIcon(new ImageIcon(getImage(enabledColor,500,1000)));
-        button.setDisabledIcon(new ImageIcon(getImage(Color.LIGHT_GRAY,500,1000)));
-        button.setText(text);
-        button.setVerticalTextPosition(SwingConstants.CENTER);
-        button.setHorizontalTextPosition(SwingConstants.CENTER);
-        return button;
-    }
-
-    private BufferedImage getImage(Color color, int w, int h) {
-        BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-        Graphics g = bi.getGraphics();
-        g.setColor(color);
-        g.fillRect(0,0,w,h);
-        g.setColor(Color.BLACK);
-        g.dispose();
-
-        return bi;
     }
 }

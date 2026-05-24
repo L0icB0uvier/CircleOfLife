@@ -51,7 +51,7 @@ public class GraphicalNewGame extends JPanel {
         JComponent player1Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
 
         JLabel player1Label = createLabel("Joueur 1 :");
-        player1Label.setForeground(UIColor.RED);
+        player1Label.setForeground(UIColor.BLUE);
         AI1LevelLabel.setVisible(false);
 
         player1NameTextField = createJTextField("Joueur 1");
@@ -60,7 +60,7 @@ public class GraphicalNewGame extends JPanel {
         JComponent player2Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
 
         JLabel player2Label = createLabel("Joueur 2 :");
-        player2Label.setForeground(UIColor.BLUE);
+        player2Label.setForeground(UIColor.RED);
         AI2LevelLabel.setVisible(false);
 
         player2NameTextField = createJTextField("Joueur 2");

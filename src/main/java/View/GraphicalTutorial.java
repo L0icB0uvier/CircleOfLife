@@ -23,10 +23,10 @@ public class GraphicalTutorial extends JComponent {
     JLabel titleLabel, textLabel;
     BufferedImage[] imagesTuto = new BufferedImage[4];
     ImagePanel image;
-    ImageButton buttonNext, buttonPrev, buttonQuit;
+    ImageButton buttonNext, buttonPrev, buttonQuit, buttonPrevDisabled;
 
     public GraphicalTutorial(GraphicalUserInterface userInterface) {
-        MigLayout layout = new MigLayout("fill, insets 10", "[align center]", "[8%][17%][grow][15%]");
+        MigLayout layout = new MigLayout("fill, insets 10 10 20 10", "[align center]", "[8%][17%][57%][grow]");
         this.setLayout(layout);
 
         for(int i = 0; i < 4; i++) {
@@ -40,24 +40,28 @@ public class GraphicalTutorial extends JComponent {
 
         this.image = new ImagePanel(imagesTuto[pageNumber]);
 
-        this.buttonPrev = new ImageButton("PreviousPage.png");
+        this.buttonPrev = new ImageButton("undoIcon.png");
         buttonPrev.addActionListener(e -> previousPage());
 
-        this.buttonNext = new ImageButton("NextPage.png");
+        this.buttonPrevDisabled = new ImageButton("undoIcon.png", new Color(210, 210, 210));
+        this.buttonPrevDisabled.setEnabled(false);
+
+        this.buttonNext = new ImageButton("redoIcon.png");
         buttonNext.addActionListener(e -> nextPage());
 
-        this.buttonQuit = new ImageButton("Quit.png");
+        this.buttonQuit = new ImageButton("Close.png");
         buttonQuit.addActionListener(new ChangePageAdapter(userInterface, userInterface.graphicalMainMenu));
 
 
-        MigLayout layoutButtons = new MigLayout("fill, insets 10 10 10 10, hidemode 3", "push[sg]push[sg]push", "[]");
+        MigLayout layoutButtons = new MigLayout("fill, insets 10 10 10 10, hidemode 3", "push[15%, sg]push[15%, sg]push", "[]");
         JComponent buttonsComp = new JPanel(layoutButtons);
 
         buttonsComp.add(buttonPrev, "cell 0 0, grow");
+        buttonsComp.add(buttonPrevDisabled, "cell 0 0, grow");
         buttonsComp.add(buttonNext, "cell 1 0, grow");
         buttonsComp.add(buttonQuit, "cell 1 0, grow");
         buttonQuit.setVisible(false);
-        buttonPrev.setEnabled(false);
+        buttonPrev.setVisible(false);
 
         this.add(titleLabel, "cell 0 0, growy");
         this.add(textLabel, "cell 0 1, growy");
@@ -73,13 +77,13 @@ public class GraphicalTutorial extends JComponent {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        this.setBackground(UIColor.RED);
         titleLabel.setText(TutorialPages.pages[pageNumber].getTitle());
         textLabel.setText("<html>" + TutorialPages.pages[pageNumber].getText() + "</html>");
         image.setImage(imagesTuto[pageNumber]);
-        int size = Math.max(buttonPrev.getWidth(), buttonPrev.getHeight());
+        int size = Math.max(Math.max(buttonPrevDisabled.getWidth(), buttonPrevDisabled.getHeight()), Math.max(buttonPrev.getWidth(), buttonPrev.getHeight()));
         Dimension dim = new Dimension(size, size);
         buttonPrev.setSize(dim);
+        buttonPrevDisabled.setSize(dim);
         buttonNext.setSize(dim);
         buttonQuit.setSize(dim);
     }
@@ -89,7 +93,8 @@ public class GraphicalTutorial extends JComponent {
         boolean isLastPage = (pageNumber == imagesTuto.length - 1);
         buttonNext.setVisible(!isLastPage);
         buttonQuit.setVisible(isLastPage);
-        buttonPrev.setEnabled(true);
+        buttonPrev.setVisible(true);
+        buttonPrevDisabled.setVisible(false);
         repaint();
     }
 
@@ -97,7 +102,8 @@ public class GraphicalTutorial extends JComponent {
         pageNumber = Math.max(0, pageNumber - 1);
         buttonNext.setVisible(true);
         buttonQuit.setVisible(false);
-        buttonPrev.setEnabled(pageNumber != 0);
+        buttonPrev.setVisible(pageNumber != 0);
+        buttonPrevDisabled.setVisible(pageNumber == 0);
         repaint();
     }
 
@@ -105,7 +111,8 @@ public class GraphicalTutorial extends JComponent {
         pageNumber = 0;
         buttonNext.setVisible(true);
         buttonQuit.setVisible(false);
-        buttonPrev.setEnabled(false);
+        buttonPrev.setVisible(false);
+        buttonPrevDisabled.setVisible(true);
         repaint();
     }
 
