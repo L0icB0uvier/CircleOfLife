@@ -1,5 +1,6 @@
 package View.CustomComponents;
 
+import Global.Configuration;
 import View.Adapter.ChangePageAdapter;
 import View.EventCollector;
 import View.GraphicalUserInterface;
@@ -114,6 +115,18 @@ public class PopUpPanel extends JPanel {
                     }
                 }
             });
+    }
+
+    public void setActionButton(int button,ActionListener action, boolean dispose){
+        this.listButton.get(button).addActionListener(action);
+        if(dispose){
+            this.listButton.get(button).addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    dialog.dispose();
+                }
+            });
+        }
     }
 
 

@@ -16,7 +16,7 @@ public class  ImageButton extends JButton {
         this.image = Configuration.loadImage(path);
         setContentAreaFilled(false);
         setBackground(bgColor);
-        setBorder(new RoundedBorder(15,false,image));
+        setBorder(new RoundedBorder(15,true,image));
 
         /*addMouseListener(new MouseAdapter() {
             @Override
@@ -38,7 +38,7 @@ public class  ImageButton extends JButton {
         this.bgColor = bgColor;
         setContentAreaFilled(false);
         setBackground(this.bgColor);
-        setBorder(new RoundedBorder(15, false, image));
+        setBorder(new RoundedBorder(15, true, image));
     }
 
 

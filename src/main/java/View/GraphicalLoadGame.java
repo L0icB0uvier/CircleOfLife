@@ -6,6 +6,7 @@ import Model.Game;
 import Model.GameDataManager;
 import View.Adapter.LoadGameAdapter;
 import View.Adapter.LoadGamesAdapter;
+import View.Adapter.PopUpAdapter;
 import View.Adapter.SelectGameMouseAdapter;
 import View.CustomComponents.CustomButton;
 import View.CustomComponents.CustomLabel;
@@ -62,7 +63,7 @@ public class GraphicalLoadGame extends JPanel {
         scrollPane.setWheelScrollingEnabled(true);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
-        MigLayout layoutBtns = new MigLayout("fill", "10%[15%, sg]push[15%, sg]push[15%, sg]push[15%, sg]10%", "");
+        MigLayout layoutBtns = new MigLayout("fill", "10%[15%, sg]push[15%, sg]push[15%, sg]10%", "");
         JPanel buttonComp = new JPanel(layoutBtns);
 
         cancelButton = createJButton("Annuler",true,UIColor.ORANGE);
@@ -79,13 +80,13 @@ public class GraphicalLoadGame extends JPanel {
         cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
         cancelButton.setFocusable(false);
 
-        deleteBtn = createJButton("Supprimer",false,UIColor.RED);
+        /*deleteBtn = createJButton("Supprimer",false,UIColor.RED);
         deleteBtn.setMinimumSize(new Dimension(0, 0));
         deleteBtn.addActionListener(e -> deleteGame());
         deleteBtn.setEnabled(false);
         cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
         cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        cancelButton.setFocusable(false);
+        cancelButton.setFocusable(false);*/
 
         loadBtn = createJButton("Charger",false,UIColor.GREEN);
         loadBtn.setMinimumSize(new Dimension(0, 0));
@@ -98,13 +99,13 @@ public class GraphicalLoadGame extends JPanel {
         buttonComp.setBackground(UIColor.BACKGROUND);
         buttonComp.add(cancelButton, "cell 0 0,grow");
         buttonComp.add(renameBtn, "cell 1 0,grow");
-        buttonComp.add(deleteBtn, "cell 2 0,grow");
-        buttonComp.add(loadBtn, "cell 3 0,grow");
+        //buttonComp.add(deleteBtn, "cell 2 0,grow");
+        buttonComp.add(loadBtn, "cell 2 0,grow");
 
         this.add(scrollPane, "cell 0 0, grow");
         this.add(buttonComp, "cell 0 1, grow");
 
-        buttonComp.addComponentListener(new FontScaler(cancelButton, renameBtn, deleteBtn, loadBtn));
+        buttonComp.addComponentListener(new FontScaler(cancelButton, renameBtn, /*deleteBtn,*/ loadBtn));
 
         this.addMouseListener(getMouseDeselector());
         scrollPane.addMouseListener(getMouseDeselector());
@@ -114,8 +115,8 @@ public class GraphicalLoadGame extends JPanel {
             @Override
             public void componentResized(ComponentEvent e) {
 
-            int visibleHeight = scrollPane.getViewport().getHeight();
-            int panelHeight = visibleHeight / 5;
+                int visibleHeight = scrollPane.getViewport().getHeight();
+                int panelHeight = visibleHeight / 5;
                 for (Component c : contentPanel.getComponents()) {
 
                     if (c instanceof JPanel panel) {
@@ -129,15 +130,16 @@ public class GraphicalLoadGame extends JPanel {
 
             }
         });
+
+
     }
+
 
     private void loadGame() {
         if(currentGame == null) return;
         controller.loadGame(currentGame);
         userInterface.startGame();
     }
-
-
 
     private void renameGame() {
         JLabel gameLabel = (JLabel) currentGamePanel.getComponent(0);
@@ -220,7 +222,8 @@ public class GraphicalLoadGame extends JPanel {
         contentPanel.remove(gamePanel);
         contentPanel.remove(indexComponent - 1);
         controller.deleteGame(game);
-        this.revalidate();
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 
     public void selectGame(JPanel gamePanel, String gameFile) {
@@ -247,7 +250,7 @@ public class GraphicalLoadGame extends JPanel {
     public void addGame(String game) {
         String[] gameData = GameDataManager.parseFileName(game);
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[60%, align left]push[10%]push", "push[50%][grow][30%, align center]push" );
+        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[90%, align left][10%, align right]", "[10%][20%]5%[30%]5%[20%, align center][10%]" );
         JPanel gamePanel = new JPanel(layout);
         gamePanel.setPreferredSize(new Dimension(500,150));
         gamePanel.setMaximumSize(new Dimension(10000,150));
@@ -273,21 +276,35 @@ public class GraphicalLoadGame extends JPanel {
         player2Label.setForeground(UIColor.RED);
 
         ImageButton deleteBtn = new ImageButton("delete.png", UIColor.RED);
-        deleteBtn.setHorizontalAlignment(SwingConstants.CENTER);
 
-        deleteBtn.setMinimumSize(new Dimension(0, 0));
+        JPanel deleteButtonPanel = new JPanel();
+        deleteButtonPanel.setLayout(new GridLayout());
+        deleteButtonPanel.setOpaque(false);
+        deleteButtonPanel.add(deleteBtn);
 
-        gamePanel.add(nameLabel, "cell 0 0, grow");
-        gamePanel.add(player1Label, "cell 0 2, growy");
-        gamePanel.add(sepLabel, "cell 0 2, growy");
-        gamePanel.add(player2Label, "cell 0 2, growy");
-        gamePanel.add(deleteBtn, "cell 1 0, span 1 3, grow");
+        gamePanel.add(nameLabel, "cell 0 0,span 1 3, grow");
+        gamePanel.add(player1Label, "cell 0 3,span 1 2, growy");
+        gamePanel.add(sepLabel, "cell 0 3, span 1 2, growy");
+        gamePanel.add(player2Label, "cell 0 3,span 1 2, growy");
+        gamePanel.add(deleteButtonPanel, "cell 1 1,span 1 3, grow");
 
         nameLabel.addComponentListener(new FontScaler(0.7f, nameLabel));
         player1Label.addComponentListener(new FontScaler(0.7f, player1Label, sepLabel, player2Label));
 
         gamePanel.addMouseListener(new SelectGameMouseAdapter(this, gamePanel, game));
-        deleteBtn.addActionListener(e -> deleteGame(game, gamePanel));
+        PopUpAdapter pua = new PopUpAdapter(this.userInterface.getFrame(), controller,3,"Voulez-vous supprimer "+game+"?","");
+        pua.setButtonVisibility(1,false);
+        pua.setButtonLabel(0,"Annuler");
+        pua.setButtonLabel(2,"Supprimer");
+        pua.setActionButton(0,"Annuler",true);
+        pua.setActionButton(2, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteGame(game,gamePanel);
+            }
+        },true);
+        deleteBtn.addActionListener(pua);
+
         contentPanel.add(gamePanel);
     }
 
