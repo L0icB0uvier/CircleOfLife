@@ -72,6 +72,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         //TODO : ajouter les images des boutons grisés
         //graphicalGame.gameControlBar.undoBt.setEnabled(game.getMatch().canUndo());
         //graphicalGame.gameControlBar.redoBt.setEnabled(game.getMatch().canRedo());
+        graphicalGame.undoBt.setEnabled(game.getMatch().canUndo());
+        graphicalGame.redoBt.setEnabled(game.getMatch().canRedo());
     }
 
     public void startLoadPage() {
@@ -101,14 +103,12 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setButtonLabel(2, "Sauvegarder");
         pua.setButtonVisibility(1, false);
 
-        pua = new PopUpAdapter(frame, controller, 4, "Voulez-vous quittez la partie en cours ?", "Attention les données non sauvegardées seront supprimées !");
+        pua = new PopUpAdapter(frame, controller, 3, "Voulez-vous quittez la partie en cours ?", "Attention les données non sauvegardées seront supprimées !");
         graphicalGame.gameControlBar.forfeitBt.addActionListener(pua);
         pua.setActionButton(0, "Annuler", true);
         pua.setButtonLabel(0, "Annuler");
-        pua.setActionButton(2, "Replay", true);
-        pua.setButtonLabel(2, "Rejouer");
-        pua.setActionButton(3, this, graphicalMainMenu);
-        pua.setButtonLabel(3, "Menu");
+        pua.setActionButton(2, this, graphicalMainMenu);
+        pua.setButtonLabel(2, "Menu");
         pua.setButtonVisibility(1, false);
 
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
@@ -130,7 +130,12 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         if (game.isReviewModeActive()) {
             graphicalGame.updateGameInfo();
-        } else if (game.isGameOver()); //TODO : ajouter un bouton review qui apparait une fois la partie fini;
+            graphicalGame.replayBt.getParent().setVisible(true);
+            graphicalGame.reviewBt.getParent().setVisible(true);
+        } else if (game.isGameOver()){
+            graphicalGame.replayBt.getParent().setVisible(true);
+            graphicalGame.reviewBt.getParent().setVisible(true);
+        }; //TODO : ajouter un bouton review qui apparait une fois la partie fini;
     }
 
     @Override
@@ -163,21 +168,4 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.setVisible(true);
     }
 
-    private void displayGameOverPopup(int nJoueur) {
-
-        PopUpAdapter pua = new PopUpAdapter(frame,controller,5,"Le Joueur " + (nJoueur + 1) + " a gagné la manche !","");
-
-        pua.setButtonLabel(0,"Menu");
-        pua.setButtonLabel(1,"Sauvegarder");
-        pua.setButtonVisibility(2,false);
-        pua.setButtonLabel(3,"Analyser");
-        pua.setButtonLabel(4,"Rejouer");
-
-        pua.setActionButton(0, this, graphicalMainMenu);
-        pua.setActionButton(1, "Save",false);
-        pua.setActionButton(3, "Review", true);
-        pua.setActionButton(4, "Replay",true);
-
-        pua.show();
-    }
 }

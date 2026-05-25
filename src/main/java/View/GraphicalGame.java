@@ -51,6 +51,7 @@ public class GraphicalGame extends JPanel {
         replayPanel.setBackground(UIColor.WHITE);
         replayPanel.setBorder(new RoundedBorder(15,true));
         replayPanel.addComponentListener(new FontScaler(replayBt));
+        replayPanel.setVisible(false);
 
         reviewBt = new CustomButton("Revoir",UIColor.WHITE);
         reviewBt.setOpaque(false);
@@ -62,6 +63,7 @@ public class GraphicalGame extends JPanel {
         reviewPanel.setBackground(UIColor.WHITE);
         reviewPanel.setBorder(new RoundedBorder(15,true));
         reviewPanel.addComponentListener(new FontScaler(reviewBt));
+        reviewPanel.setVisible(false);
 
         gameInfo = new CustomLabel(game);
 

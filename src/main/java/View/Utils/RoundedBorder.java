@@ -1,5 +1,7 @@
 package View.Utils;
 
+import Global.Configuration;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -15,6 +17,8 @@ public class RoundedBorder implements Border {
     private final int thickness ;
     private final boolean shadow ;
     private Image image = null;
+    private boolean toogle = false;
+    private boolean isToogled = true;
 
     public RoundedBorder(int radius, Color color, int thickness) {
         this.radius = radius;
@@ -50,9 +54,16 @@ public class RoundedBorder implements Border {
             g2d.drawRoundRect(x + thickness / 2, y + thickness / 2, width - thickness, height - thickness, radius, radius);
         }else {
             if(shadow){
-                paintShadow(g2d,x,y,width,height);
-                g2d.setColor(c.getBackground());
-                g2d.fillRoundRect(x+SHADOW_SIZE_HORIZONTAL, y, width -SHADOW_SIZE_HORIZONTAL*2 , height - SHADOW_SIZE_BOTTOM, radius, radius);
+                if(toogle && isToogled) {
+                    g2d.setColor(c.getBackground());
+                    g2d.fillRoundRect(x + SHADOW_SIZE_HORIZONTAL, y, width - SHADOW_SIZE_HORIZONTAL * 2, height - SHADOW_SIZE_BOTTOM, radius, radius);
+                    paintShadow(g2d, x, y, width, height);
+                }else{
+                    paintShadow(g2d, x, y, width, height);
+                    g2d.setColor(c.getBackground());
+                    g2d.fillRoundRect(x + SHADOW_SIZE_HORIZONTAL, y, width - SHADOW_SIZE_HORIZONTAL * 2, height - SHADOW_SIZE_BOTTOM, radius, radius);
+
+                }
             }else {
                 g2d.setColor(c.getBackground());
                 g2d.fillRoundRect(x, y, width - 1, height - 1, radius, radius);
@@ -82,18 +93,42 @@ public class RoundedBorder implements Border {
     }
 
     private void paintShadow(Graphics2D g2d, int x, int y, int width, int height) {
-        for (int i = SHADOW_SIZE_BOTTOM; i >=1; i--){
+        Color prevColor = g2d.getColor();
+        for (int i = SHADOW_SIZE_BOTTOM; i >= 1; i--) {
+            if(toogle && isToogled) {
+                int alpha = (int)(50 - Math.pow((double)(SHADOW_SIZE_BOTTOM - i) / (SHADOW_SIZE_BOTTOM - 1), 0.9) * 40);
+                g2d.setColor(new Color(0, 0, 0,alpha ));
 
-            int alpha = (int) (30 - (SHADOW_SIZE_BOTTOM*i/1.5));
-            g2d.setColor(new Color(0, 0, 0, alpha));
+                int shadowX = x + SHADOW_SIZE_HORIZONTAL + (SHADOW_SIZE_BOTTOM - i);
+                int shadowY = y + (SHADOW_SIZE_BOTTOM - i);
+                int shadowWidth = width - SHADOW_SIZE_HORIZONTAL *2 - (SHADOW_SIZE_BOTTOM - i);
+                int shadowHeight = height - SHADOW_SIZE_BOTTOM - (SHADOW_SIZE_BOTTOM - i);
 
-            int shadowX = x + (SHADOW_SIZE_BOTTOM-i);
-            int shadowY = y + (SHADOW_SIZE_BOTTOM-i<=SHADOW_SIZE_HORIZONTAL?SHADOW_SIZE_BOTTOM-i:SHADOW_SIZE_HORIZONTAL+1)+3;
-            int shadowWidth = width - (SHADOW_SIZE_BOTTOM-i)*2;
-            int shadowHeight = height - (SHADOW_SIZE_BOTTOM-i) - ((SHADOW_SIZE_BOTTOM-i<=SHADOW_SIZE_HORIZONTAL?SHADOW_SIZE_BOTTOM-i:SHADOW_SIZE_HORIZONTAL+1)+3);
+                g2d.fillRoundRect(shadowX, shadowY, shadowWidth, shadowHeight, radius, radius);
+                g2d.setColor(prevColor);
+                g2d.fillRoundRect(shadowX+1, shadowY+1, shadowWidth-1, shadowHeight-1, radius , radius);
+            }else{
+                int alpha = (int) (30 - (SHADOW_SIZE_BOTTOM * i / 1.5));
+                g2d.setColor(new Color(0, 0, 0, alpha));
 
-            g2d.fillRoundRect(shadowX, shadowY, shadowWidth, shadowHeight, radius+i, radius+i);
+                int shadowX = x + (SHADOW_SIZE_BOTTOM - i);
+                int shadowY = y + (SHADOW_SIZE_BOTTOM - i <= SHADOW_SIZE_HORIZONTAL ? SHADOW_SIZE_BOTTOM - i : SHADOW_SIZE_HORIZONTAL + 1) + 3;
+                int shadowWidth = width - (SHADOW_SIZE_BOTTOM - i) * 2;
+                int shadowHeight = height - (SHADOW_SIZE_BOTTOM - i) - ((SHADOW_SIZE_BOTTOM - i <= SHADOW_SIZE_HORIZONTAL ? SHADOW_SIZE_BOTTOM - i : SHADOW_SIZE_HORIZONTAL + 1) + 3);
+
+                g2d.fillRoundRect(shadowX, shadowY, shadowWidth, shadowHeight, radius + i, radius + i);
+            }
         }
+        g2d.setColor(prevColor);
+
+    }
+
+    public void toogle(){
+        toogle = !toogle;
+    }
+
+    public void setToggled(boolean b){
+        isToogled = b;
     }
 
     @Override
