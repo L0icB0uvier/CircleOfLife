@@ -1,14 +1,17 @@
 package View.CustomComponents;
 
+import Model.Game;
+
 import javax.swing.*;
 import java.awt.*;
 
 
 public class GameControlBar extends JPanel {
+    private Game game;
+    public ImageButton saveBt, forfeitBt, quitGameButton;
 
-    public ImageButton saveBt,forfeitBt;
-
-    public GameControlBar(){
+    public GameControlBar(Game game){
+        this.game = game;
         init();
     }
 
@@ -19,12 +22,29 @@ public class GameControlBar extends JPanel {
 
         saveBt = new ImageButton("saveIcon.png");
         saveBt.setToolTipText("<html><b>Sauvegarder la partie.<b></html>");
-        forfeitBt = new ImageButton("logout.png");
+        forfeitBt = new ImageButton("giveUp.png");
         forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
+        quitGameButton = new ImageButton("logout.png");
+        quitGameButton.setToolTipText("<html><b>Quitter la partie.<b></html>");
 
         this.add(saveBt);
         this.add(forfeitBt);
+    }
 
+    public void updateButtons(){
+        if(game.isGameOver()){
+            this.remove(forfeitBt);
+            this.remove(quitGameButton);
+            this.add(quitGameButton);
+        }
+        else{
+            this.remove(forfeitBt);
+            this.remove(quitGameButton);
+            this.add(forfeitBt);
+
+        }
+        this.revalidate();
+        this.repaint();
     }
 }
 

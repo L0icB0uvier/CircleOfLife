@@ -18,14 +18,14 @@ public class  ImageButton extends JButton {
 
     public ImageButton(String path) {
         this.image = Configuration.loadImage(path);
-        border = new RoundedBorder(15,true,image);
+        border = new RoundedBorder(15,true, image);
         init();
     }
 
     public ImageButton(String path, Color bgColor) {
         this.image = Configuration.loadImage(path);
         this.bgColor = bgColor;
-        border = new RoundedBorder(15,true,image);
+        border = new RoundedBorder(15,true, image);
         init();
     }
 

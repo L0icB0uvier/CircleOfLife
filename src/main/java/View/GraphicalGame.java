@@ -25,9 +25,10 @@ public class GraphicalGame extends JPanel {
     CustomLabel gameInfo;
 
     public JButton undoBt, redoBt, allUndoBt, allRedoBt;
-    public CustomButton replayBt, reviewBt;
+    public CustomButton forfeitBt, replayBt, reviewBt;
 
     public JPanel undoPanel, redoPanel, allUndoPanel, allRedoPanel;
+
     public GraphicalGame(Game game, EventCollector controller){
         this.game = game;
         this.controller = controller;
@@ -70,6 +71,15 @@ public class GraphicalGame extends JPanel {
         allRedoPanel.add(allRedoBt);
         allRedoBt.setToolTipText("<html><b>Refaire la dernière action.<b></html>");
 
+//        forfeitBt = new CustomButton("Abandonner", UIColor.WHITE);
+//        forfeitBt.setOpaque(false);
+//        JPanel forfeitPanel = new JPanel();
+//        forfeitPanel.setOpaque(false);
+//        forfeitPanel.setLayout(new GridLayout());
+//        forfeitPanel.add(forfeitBt);
+//        forfeitPanel.setBackground(UIColor.WHITE);
+//        forfeitPanel.addComponentListener(new FontScaler(forfeitBt));
+//        forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
 
         replayBt = new CustomButton("Rejouer",UIColor.WHITE);
         replayBt.setOpaque(false);
@@ -97,8 +107,6 @@ public class GraphicalGame extends JPanel {
 
         gameInfo = new CustomLabel(game);
 
-        gameControlBar = new GameControlBar();
-
         gamePanel = new GamePanel(game);
         gamePanel.setBorder(new RoundedBorder(15,Color.BLACK,5));
         gamePanel.setBackground(UIColor.WHITE);
@@ -108,7 +116,7 @@ public class GraphicalGame extends JPanel {
         playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[1].getName(),1));
         PlayerInfo player2Info = playerInfos.get(1);
 
-        gameControlBar = new GameControlBar();
+        gameControlBar = new GameControlBar(game);
         gameControlBar.setBackground(UIColor.BACKGROUND);
 
         reviewPanel.setMinimumSize(new Dimension(0, 0));
@@ -130,6 +138,7 @@ public class GraphicalGame extends JPanel {
         this.add(gameControlBar,"cell 5 6, grow, sg top");
         this.add(undoPanel,"cell 0 0, span 2,  grow");
         this.add(redoPanel,"cell 3 0, span 2, grow");
+        //this.add(forfeitPanel,"cell 5 3, grow, sg top");
         this.add(reviewPanel,"cell 5 3, grow, sg top");
         this.add(replayPanel,"cell 5 4, grow, sg top");
 
@@ -147,6 +156,7 @@ public class GraphicalGame extends JPanel {
         updateEndGameButtonsVisibility();
         updateUndoRedoEnabled();
         updateGameControlBarVisibility();
+        gameControlBar.updateButtons();
     }
 
     public void updateEndGameButtonsVisibility(){
@@ -165,6 +175,8 @@ public class GraphicalGame extends JPanel {
 
     public void updateGameInfo(){
         if (game.isGameOver()) {
+//            this.remove(forfeitBt.getParent());
+
             if(game.isReviewModeActive()){
                 gameInfo.updateMessage(game.getMatch().wonByScore? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
                 showAllUndoRedoButtons();
@@ -174,6 +186,8 @@ public class GraphicalGame extends JPanel {
                 hideAllUndoRedoButtons();
             }
         } else {
+//            this.remove(forfeitBt.getParent());
+//            this.add(forfeitBt.getParent());
             gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
             hideAllUndoRedoButtons();
         }

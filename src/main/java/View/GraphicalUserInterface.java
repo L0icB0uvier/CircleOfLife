@@ -21,6 +21,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     GraphicalLoadGame graphicalLoadGame;
     GraphicalTutorial graphicalTutorial;
 
+    private boolean maximized;
+
     public GraphicalUserInterface(Game game, EventCollector controller){
         this.game = game;
         this.controller = controller;
@@ -38,7 +40,15 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
     @Override
     public void toggleFullscreen() {
-
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        if (maximized) {
+            device.setFullScreenWindow(null);
+            maximized = false;
+        } else {
+            device.setFullScreenWindow(frame);
+            maximized = true;
+        }
     }
 
     public JFrame getFrame() {
@@ -87,12 +97,19 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setButtonVisibility(1, false);
 
         pua = new PopUpAdapter(frame, controller, 3, "Voulez-vous quittez la partie en cours ?", "Attention les données non sauvegardées seront supprimées !");
-        graphicalGame.gameControlBar.forfeitBt.addActionListener(pua);
+        graphicalGame.gameControlBar.quitGameButton.addActionListener(pua);
         pua.setActionButton(0, "Annuler", true);
         pua.setButtonLabel(0, "Annuler");
         pua.setActionButton(2, this, graphicalMainMenu);
         pua.setButtonLabel(2, "Menu");
         pua.setButtonVisibility(1, false);
+
+        pua = new PopUpAdapter(frame, controller, 2, "Voulez-vous abandonner la partie en en cours ?", "");
+        graphicalGame.gameControlBar.forfeitBt.addActionListener(pua);
+        pua.setActionButton(0, "Annuler", true);
+        pua.setButtonLabel(0, "Non");
+        pua.setActionButton(1, "GiveUp", true);
+        pua.setButtonLabel(1, "Oui");
 
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);

@@ -94,11 +94,11 @@ public class PopUpPanel extends JPanel {
     }
 
 
-    public void setButtonVisibility(int button,boolean b){
+    public void setButtonVisibility(int button, boolean b){
         listButton.get(button).setVisible(b);
     }
 
-    public void setActionButton(int button,String action, boolean dispose){
+    public void setActionButton(int button, String action, boolean dispose){
         this.listButton.get(button).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -117,7 +117,7 @@ public class PopUpPanel extends JPanel {
             });
     }
 
-    public void setActionButton(int button,ActionListener action, boolean dispose){
+    public void setActionButton(int button, ActionListener action, boolean dispose){
         this.listButton.get(button).addActionListener(action);
         if(dispose){
             this.listButton.get(button).addActionListener(new ActionListener() {
@@ -130,7 +130,7 @@ public class PopUpPanel extends JPanel {
     }
 
 
-    public void setActionButton(int button,GraphicalUserInterface gui,JComponent nPage){
+    public void setActionButton(int button, GraphicalUserInterface gui, JComponent nPage){
         this.listButton.get(button).addActionListener(new ChangePageAdapter(gui,nPage));
         this.listButton.get(button).addActionListener(new ActionListener() {
             @Override

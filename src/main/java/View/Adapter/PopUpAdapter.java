@@ -55,7 +55,7 @@ public class PopUpAdapter implements ActionListener {
     }
 
     public void setActionButton(int button,ActionListener action,boolean dispose){
-        popup.setActionButton(button,action,dispose);
+        popup.setActionButton(button, action, dispose);
     }
 
     public void setActionButton(int button, GraphicalUserInterface gui, JComponent nPage) {
