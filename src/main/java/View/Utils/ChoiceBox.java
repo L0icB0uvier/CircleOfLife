@@ -28,14 +28,23 @@ public class ChoiceBox extends JComponent {
         label.setMinimumSize(new Dimension(0, 0));
         rightBtn.setMinimumSize(new Dimension(0, 0));
 
-        this.add(leftBtn);
-        this.add(label);
-        this.add(rightBtn);
-        this.addComponentListener(new FontScaler(leftBtn, label, rightBtn));
+        this.add(leftBtn, "grow");
+        this.add(label, "grow");
+        this.add(rightBtn, "grow");
+        leftBtn.addComponentListener(new FontScaler(leftBtn, rightBtn));
+        label.addComponentListener(new FontScaler(label));
     }
 
     public String getValue() {
         return this.label.getText();
+    }
+
+    public String getMaxText() {
+        String text = "";
+        for(String t: values) {
+            if (t.length() > text.length()) text = t;
+        }
+        return text;
     }
 
     public void changeLabel(int direction) {
