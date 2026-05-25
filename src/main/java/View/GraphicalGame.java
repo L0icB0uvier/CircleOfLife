@@ -41,6 +41,7 @@ public class GraphicalGame extends JPanel {
         undoPanel.setLayout(new GridLayout());
         undoPanel.add(undoBt);
         undoBt.addActionListener(new ControlButtonAdapter(controller, "Undo"));
+        undoBt.setToolTipText("<html><b>Annuler la dernière action</b></html>");
 
         redoBt = new ImageButton("redoIcon.png");
         JPanel redoPanel = new JPanel();
@@ -48,6 +49,7 @@ public class GraphicalGame extends JPanel {
         redoPanel.setLayout(new GridLayout());
         redoPanel.add(redoBt);
         redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
+        redoBt.setToolTipText("<html><b>Refaire la dernière action.<b></html>");
 
         replayBt = new CustomButton("Rejouer",UIColor.WHITE);
         replayBt.setOpaque(false);
@@ -59,6 +61,7 @@ public class GraphicalGame extends JPanel {
         replayPanel.addComponentListener(new FontScaler(replayBt));
         replayPanel.setVisible(false);
         replayBt.addActionListener(new ControlButtonAdapter(controller, "Replay"));
+        replayBt.setToolTipText("<html><b>Rejouer une partie.<b></html>");
 
         reviewBt = new CustomButton("Revoir", UIColor.WHITE);
         reviewBt.setOpaque(false);
@@ -70,6 +73,7 @@ public class GraphicalGame extends JPanel {
         reviewPanel.addComponentListener(new FontScaler(reviewBt));
         reviewPanel.setVisible(false);
         reviewBt.addActionListener(new ControlButtonAdapter(controller, "ToggleReviewMode"));
+        reviewBt.setToolTipText("<html><b>Revoir la partie.<b></html>");
 
         gameInfo = new CustomLabel(game);
 
@@ -128,6 +132,10 @@ public class GraphicalGame extends JPanel {
         boolean reviewBtnVisible = game.isGameOver();
 
         reviewBt.updateText(game.getMatch().isReviewModeActive()? "Retour" : "Revoir");
+        reviewBt.setToolTipText(game.getMatch().isReviewModeActive()?
+                "<html><b>Retour au menu de fin de partie.<b></html>" :
+                "<html><b>Revoir la partie.<b></html>"
+        );
 
         replayBt.getParent().setVisible(replayBtnVisible);
         reviewBt.getParent().setVisible(reviewBtnVisible);

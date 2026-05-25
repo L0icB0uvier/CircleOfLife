@@ -1,18 +1,14 @@
 package View;
 
 import Controller.Controller;
-import Controller.IA.AILevel;
 import Global.Configuration;
 import Global.PlayerNumber;
 import Model.Game;
-import Model.PlayerData;
 import Patterns.Observer;
 import View.Adapter.*;
-import View.Utils.ChoiceBox;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 public class GraphicalUserInterface implements Runnable, UserInterface, Observer {
     Game game;
@@ -106,7 +102,17 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.setContentPane(graphicalGame);
         frame.revalidate();
 
+        setUpTooltipSettings();
+
         graphicalGame.updateGUI();
+    }
+
+    private static void setUpTooltipSettings() {
+        ToolTipManager ttm = ToolTipManager.sharedInstance();
+
+        ttm.setInitialDelay(200);  // Temps d'attente avant apparition (en millisecondes)
+        ttm.setDismissDelay(5000); // Temps avant que l'info-bulle ne disparaisse (5 secondes)
+        ttm.setReshowDelay(100);   // Temps d'attente si on passe d'un bouton à un autre
     }
 
     @Override
