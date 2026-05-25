@@ -1,6 +1,7 @@
 package View.Utils;
 
 import Global.Configuration;
+import Model.Coordinate;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -17,6 +18,7 @@ public class RoundedBorder implements Border {
     private final int thickness ;
     private final boolean shadow ;
     private Image image = null;
+    private String text = null;
     private boolean toogle = false;
     private boolean isToogled = true;
 
@@ -36,6 +38,12 @@ public class RoundedBorder implements Border {
         this.thickness = 0;
         this.shadow = shadow;
         this.image = image;
+    }
+    public RoundedBorder(int radius,boolean shadow,String text) {
+        this.radius = radius;
+        this.thickness = 0;
+        this.shadow = shadow;
+        this.text = text;
     }
 
 
@@ -86,8 +94,15 @@ public class RoundedBorder implements Border {
             int imageY = (heightContainer - size) / 2;
 
             g2d.drawImage(image, imageX, imageY, size, size, c);
+        }else if(text != null){
+            Color prevColor = g2d.getColor();
 
+            int newX = (width-g2d.getFontMetrics().stringWidth(text))/2;
+            int newY = ((height - g2d.getFontMetrics().getHeight())/2) + g2d.getFontMetrics().getAscent() - SHADOW_SIZE_BOTTOM/2 ;
 
+            g2d.setColor(Color.BLACK);
+            g2d.drawString(text,newX,newY);
+            g2d.setColor(prevColor);
         }
 
     }

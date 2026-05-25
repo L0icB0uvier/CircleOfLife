@@ -43,25 +43,21 @@ public class GraphicalGame extends JPanel {
 
         replayBt = new CustomButton("Rejouer",UIColor.WHITE);
         replayBt.setOpaque(false);
-        replayBt.setBorder(BorderFactory.createEmptyBorder(0,0,RoundedBorder.SHADOW_SIZE_BOTTOM,0));
         JPanel replayPanel = new JPanel();
         replayPanel.setOpaque(false);
         replayPanel.setLayout(new GridLayout());
         replayPanel.add(replayBt);
         replayPanel.setBackground(UIColor.WHITE);
-        replayPanel.setBorder(new RoundedBorder(15,true));
         replayPanel.addComponentListener(new FontScaler(replayBt));
         replayPanel.setVisible(false);
 
         reviewBt = new CustomButton("Revoir",UIColor.WHITE);
         reviewBt.setOpaque(false);
-        reviewBt.setBorder(BorderFactory.createEmptyBorder(0,0,RoundedBorder.SHADOW_SIZE_BOTTOM,0));
         JPanel reviewPanel = new JPanel();
         reviewPanel.setOpaque(false);
         reviewPanel.setLayout(new GridLayout());
         reviewPanel.add(reviewBt);
         reviewPanel.setBackground(UIColor.WHITE);
-        reviewPanel.setBorder(new RoundedBorder(15,true));
         reviewPanel.addComponentListener(new FontScaler(reviewBt));
         reviewPanel.setVisible(false);
 
@@ -100,7 +96,6 @@ public class GraphicalGame extends JPanel {
         this.add(redoPanel,"cell 2 0, grow");
         this.add(reviewPanel,"cell 3 3, grow, sg top");
         this.add(replayPanel,"cell 3 4, grow, sg top");
-
 
         this.setVisible(true);
 

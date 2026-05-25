@@ -68,17 +68,11 @@ public class GraphicalLoadGame extends JPanel {
 
         cancelButton = createJButton("Annuler",true,UIColor.ORANGE);
         cancelButton.setMinimumSize(new Dimension(0, 0));
-        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
-        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        cancelButton.setFocusable(false);
 
         renameBtn = createJButton("Renommer",false,UIColor.BROWN);
         renameBtn.setMinimumSize(new Dimension(0, 0));
         renameBtn.addActionListener(e -> renameGame());
         renameBtn.setEnabled(false);
-        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
-        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        cancelButton.setFocusable(false);
 
         /*deleteBtn = createJButton("Supprimer",false,UIColor.RED);
         deleteBtn.setMinimumSize(new Dimension(0, 0));
@@ -92,9 +86,6 @@ public class GraphicalLoadGame extends JPanel {
         loadBtn.setMinimumSize(new Dimension(0, 0));
         loadBtn.addActionListener(e -> loadGame());
         loadBtn.setEnabled(false);
-        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
-        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        cancelButton.setFocusable(false);
 
         buttonComp.setBackground(UIColor.BACKGROUND);
         buttonComp.add(cancelButton, "cell 0 0,grow");
@@ -231,7 +222,7 @@ public class GraphicalLoadGame extends JPanel {
         this.currentGame = gameFile;
         this.currentGamePanel = gamePanel;
         this.renameBtn.setEnabled(true);
-        this.deleteBtn.setEnabled(true);
+        //this.deleteBtn.setEnabled(true);
         this.loadBtn.setEnabled(true);
         gamePanel.setBorder(new RoundedBorder(10, UIColor.HOVER_COLOR, 5));
     }
@@ -242,7 +233,7 @@ public class GraphicalLoadGame extends JPanel {
         currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
         currentGamePanel = null;
         this.renameBtn.setEnabled(false);
-        this.deleteBtn.setEnabled(false);
+        //this.deleteBtn.setEnabled(false);
         this.loadBtn.setEnabled(false);
     }
 
