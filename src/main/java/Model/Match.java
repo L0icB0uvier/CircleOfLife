@@ -60,6 +60,11 @@ public class Match extends History<Move> implements Cloneable {
         initMatch();
     }
 
+    public void toggleStartingPlayer(){
+        startingPlayer = startingPlayer == 0 ? 1 : 0;
+        currentPlayerIndex = startingPlayer;
+    }
+
     /**
      * Initialise le match en supprimant l'historique, en initialisant le plateau de jeu et en choisissant un nouveau joueur de manière aléatoire.
      */

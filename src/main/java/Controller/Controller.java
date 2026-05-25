@@ -151,6 +151,8 @@ public class Controller implements EventCollector, Observer {
 
     private void replay(){
         game.replay();
+        updateCurrentPlayer();
+        currentPlayer.startTurn();
     }
 
     private void review(){
