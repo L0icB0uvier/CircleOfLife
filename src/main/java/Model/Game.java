@@ -79,6 +79,7 @@ public class Game extends Observable {
      * Annule le dernier Move puis appel update pour notifier les observateurs.
      */
     public void undo(){
+        Configuration.info("Game received Undo.");
         if(canUndo() == false) return;
 
         match.undo();
@@ -101,6 +102,7 @@ public class Game extends Observable {
      * Refait le dernier Move annulé puis appel update pour notifier les observateurs.
      */
     public void redo(){
+        Configuration.info("Game received Redo.");
         if(!match.canRedo()) return;
 
         if(match.isReviewModeActive()){
@@ -121,6 +123,18 @@ public class Game extends Observable {
             Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
         }
         update();
+    }
+
+    public void undoAll(){
+        Configuration.info("Game received Undo all.");
+        while (canUndo())
+            undo();
+    }
+
+    public void redoAll(){
+        Configuration.info("Game received Redo all");
+        while (match.canRedo())
+            redo();
     }
 
     public void giveUp(){

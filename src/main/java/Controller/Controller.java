@@ -28,42 +28,18 @@ public class Controller implements EventCollector, Observer {
 
     @Override
     public void performAction(String actionName) {
-        switch (actionName){
-            case "NewGame":
-                createNewGame();
-                break;
-            case "StartGame":
-                startGame();
-                break;
-            case "ContinueGame":
-                continueGame();
-                break;
-            case "GiveUp":
-                giveUp();
-                break;
-            case "Replay":
-                replay();
-                break;
-            case "Review":
-                review();
-                break;
-            case "Quit":
-                break;
-            case "Undo":
-                handleUndo();
-                break;
-            case "Redo":
-                handleRedo();
-                break;
-            case "Save":
-                try {
-                    GameDataManager.saveMatch(game.getMatch(), Configuration.getSettings());
-                    Configuration.info("Match successfully saved");
-                } catch (Exception e) {
-                    Configuration.warning("Error while saving match");
-                    throw new RuntimeException(e);
-                }
-                break;
+        switch (actionName) {
+            case "NewGame" -> createNewGame();
+            case "StartGame" -> startGame();
+            case "ContinueGame" -> continueGame();
+            case "GiveUp" -> giveUp();
+            case "Replay" -> replay();
+            case "Review" -> review();
+            case "Undo" -> handleUndo();
+            case "Redo" -> handleRedo();
+            case "UndoAll" -> handleUndoAll();
+            case "RedoAll" -> handleRedoAll();
+            case "Save" -> handleSave();
         }
     }
 
@@ -71,7 +47,7 @@ public class Controller implements EventCollector, Observer {
      * Gère le undo.
      */
     private void handleUndo(){
-        Configuration.info("Undo");
+        Configuration.info("Controller received Undo");
         game.undo();
     }
 
@@ -79,8 +55,17 @@ public class Controller implements EventCollector, Observer {
      * Gère le redo
      */
     private void handleRedo(){
-        Configuration.info("Redo");
+        Configuration.info("Controller received Redo");
         game.redo();
+    }
+
+
+    private void handleUndoAll(){
+        game.undoAll();
+    }
+
+    private void handleRedoAll(){
+        game.redoAll();
     }
 
     /**
@@ -159,6 +144,23 @@ public class Controller implements EventCollector, Observer {
         game.enterReviewMode();
     }
 
+    private void handleSave() {
+        try {
+            GameDataManager.saveMatch(game.getMatch(), Configuration.getSettings());
+            Configuration.info("Match successfully saved");
+        } catch (Exception e) {
+            Configuration.warning("Error while saving match");
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Met à jour le joueur actif à partir des données du modèle.
+     */
+    private void updateCurrentPlayer(){
+        currentPlayer = players[game.getCurrentPlayerIndex()];
+    }
+
     @Override
     public void addUserInterface(UserInterface i) {
         view = i;
@@ -177,12 +179,5 @@ public class Controller implements EventCollector, Observer {
 
         updateCurrentPlayer();
         currentPlayer.startTurn();
-    }
-
-    /**
-     * Met à jour le joueur actif à partir des données du modèle.
-     */
-    private void updateCurrentPlayer(){
-        currentPlayer = players[game.getCurrentPlayerIndex()];
     }
 }

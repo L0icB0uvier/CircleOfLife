@@ -20,6 +20,8 @@ public class KeyboardAdapter extends KeyAdapter {
             case KeyEvent.VK_LEFT -> control.performAction("Undo");
             case KeyEvent.VK_RIGHT -> control.performAction("Redo");
             case KeyEvent.VK_S -> control.performAction("Save");
+            case KeyEvent.VK_O -> control.performAction("UndoAll");
+            case KeyEvent.VK_P -> control.performAction("RedoAll");
         }
     }
 }
