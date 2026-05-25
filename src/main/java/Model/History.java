@@ -15,6 +15,8 @@ public class History<E extends Command> {
     }
 
     void reset() {
+        pastCount = 0;
+        futureCount = 0;
         past = new ArrayDeque<>();
         future = new ArrayDeque<>();
     }

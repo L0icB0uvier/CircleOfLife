@@ -135,6 +135,7 @@ public class Game extends Observable {
 
     public void replay(){
         match.initMatch();
+        match.toggleStartingPlayer();
         update();
     }
 

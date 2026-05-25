@@ -1,8 +1,8 @@
 package View;
 
-import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
+import View.Adapter.ControlButtonAdapter;
 import View.CustomComponents.*;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
@@ -14,16 +14,20 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class GraphicalGame extends JPanel {
+    Game game;
+    EventCollector controller;
+
     GamePanel gamePanel;
     ArrayList<PlayerInfo> playerInfos;
     GameControlBar gameControlBar;
     CustomLabel gameInfo;
 
-    public JButton undoBt,redoBt,replayBt,reviewBt;
-    Game game;
+    public JButton undoBt, redoBt, replayBt, reviewBt;
 
-    public GraphicalGame(Game game){
-        this.game=game;
+    public GraphicalGame(Game game, EventCollector controller){
+        this.game = game;
+        this.controller = controller;
+
         playerInfos = new ArrayList<>();
 
         MigLayout layout = new MigLayout("fill, insets 1.5% 1.5% 1.5% 1.5%", "[grow]1%[58%]1%[grow]1%[14%]","[10%]1%[10%][grow][10%]1%[10%][grow][10%]" );
@@ -35,11 +39,14 @@ public class GraphicalGame extends JPanel {
         undoPanel.setOpaque(false);
         undoPanel.setLayout(new GridLayout());
         undoPanel.add(undoBt);
+        undoBt.addActionListener(new ControlButtonAdapter(controller, "Undo"));
+
         redoBt = new ImageButton("redoIcon.png");
         JPanel redoPanel = new JPanel();
         redoPanel.setOpaque(false);
         redoPanel.setLayout(new GridLayout());
         redoPanel.add(redoBt);
+        redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
 
         replayBt = new CustomButton("Rejouer",UIColor.WHITE);
         replayBt.setOpaque(false);
@@ -52,6 +59,7 @@ public class GraphicalGame extends JPanel {
         replayPanel.setBorder(new RoundedBorder(15,true));
         replayPanel.addComponentListener(new FontScaler(replayBt));
         replayPanel.setVisible(false);
+        replayBt.addActionListener(new ControlButtonAdapter(controller, "Replay"));
 
         reviewBt = new CustomButton("Revoir",UIColor.WHITE);
         reviewBt.setOpaque(false);
@@ -64,6 +72,7 @@ public class GraphicalGame extends JPanel {
         reviewPanel.setBorder(new RoundedBorder(15,true));
         reviewPanel.addComponentListener(new FontScaler(reviewBt));
         reviewPanel.setVisible(false);
+        reviewBt.addActionListener(new ControlButtonAdapter(controller, "Review"));
 
         gameInfo = new CustomLabel(game);
 
@@ -101,7 +110,6 @@ public class GraphicalGame extends JPanel {
         this.add(reviewPanel,"cell 3 3, grow, sg top");
         this.add(replayPanel,"cell 3 4, grow, sg top");
 
-
         this.setVisible(true);
 
         updateScore(game.getMatch().getPlayerData());
@@ -109,6 +117,20 @@ public class GraphicalGame extends JPanel {
 
     public GamePanel getGamePanel() {
         return gamePanel;
+    }
+
+    public void updateGUI(){
+        updateGameInfo();
+        updateEndGameButtonsVisibility();
+        updateUndoRedoEnabled();
+    }
+
+    public void updateEndGameButtonsVisibility(){
+        boolean replayBtnVisible = game.isGameOver() && game.isReviewModeActive() == false;
+        boolean reviewBtnVisible = game.isGameOver() && game.isReviewModeActive() == false;
+
+        replayBt.getParent().setVisible(replayBtnVisible);
+        reviewBt.getParent().setVisible(reviewBtnVisible);
     }
 
     public void updateGameInfo(){
@@ -124,6 +146,14 @@ public class GraphicalGame extends JPanel {
         }
 
         updateScore(game.getMatch().getPlayerData());
+    }
+
+    public void updateUndoRedoEnabled() {
+        //TODO : ajouter les images des boutons grisés
+        boolean undoRedoEnabled = game.isGameOver() == false || game.isReviewModeActive();
+
+        undoBt.setEnabled(undoRedoEnabled && game.getMatch().canUndo());
+        redoBt.setEnabled(undoRedoEnabled && game.getMatch().canRedo());
     }
 
     public void updateScore(PlayerData[] playerData) {

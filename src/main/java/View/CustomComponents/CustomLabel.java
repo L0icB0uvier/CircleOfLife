@@ -60,7 +60,7 @@ public class CustomLabel extends JPanel {
     }
 
     public void updatePlayerTurn(int currentPlayer){
-        turn.setText(String.format("Tour %d - ", game.getMatch().getPastCount() + 1));
+        turn.setText(String.format("Tour %d - ", game.getMatch().isGameOver()?  game.getMatch().getPastCount() : game.getMatch().getPastCount() + 1));
         playerName.setText(currentPlayer == 0? game.getMatch().getPlayerData()[0].getName() : game.getMatch().getPlayerData()[1].getName());
         playerName.setForeground(currentPlayer == 0? UIColor.BLUE : UIColor.RED);
         this.setBackground(currentPlayer == 0 ? UIColor.LIGHT_BLUE : UIColor.LIGHT_RED);

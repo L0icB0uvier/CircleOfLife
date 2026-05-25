@@ -15,7 +15,6 @@ public class  ImageButton extends JButton {
 
     RoundedBorder border;
     boolean hovered = false;
-    boolean enabled = true;
 
     public ImageButton(String path) {
         this.image = Configuration.loadImage(path);
@@ -59,14 +58,12 @@ public class  ImageButton extends JButton {
                 border.toogle();
                 repaint();
             }
-
-
         });
     }
 
     @Override
     public void setEnabled(boolean e){
-        this.enabled = e;
+        super.setEnabled(e);
 
         if(!e){
             setBackground(Color.LIGHT_GRAY);
@@ -78,10 +75,6 @@ public class  ImageButton extends JButton {
             this.repaint();
         }
     }
-
-
-
-
 }
 
 

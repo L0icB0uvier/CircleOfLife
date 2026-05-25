@@ -78,7 +78,6 @@ public class Configuration {
         } catch (IOException e) {
             // Le logger n'est pas encore en place à ce moment là
             System.err.println("Impossible de charger " + fileName);
-            System.err.println(e);
             System.exit(1);
         }
     }
@@ -254,12 +253,12 @@ public class Configuration {
      */
     public static void setPlayerSettings(PlayerNumber player, AILevel aiLevel, String name){
         switch (player){
-            case PLAYER_1 -> {
+            case PLAYER_1 ->
                 instance().matchSettings.setPlayer1Settings(aiLevel, name);
-            }
-            case PLAYER_2 -> {
+
+            case PLAYER_2 ->
                 instance().matchSettings.setPlayer2Settings(aiLevel, name);
-            }
+
             default -> Configuration.error("Mauvais numéro de joueur.");
         }
     }

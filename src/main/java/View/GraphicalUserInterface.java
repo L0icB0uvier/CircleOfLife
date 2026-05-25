@@ -67,15 +67,6 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         Configuration.updateStartingPlayerSetting(graphicalNewGame.startingPlayerChoice.getValue());
     }
 
-
-    public void updateUndoRedoEnabled() {
-        //TODO : ajouter les images des boutons grisés
-        //graphicalGame.gameControlBar.undoBt.setEnabled(game.getMatch().canUndo());
-        //graphicalGame.gameControlBar.redoBt.setEnabled(game.getMatch().canRedo());
-        graphicalGame.undoBt.setEnabled(game.getMatch().canUndo());
-        graphicalGame.redoBt.setEnabled(game.getMatch().canRedo());
-    }
-
     public void startLoadPage() {
         graphicalLoadGame = new GraphicalLoadGame((Controller) controller, this);
 
@@ -87,12 +78,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
 
     public void startGame() {
-        graphicalGame = new GraphicalGame(game);
+        graphicalGame = new GraphicalGame(game, controller);
 
-        graphicalGame.undoBt.addActionListener(new ControlButtonAdapter(controller, "Undo"));
-        graphicalGame.redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
-
-        updateUndoRedoEnabled();
         PopUpAdapter pua;
 
         pua = new PopUpAdapter(frame, controller, 3, "Voulez-vous sauvegarder la partie en cours ?", "");
@@ -119,23 +106,13 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.setContentPane(graphicalGame);
         frame.revalidate();
 
-        graphicalGame.updateGameInfo();
+        graphicalGame.updateGUI();
     }
 
     @Override
     public void update() {
         if (graphicalGame == null) return;
-        graphicalGame.updateGameInfo();
-        updateUndoRedoEnabled();
-
-        if (game.isReviewModeActive()) {
-            graphicalGame.updateGameInfo();
-            graphicalGame.replayBt.getParent().setVisible(true);
-            graphicalGame.reviewBt.getParent().setVisible(true);
-        } else if (game.isGameOver()){
-            graphicalGame.replayBt.getParent().setVisible(true);
-            graphicalGame.reviewBt.getParent().setVisible(true);
-        }; //TODO : ajouter un bouton review qui apparait une fois la partie fini;
+        graphicalGame.updateGUI();
     }
 
     @Override
