@@ -57,6 +57,9 @@ public class AnalyseIAView implements Observer, UserInterface {
         startNewGame();
     }
 
+    /**
+     * Wrapper pour le lancement d'une nouvelle partie, avec vérification du temps passé.
+     */
     private void startNewGame(){
         System.out.println("Début d'une nouvelle partie.");
         control.performAction("NewGame");
@@ -66,6 +69,11 @@ public class AnalyseIAView implements Observer, UserInterface {
         }
     }
 
+    /**
+     * Lis les arguments donnés en argument et initialise la view en fonction.
+     * @param args la table des arguments.
+     * @return true si le nombre d'arguments est valide, false sinon.
+     */
     private boolean parseArgs(String[] args){
         if (args.length < 4) return false;
 
@@ -100,6 +108,11 @@ public class AnalyseIAView implements Observer, UserInterface {
         return true;
     }
 
+    /**
+     * Lis la String de difficulté de l'IA renvoie un AILevel correspondant.
+     * @param AIDifficultyArg String contenant la difficulté (= EASY | MEDIUM | HARD)
+     * @return Le AILevel correspondant à la difficulté de l'IA.
+     */
     private AILevel parseAIDifficulty(String AIDifficultyArg){
         return switch (AIDifficultyArg.toUpperCase()) {
             case "F" -> AILevel.EASY;
@@ -109,12 +122,22 @@ public class AnalyseIAView implements Observer, UserInterface {
         };
     }
 
+    /**
+     * Lis le nombre de parties qui doivent être jouées dans le mode analyseIA.
+     * @param gameCountArg La String contenant le nombre de parties.
+     * @return Le nombre de parties
+     */
     private boolean parseGameCount(String gameCountArg){
         if(isNumeric(gameCountArg) == false) return false;
         numberOfGames = Integer.parseInt(gameCountArg);
         return numberOfGames > 1 && numberOfGames <= 1000;
     }
 
+    /**
+     * Vérifie si une String représente bien un nombre entier.
+     * @param str la String à tester.
+     * @return true si la string donnée représente un entier, false sinon.
+     */
     public boolean isNumeric(String str) {
         if (str == null || str.isEmpty()) {
             return false;
@@ -173,6 +196,9 @@ public class AnalyseIAView implements Observer, UserInterface {
         }
     }
 
+    /**
+     * Met à jour gameStats à la fin d'une partie.
+     */
     private void extractGameData(){
         System.out.println("Extraction des données.");
         gameStats[game.getWinningPlayer()].winCount++;
@@ -185,6 +211,9 @@ public class AnalyseIAView implements Observer, UserInterface {
         }
     }
 
+    /**
+     * Écrit les gameStats dans le fichier de résultats puis dans la console.
+     */
     private void writeGameStats() {
         System.out.println("Écriture des statistiques...");
 
@@ -210,6 +239,11 @@ public class AnalyseIAView implements Observer, UserInterface {
         System.out.println("============================================================================");
     }
 
+    /**
+     * Écrit les gameStats dans le Writer donné en argument.
+     * @param writer Le wirter où écrire les statistiques de parties.
+     * @throws IOException Si erreur IO quelconque.
+     */
     private void printTableToDestination(java.io.Writer writer) throws IOException {
         String formatLigneStr = "%-30s\t%-18s\t%-18s\n";
         String formatLigneInt = "%-30s\t%-18d\t%-18d\n";
@@ -244,6 +278,11 @@ public class AnalyseIAView implements Observer, UserInterface {
         writer.write(String.format("Analyse effectuée en %.3f secondes.", analyseTime));
     }
 
+    /**
+     * Convertit le niveau de difficulté IA en String.
+     * @param aiLevel Le niveau de difficulté IA.
+     * @return La String correspondant (EASY -> "Facile", MEDIUM -> "Moyenne", HARD -> "Difficile").
+     */
     private String convertAILevelToText(AILevel aiLevel){
         switch (aiLevel){
             case EASY: return "Facile";
@@ -264,6 +303,9 @@ public class AnalyseIAView implements Observer, UserInterface {
         Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, aiLevel2, "AI2");
     }
 
+    /**
+     * Classe contenant les statistiques associées à une partie.
+     */
     public class gameStats {
         public int turnPlayed;
         public int winCount;
