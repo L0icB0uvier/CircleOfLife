@@ -65,5 +65,9 @@ public class CustomLabel extends JPanel {
         playerName.setForeground(currentPlayer == 0? UIColor.BLUE : UIColor.RED);
         this.setBackground(currentPlayer == 0 ? UIColor.LIGHT_BLUE : UIColor.LIGHT_RED);
     }
+
+    public String getText() {
+        return text.getText();
+    }
 }
 

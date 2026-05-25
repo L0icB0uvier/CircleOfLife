@@ -1,6 +1,5 @@
 package View;
 
-import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
 import View.Adapter.ControlButtonAdapter;
@@ -13,7 +12,6 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class GraphicalGame extends JPanel {
     Game game;
@@ -27,7 +25,7 @@ public class GraphicalGame extends JPanel {
     public JButton undoBt, redoBt, allUndoBt, allRedoBt;
     public CustomButton forfeitBt, replayBt, reviewBt;
 
-    public JPanel undoPanel, redoPanel, allUndoPanel, allRedoPanel;
+    public JPanel undoPanel, redoPanel, allUndoPanel, allRedoPanel, forfeitPanel, reviewPanel, replayPanel;
 
     public GraphicalGame(Game game, EventCollector controller){
         this.game = game;
@@ -71,19 +69,21 @@ public class GraphicalGame extends JPanel {
         allRedoPanel.add(allRedoBt);
         allRedoBt.setToolTipText("<html><b>Refaire la dernière action.<b></html>");
 
-//        forfeitBt = new CustomButton("Abandonner", UIColor.WHITE);
-//        forfeitBt.setOpaque(false);
-//        JPanel forfeitPanel = new JPanel();
-//        forfeitPanel.setOpaque(false);
-//        forfeitPanel.setLayout(new GridLayout());
-//        forfeitPanel.add(forfeitBt);
-//        forfeitPanel.setBackground(UIColor.WHITE);
-//        forfeitPanel.addComponentListener(new FontScaler(forfeitBt));
-//        forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
+        forfeitBt = new CustomButton("Abandonner", UIColor.WHITE);
+        forfeitBt.setOpaque(false);
+        forfeitPanel = new JPanel();
+        forfeitPanel.setOpaque(false);
+        forfeitPanel.setLayout(new GridLayout());
+        forfeitPanel.add(forfeitBt);
+        forfeitPanel.setBackground(UIColor.WHITE);
+        forfeitPanel.addComponentListener(new FontScaler(forfeitBt));
+        forfeitBt.setVisible(true);
+        forfeitBt.addActionListener(new ControlButtonAdapter(controller, "GiveUp"));
+        forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
 
         replayBt = new CustomButton("Rejouer",UIColor.WHITE);
         replayBt.setOpaque(false);
-        JPanel replayPanel = new JPanel();
+        replayPanel = new JPanel();
         replayPanel.setOpaque(false);
         replayPanel.setLayout(new GridLayout());
         replayPanel.add(replayBt);
@@ -95,7 +95,7 @@ public class GraphicalGame extends JPanel {
 
         reviewBt = new CustomButton("Revoir", UIColor.WHITE);
         reviewBt.setOpaque(false);
-        JPanel reviewPanel = new JPanel();
+        reviewPanel = new JPanel();
         reviewPanel.setOpaque(false);
         reviewPanel.setLayout(new GridLayout());
         reviewPanel.add(reviewBt);
@@ -130,17 +130,13 @@ public class GraphicalGame extends JPanel {
         player1Info.setMinimumSize(new Dimension(0, 0));
         player2Info.setMinimumSize(new Dimension(0, 0));
         gameControlBar.setMinimumSize(new Dimension(0, 0));
+        forfeitPanel.setMinimumSize(new Dimension(0,0));
 
         this.add(gameInfo,"cell 2 0, grow, sg top");
         this.add(player1Info,"cell 5 0, grow, sg top");
         this.add(player2Info,"cell 5 1, grow, sg top");
         this.add(gamePanel,"cell 0 1, span 5 6, grow");
         this.add(gameControlBar,"cell 5 6, grow, sg top");
-        this.add(undoPanel,"cell 0 0, span 2,  grow");
-        this.add(redoPanel,"cell 3 0, span 2, grow");
-        //this.add(forfeitPanel,"cell 5 3, grow, sg top");
-        this.add(reviewPanel,"cell 5 3, grow, sg top");
-        this.add(replayPanel,"cell 5 4, grow, sg top");
 
         this.setVisible(true);
 
@@ -176,20 +172,21 @@ public class GraphicalGame extends JPanel {
     public void updateGameInfo(){
         if (game.isGameOver()) {
 //            this.remove(forfeitBt.getParent());
-
+            showEndGameButtons();
             if(game.isReviewModeActive()){
                 gameInfo.updateMessage(game.getMatch().wonByScore? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
-                showAllUndoRedoButtons();
+                enableReviewMode();
             }
             else{
                 gameInfo.updateMessage(game.getWinningPlayer(), " a gagné la partie.");
-                hideAllUndoRedoButtons();
+                disableReviewMode();
             }
         } else {
+            hideEndGameButtons();
 //            this.remove(forfeitBt.getParent());
 //            this.add(forfeitBt.getParent());
             gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
-            hideAllUndoRedoButtons();
+            disableReviewMode();
         }
 
         updateScore(game.getMatch().getPlayerData());
@@ -205,27 +202,46 @@ public class GraphicalGame extends JPanel {
 
     }
 
-    public void showAllUndoRedoButtons(){
-        if(Arrays.stream(this.getComponents()).noneMatch(c-> c == allUndoPanel)){
-            Configuration.info("HEYYY");
+    public void enableReviewMode(){
             this.remove(undoPanel);
             this.remove(redoPanel);
+
             this.add(undoPanel,"cell 1 0, grow");
             this.add(redoPanel,"cell 3 0, grow");
             this.add(allUndoPanel,"cell 0 0, grow");
             this.add(allRedoPanel,"cell 4 0, grow");
-        }
+            this.revalidate();
+            repaint();
     }
 
-    public void hideAllUndoRedoButtons(){
-        if(Arrays.stream(this.getComponents()).anyMatch(c-> c == allUndoPanel)){
+    public void disableReviewMode(){
         this.remove(undoPanel);
-            this.remove(redoPanel);
-            this.remove(allUndoPanel);
-            this.remove(allRedoPanel);
-            this.add(undoPanel,"cell 0 0,span 2, grow");
-            this.add(redoPanel,"cell 3 0,span 2, grow");
-        }
+        this.remove(redoPanel);
+        this.remove(allUndoPanel);
+        this.remove(allRedoPanel);
+
+        this.add(undoPanel,"cell 0 0,span 2, grow");
+        this.add(redoPanel,"cell 3 0,span 2, grow");
+        this.revalidate();
+        repaint();
+
+    }
+
+    public void showEndGameButtons(){
+        this.remove(forfeitPanel);
+        this.add(reviewPanel,"cell 5 3, grow, sg top");
+        this.add(replayPanel,"cell 5 4, grow, sg top");
+        this.revalidate();
+        repaint();
+
+    }
+
+    public void hideEndGameButtons(){
+        this.remove(reviewPanel);
+        this.remove(replayPanel);
+        this.add(forfeitPanel,"cell 5 3, grow, sg top");
+        this.revalidate();
+        repaint();
     }
 
     private void updateScore(PlayerData[] playerData) {

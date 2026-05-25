@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class CustomButton extends JButton {
+public class CustomButton extends JButton  {
 
     Color bgColor;
     RoundedBorder border;
@@ -58,4 +58,6 @@ public class CustomButton extends JButton {
         this.border = new RoundedBorder(15,true,this.text);
         this.setBorder(border);
     }
+
+
 }
