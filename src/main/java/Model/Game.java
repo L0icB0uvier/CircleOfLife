@@ -156,6 +156,7 @@ public class Game extends Observable {
     }
 
     private void exitReviewMode(){
+        redoAll();
         match.exitReviewMode();
         update();
     }
