@@ -149,6 +149,11 @@ public class Match extends History<Move> implements Cloneable {
         reviewModeActive = true;
     }
 
+    void exitReviewMode(){
+        Configuration.info("Fin du mode review");
+        reviewModeActive = false;
+    }
+
     /**
      * Vérifie si la position du Move est valide.
      * @param l La ligne du move.

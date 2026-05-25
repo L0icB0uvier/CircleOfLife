@@ -22,7 +22,8 @@ public class GraphicalGame extends JPanel {
     GameControlBar gameControlBar;
     CustomLabel gameInfo;
 
-    public JButton undoBt, redoBt, replayBt, reviewBt;
+    public JButton undoBt, redoBt;
+    public CustomButton replayBt, reviewBt;
 
     public GraphicalGame(Game game, EventCollector controller){
         this.game = game;
@@ -59,7 +60,7 @@ public class GraphicalGame extends JPanel {
         replayPanel.setVisible(false);
         replayBt.addActionListener(new ControlButtonAdapter(controller, "Replay"));
 
-        reviewBt = new CustomButton("Revoir",UIColor.WHITE);
+        reviewBt = new CustomButton("Revoir", UIColor.WHITE);
         reviewBt.setOpaque(false);
         JPanel reviewPanel = new JPanel();
         reviewPanel.setOpaque(false);
@@ -68,7 +69,7 @@ public class GraphicalGame extends JPanel {
         reviewPanel.setBackground(UIColor.WHITE);
         reviewPanel.addComponentListener(new FontScaler(reviewBt));
         reviewPanel.setVisible(false);
-        reviewBt.addActionListener(new ControlButtonAdapter(controller, "Review"));
+        reviewBt.addActionListener(new ControlButtonAdapter(controller, "ToggleReviewMode"));
 
         gameInfo = new CustomLabel(game);
 
@@ -119,11 +120,14 @@ public class GraphicalGame extends JPanel {
         updateGameInfo();
         updateEndGameButtonsVisibility();
         updateUndoRedoEnabled();
+        updateGameControlBarVisibility();
     }
 
     public void updateEndGameButtonsVisibility(){
         boolean replayBtnVisible = game.isGameOver() && game.isReviewModeActive() == false;
-        boolean reviewBtnVisible = game.isGameOver() && game.isReviewModeActive() == false;
+        boolean reviewBtnVisible = game.isGameOver();
+
+        reviewBt.updateText(game.getMatch().isReviewModeActive()? "Retour" : "Revoir");
 
         replayBt.getParent().setVisible(replayBtnVisible);
         reviewBt.getParent().setVisible(reviewBtnVisible);
@@ -144,16 +148,21 @@ public class GraphicalGame extends JPanel {
         updateScore(game.getMatch().getPlayerData());
     }
 
-    public void updateUndoRedoEnabled() {
+    private void updateUndoRedoEnabled() {
         //TODO : ajouter les images des boutons grisés
         boolean undoRedoEnabled = game.isGameOver() == false || game.isReviewModeActive();
 
-        undoBt.setEnabled(undoRedoEnabled && game.getMatch().canUndo());
+        undoBt.setEnabled(undoRedoEnabled && game.canUndo());
         redoBt.setEnabled(undoRedoEnabled && game.getMatch().canRedo());
     }
 
-    public void updateScore(PlayerData[] playerData) {
+    private void updateScore(PlayerData[] playerData) {
         playerInfos.get(0).updateScore(playerData[0]);
         playerInfos.get(1).updateScore(playerData[1]);
+    }
+
+    private void updateGameControlBarVisibility(){
+        boolean gameControlBarVisible = game.getMatch().isReviewModeActive() == false;
+        gameControlBar.setVisible(gameControlBarVisible);
     }
 }

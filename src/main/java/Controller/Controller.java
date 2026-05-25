@@ -8,7 +8,6 @@ import Global.Settings;
 import View.UserInterface;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 public class Controller implements EventCollector, Observer {
     Game game;
@@ -34,7 +33,7 @@ public class Controller implements EventCollector, Observer {
             case "ContinueGame" -> continueGame();
             case "GiveUp" -> giveUp();
             case "Replay" -> replay();
-            case "Review" -> review();
+            case "ToggleReviewMode" -> toggleReviewMode();
             case "Undo" -> handleUndo();
             case "Redo" -> handleRedo();
             case "UndoAll" -> handleUndoAll();
@@ -140,8 +139,8 @@ public class Controller implements EventCollector, Observer {
         currentPlayer.startTurn();
     }
 
-    private void review(){
-        game.enterReviewMode();
+    private void toggleReviewMode(){
+        game.toggleReviewMode();
     }
 
     private void handleSave() {

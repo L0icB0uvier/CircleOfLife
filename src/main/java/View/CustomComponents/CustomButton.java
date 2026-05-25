@@ -18,11 +18,11 @@ public class CustomButton extends JButton {
 
     public CustomButton(String text,Color bgColor){
         this.bgColor = bgColor;
-        this.text=text;
+        this.text = text;
         this.setBackground(this.bgColor);
         this.setFocusable(false);
         this.setOpaque(false);
-        this.border = new RoundedBorder(15,true,this.text);
+        this.border = new RoundedBorder(15,true, this.text);
         this.setBorder(border);
         setContentAreaFilled(false);
         this.addChangeListener(new ChangeListener() {
@@ -51,5 +51,11 @@ public class CustomButton extends JButton {
 
 
         });
+    }
+
+    public void updateText(String text){
+        this.text = text;
+        this.border = new RoundedBorder(15,true,this.text);
+        this.setBorder(border);
     }
 }

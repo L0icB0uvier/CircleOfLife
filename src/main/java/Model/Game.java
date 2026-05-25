@@ -142,8 +142,21 @@ public class Game extends Observable {
         update();
     }
 
-    public void enterReviewMode(){
+    public void toggleReviewMode(){
+        if(match.isReviewModeActive()){
+            exitReviewMode();
+        }
+        else
+            enterReviewMode();
+    }
+
+    private void enterReviewMode(){
         match.enterReviewMode();
+        update();
+    }
+
+    private void exitReviewMode(){
+        match.exitReviewMode();
         update();
     }
 
