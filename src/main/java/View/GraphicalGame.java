@@ -1,5 +1,6 @@
 package View;
 
+import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
 import View.Adapter.ControlButtonAdapter;
@@ -12,6 +13,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GraphicalGame extends JPanel {
     Game game;
@@ -22,34 +24,52 @@ public class GraphicalGame extends JPanel {
     GameControlBar gameControlBar;
     CustomLabel gameInfo;
 
-    public JButton undoBt, redoBt;
+    public JButton undoBt, redoBt, allUndoBt, allRedoBt;
     public CustomButton replayBt, reviewBt;
 
+    public JPanel undoPanel, redoPanel, allUndoPanel, allRedoPanel;
     public GraphicalGame(Game game, EventCollector controller){
         this.game = game;
         this.controller = controller;
 
         playerInfos = new ArrayList<>();
 
-        MigLayout layout = new MigLayout("fill, insets 1.5% 1.5% 1.5% 1.5%", "[grow]1%[58%]1%[grow]1%[14%]","[10%]1%[10%][grow][10%]1%[10%][grow][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 1.5% 1.5% 1.5% 1.5%", "[grow]1%[grow]1%[58%]1%[grow]1%[grow]1%[14%]","[10%]1%[10%][grow][10%]1%[10%][grow][10%]" );
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
         undoBt = new ImageButton("undoIcon.png");
-        JPanel undoPanel = new JPanel();
-        undoPanel.setOpaque(false);
-        undoPanel.setLayout(new GridLayout());
-        undoPanel.add(undoBt);
         undoBt.addActionListener(new ControlButtonAdapter(controller, "Undo"));
+        undoPanel = new JPanel();
+        undoPanel.setLayout(new GridLayout());
+        undoPanel.setOpaque(false);
+        undoPanel.add(undoBt);
         undoBt.setToolTipText("<html><b>Annuler la dernière action</b></html>");
 
         redoBt = new ImageButton("redoIcon.png");
-        JPanel redoPanel = new JPanel();
+        redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
+        redoPanel = new JPanel();
         redoPanel.setOpaque(false);
         redoPanel.setLayout(new GridLayout());
         redoPanel.add(redoBt);
-        redoBt.addActionListener(new ControlButtonAdapter(controller, "Redo"));
         redoBt.setToolTipText("<html><b>Refaire la dernière action.<b></html>");
+
+        allUndoBt = new ImageButton("undoAllIcon.png");
+        allUndoBt.addActionListener(new ControlButtonAdapter(controller, "UndoAll"));
+        allUndoPanel = new JPanel();
+        allUndoPanel.setOpaque(false);
+        allUndoPanel.setLayout(new GridLayout());
+        allUndoPanel.add(allUndoBt);
+        allUndoBt.setToolTipText("<html><b>Renvenir au début de la partie</b></html>");
+
+        allRedoBt = new ImageButton("redoAllIcon.png");
+        allRedoBt.addActionListener(new ControlButtonAdapter(controller, "RedoAll"));
+        allRedoPanel = new JPanel();
+        allRedoPanel.setOpaque(false);
+        allRedoPanel.setLayout(new GridLayout());
+        allRedoPanel.add(allRedoBt);
+        allRedoBt.setToolTipText("<html><b>Refaire la dernière action.<b></html>");
+
 
         replayBt = new CustomButton("Rejouer",UIColor.WHITE);
         replayBt.setOpaque(false);
@@ -93,7 +113,9 @@ public class GraphicalGame extends JPanel {
 
         reviewPanel.setMinimumSize(new Dimension(0, 0));
         reviewPanel.setMinimumSize(new Dimension(0, 0));
-        redoBt.setMinimumSize(new Dimension(0, 0));
+        allRedoPanel.setMinimumSize(new Dimension(0, 0));
+        allUndoPanel.setMinimumSize(new Dimension(0, 0));
+        redoPanel.setMinimumSize(new Dimension(0, 0));
         undoPanel.setMinimumSize(new Dimension(0, 0));
         gameInfo.setMinimumSize(new Dimension(0, 0));
         gamePanel.setMinimumSize(new Dimension(0, 0));
@@ -101,15 +123,15 @@ public class GraphicalGame extends JPanel {
         player2Info.setMinimumSize(new Dimension(0, 0));
         gameControlBar.setMinimumSize(new Dimension(0, 0));
 
-        this.add(gameInfo,"cell 1 0, grow, sg top");
-        this.add(player1Info,"cell 3 0, grow, sg top");
-        this.add(player2Info,"cell 3 1, grow, sg top");
-        this.add(gamePanel,"cell 0 1, span 3 6, grow");
-        this.add(gameControlBar,"cell 3 6, grow, sg top");
-        this.add(undoPanel,"cell 0 0,  grow");
-        this.add(redoPanel,"cell 2 0, grow");
-        this.add(reviewPanel,"cell 3 3, grow, sg top");
-        this.add(replayPanel,"cell 3 4, grow, sg top");
+        this.add(gameInfo,"cell 2 0, grow, sg top");
+        this.add(player1Info,"cell 5 0, grow, sg top");
+        this.add(player2Info,"cell 5 1, grow, sg top");
+        this.add(gamePanel,"cell 0 1, span 5 6, grow");
+        this.add(gameControlBar,"cell 5 6, grow, sg top");
+        this.add(undoPanel,"cell 0 0, span 2,  grow");
+        this.add(redoPanel,"cell 3 0, span 2, grow");
+        this.add(reviewPanel,"cell 5 3, grow, sg top");
+        this.add(replayPanel,"cell 5 4, grow, sg top");
 
         this.setVisible(true);
 
@@ -145,23 +167,51 @@ public class GraphicalGame extends JPanel {
         if (game.isGameOver()) {
             if(game.isReviewModeActive()){
                 gameInfo.updateMessage(game.getMatch().wonByScore? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
+                showAllUndoRedoButtons();
             }
             else{
                 gameInfo.updateMessage(game.getWinningPlayer(), " a gagné la partie.");
+                hideAllUndoRedoButtons();
             }
         } else {
             gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
+            hideAllUndoRedoButtons();
         }
 
         updateScore(game.getMatch().getPlayerData());
     }
 
     private void updateUndoRedoEnabled() {
-        //TODO : ajouter les images des boutons grisés
         boolean undoRedoEnabled = game.isGameOver() == false || game.isReviewModeActive();
 
         undoBt.setEnabled(undoRedoEnabled && game.canUndo());
+        allUndoBt.setEnabled(undoRedoEnabled && game.canUndo());
         redoBt.setEnabled(undoRedoEnabled && game.getMatch().canRedo());
+        allRedoBt.setEnabled(undoRedoEnabled && game.getMatch().canRedo());
+
+    }
+
+    public void showAllUndoRedoButtons(){
+        if(Arrays.stream(this.getComponents()).noneMatch(c-> c == allUndoPanel)){
+            Configuration.info("HEYYY");
+            this.remove(undoPanel);
+            this.remove(redoPanel);
+            this.add(undoPanel,"cell 1 0, grow");
+            this.add(redoPanel,"cell 3 0, grow");
+            this.add(allUndoPanel,"cell 0 0, grow");
+            this.add(allRedoPanel,"cell 4 0, grow");
+        }
+    }
+
+    public void hideAllUndoRedoButtons(){
+        if(Arrays.stream(this.getComponents()).anyMatch(c-> c == allUndoPanel)){
+        this.remove(undoPanel);
+            this.remove(redoPanel);
+            this.remove(allUndoPanel);
+            this.remove(allRedoPanel);
+            this.add(undoPanel,"cell 0 0,span 2, grow");
+            this.add(redoPanel,"cell 3 0,span 2, grow");
+        }
     }
 
     private void updateScore(PlayerData[] playerData) {

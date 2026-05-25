@@ -20,7 +20,6 @@ public class  ImageButton extends JButton {
         this.image = Configuration.loadImage(path);
         border = new RoundedBorder(15,true,image);
         init();
-
     }
 
     public ImageButton(String path, Color bgColor) {
