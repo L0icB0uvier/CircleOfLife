@@ -29,7 +29,7 @@ public class Match extends History<Move> implements Cloneable {
 
     private final int boardSize = 9;
     int winner = -1;
-    public WinType winType;
+    public WinType winType = WinType.PENDING;
 
     private static final int[][] HEX_DELTAS = {
             {1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}
