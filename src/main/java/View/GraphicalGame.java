@@ -152,7 +152,6 @@ public class GraphicalGame extends JPanel {
         updateEndGameButtonsVisibility();
         updateUndoRedoEnabled();
         updateGameControlBarVisibility();
-        gameControlBar.updateButtons();
     }
 
     public void updateEndGameButtonsVisibility(){
