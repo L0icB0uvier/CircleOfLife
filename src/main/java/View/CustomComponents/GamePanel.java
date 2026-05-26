@@ -25,10 +25,11 @@ public class GamePanel extends JComponent implements Observer {
             imgPlateau,
             imgStonePlayer1,
             imgStonePlayer2,
+            imgStonePlayer1LastMove,
+            imgStonePlayer2LastMove,
             imgStonePlayer1Preview,
             imgStonePlayer2Preview,
-            imgStoneDisabled,
-            imgStoneHover;
+            imgStoneDisabled;
 
     int imgSrcHeight, imgSrcWidth;
     float imageWidth, imageHeight;
@@ -136,10 +137,11 @@ public class GamePanel extends JComponent implements Observer {
         imgPlateau= (BufferedImage) Configuration.loadImage("Plateau_fleches.png");
         imgStonePlayer1 = (BufferedImage) Configuration.loadImage("Blue_Stone.png");
         imgStonePlayer2 = (BufferedImage) Configuration.loadImage("Red_Stone.png");
+        imgStonePlayer1LastMove = (BufferedImage) Configuration.loadImage("Blue_Stone_Last_Move.png");
+        imgStonePlayer2LastMove = (BufferedImage) Configuration.loadImage("Red_Stone_Last_Move.png");
         imgStonePlayer1Preview = (BufferedImage) Configuration.loadImage("Blue_Stone_transparent.png");
         imgStonePlayer2Preview = (BufferedImage) Configuration.loadImage("Red_Stone_transparent.png");
         imgStoneDisabled = (BufferedImage) Configuration.loadImage("Disabled_Stone.png");
-        imgStoneHover = (BufferedImage) Configuration.loadImage("stone_hover.png");
     }
 
     @Override
@@ -161,22 +163,19 @@ public class GamePanel extends JComponent implements Observer {
         drawBoard(g2d);
         drawStones(g2d);
 
-        if(match.isReviewModeActive() && match.canUndo()){
-            drawLastMoveHighlight(g2d);
-        }
+//        if(match.isReviewModeActive() && match.canUndo()){
+//            drawLastMoveHighlight(g2d);
+//        }
 
-        else
+        if(match.isGameOver() == false || match.isReviewModeActive())
         {
-            if(match.isGameOver())
-                return;
-
             drawEaten(g2d);
 
             if(drawSelected(g2d))
                 drawFeedforward(g2d);
 
-            if(match.canUndo())
-                drawLastMoveHighlight(g2d);
+//            if(match.canUndo())
+//                drawLastMoveHighlight(g2d);
         }
 
         super.paintBorder(g2d);
@@ -215,6 +214,7 @@ public class GamePanel extends JComponent implements Observer {
         // Calcule taille de l'image des pierres du cercle
         float boardHexagonHeightRatio = 0.08461f;
         boardStoneImageSize = Math.round(boardHexagonHeightRatio * imageHeight);
+
         // Dessin des formes dans le cercle
         float circleHexagonHeightRatio = 0.04708f;
         circleStoneImageSize = Math.round(circleHexagonHeightRatio * imageHeight);
@@ -294,10 +294,10 @@ public class GamePanel extends JComponent implements Observer {
 
                 switch (contentType){
                     case 1:
-                        drawStone(g2d, imgStonePlayer1, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, isLastMove(n, m)? imgStonePlayer1LastMove : imgStonePlayer1, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case 2:
-                        drawStone(g2d, imgStonePlayer2, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, isLastMove(n, m)? imgStonePlayer2LastMove : imgStonePlayer2, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -1:
                         if(match.getCurrentPlayerIndex() == 1)
@@ -313,6 +313,17 @@ public class GamePanel extends JComponent implements Observer {
                 }
             }
         }
+    }
+
+    /**
+     * Retourne si les coordonnées correspondent au dernier coup joué.
+     * @param n La colonne du coup joué.
+     * @param m La ligne du coup joué.
+     * @return true s'il s'agit du dernier coup joué, false sinon.
+     */
+    private boolean isLastMove(int n, int m){
+        Move lastMove = match.getLastMove();
+        return lastMove.getColumn() == n && lastMove.getLine() == m;
     }
 
     /**

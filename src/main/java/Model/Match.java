@@ -60,6 +60,9 @@ public class Match extends History<Move> implements Cloneable {
         initMatch();
     }
 
+    /**
+     * Change le joueur commençant la partie.
+     */
     public void toggleStartingPlayer(){
         startingPlayer = startingPlayer == 0 ? 1 : 0;
         currentPlayerIndex = startingPlayer;
@@ -122,8 +125,7 @@ public class Match extends History<Move> implements Cloneable {
     public void endTurn(){
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
-            winType = WinType.SCORE;
-            gameOver(currentPlayerIndex);
+            gameOver(currentPlayerIndex, WinType.SCORE);
             return;
         }
 
@@ -131,15 +133,15 @@ public class Match extends History<Move> implements Cloneable {
 
         // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
         if(winByFillUp()){
-            winType = WinType.FILL;
-            gameOver(currentPlayerIndex);
+            gameOver(currentPlayerIndex, winType = WinType.FILL);
         }
     }
 
     /**
      * Met fin à la partie.
      */
-    void gameOver(int winner){
+    void gameOver(int winner, WinType winType){
+        this.winType = winType;
         gameOver = true;
         this.winner = winner;
     }

@@ -166,7 +166,7 @@ public class Game extends Observable {
      * Termine le match et déclare le joueur adverse du joueur actif vainqueur.
      */
     public void giveUp(){
-        match.gameOver(match.getOpponentPlayerIndex());
+        match.gameOver(match.getOpponentPlayerIndex(), WinType.GIVE_UP);
         update();
     }
 
