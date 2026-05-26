@@ -282,8 +282,6 @@ public class GameDataManager {
         if (scanner.hasNextBoolean()) 
             reviewModeActive = scanner.nextBoolean();
 
-        if (reviewModeActive || m.isGameOver())
-            m.enterReviewMode();
 
         if (scanner.hasNext()) {
             String winTypeText = scanner.next();
