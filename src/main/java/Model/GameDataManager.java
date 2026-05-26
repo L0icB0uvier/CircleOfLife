@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GameDataManager {
-    private static String savePath = "./sauvegardes/";
-    private static String testPath = "./test_sauvegardes/";
+    private static final String savePath = "./sauvegardes/";
+    private static final String testPath = "./test_sauvegardes/";
     static boolean testMode = false;
 
     /**

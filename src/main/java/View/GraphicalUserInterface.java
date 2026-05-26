@@ -3,6 +3,7 @@ package View;
 import Controller.Controller;
 import Global.Configuration;
 import Global.PlayerNumber;
+import Model.Coordinate;
 import Model.Game;
 import Patterns.Observer;
 import View.Adapter.*;
@@ -73,6 +74,11 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         Configuration.updateStartingPlayerSetting(graphicalNewGame.startingPlayerChoice.getValue());
     }
 
+    @Override
+    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress) {
+        graphicalGame.animateScore(groupCoords, scoreGained, player, progress);
+    }
+
     public void startLoadPage() {
         graphicalLoadGame = new GraphicalLoadGame((Controller) controller, this);
 
@@ -137,7 +143,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         Configuration.initSettings();
         frame.setSize(Configuration.readInt("WindowWidth"), Configuration.readInt("WindowHeight"));
         frame.setMinimumSize(new Dimension(800, 600));
-        game.addObserver(this);
+        game.addUpdateObserver(this);
 
         graphicalMainMenu = new GraphicalMainMenu(frame);
         graphicalNewGame = new GraphicalNewGame(frame);
@@ -154,6 +160,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalNewGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 
         frame.addKeyListener(new KeyboardAdapter(controller));
+
+        Timer timer = new Timer(16, new AnimationAdapter(controller));
+        timer.start();
 
         frame.setContentPane(graphicalMainMenu);
 

@@ -1,6 +1,7 @@
 package View;
 
 import Global.Configuration;
+import Model.Coordinate;
 import Model.Game;
 import Model.PlayerData;
 import Model.WinType;
@@ -268,7 +269,7 @@ public class GraphicalGame extends JPanel {
         }
     }
 
-
-
-
+    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress) {
+        gamePanel.animateScore(groupCoords, scoreGained, player, progress);
+    }
 }
