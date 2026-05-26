@@ -286,8 +286,12 @@ public class GameDataManager {
             m.enterReviewMode();
 
         if (scanner.hasNext()) {
-            m.winType = WinType.valueOf(scanner.next());
+            String winTypeText = scanner.next();
+            WinType winType = WinType.valueOf(winTypeText);
+            if(winType == WinType.GIVE_UP)
+                game.giveUp();
         }
+
         scanner.close();
         return true;
     }
