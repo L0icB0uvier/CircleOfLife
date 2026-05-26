@@ -149,7 +149,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalMainMenu.tutorialButton.addActionListener(new TutorialAdapter(this));
         graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
-        graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this));
+        graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this, graphicalNewGame));
         graphicalNewGame.startButton.addActionListener(new NewGameAdapter(controller));
         graphicalNewGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 

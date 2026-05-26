@@ -72,6 +72,7 @@ public class GameDataManager {
         }
 
         writer.write(match.isReviewModeActive() + sep);
+        writer.write(match.winType.name() + sep);
 
         writer.close();
     }
@@ -278,12 +279,15 @@ public class GameDataManager {
 
         // read reviewMode
         boolean reviewModeActive = false;
-        if (scanner.hasNextBoolean())
+        if (scanner.hasNextBoolean()) 
             reviewModeActive = scanner.nextBoolean();
 
         if (reviewModeActive || m.isGameOver())
             m.enterReviewMode();
 
+        if (scanner.hasNext()) {
+            m.winType = WinType.valueOf(scanner.next());
+        }
         scanner.close();
         return true;
     }
