@@ -72,6 +72,8 @@ public class GamePanel extends JComponent implements Observer {
 
     private final Point2D.Float[] shapeOriginPoints;
 
+    private Set<Coordinate> coordinatesHighlighted = new HashSet<>();
+
     private final imageRatio[] shapePositionRatios = new imageRatio[]{
             new imageRatio(0.48825f, 0.07045f), // 0
             new imageRatio(0.68074f, 0.07300f), // 1
@@ -154,6 +156,8 @@ public class GamePanel extends JComponent implements Observer {
         if(requireCalculation)
             recalculate();
 
+        coordinatesHighlighted.clear();
+
         drawBoard(g2d);
         drawStones(g2d);
 
@@ -166,14 +170,14 @@ public class GamePanel extends JComponent implements Observer {
             if(match.isGameOver())
                 return;
 
-            if(match.canUndo())
-                drawLastMoveHighlight(g2d);
+            drawEaten(g2d);
 
             if(drawSelected(g2d))
                 drawFeedforward(g2d);
-        }
 
-        drawEaten(g2d);
+            if(match.canUndo())
+                drawLastMoveHighlight(g2d);
+        }
 
         super.paintBorder(g2d);
 
@@ -328,9 +332,10 @@ public class GamePanel extends JComponent implements Observer {
      * @param g2d Le composant Graphic à utiliser pour dessiner.
      */
     private void drawLastMoveHighlight(Graphics2D g2d){
-        var lastMove = match.getLastMove();
+        Move lastMove = match.getLastMove();
+        float offset = coordinatesHighlighted.contains(new Coordinate(lastMove.getColumn(), lastMove.getLine()))? lastMoveStroke.getLineWidth() * 1.5f : lastMoveStroke.getLineWidth() / 2;
         Point2D.Float origin = new Point2D.Float(nToX(lastMove.getColumn(), lastMove.getLine()), mToY(lastMove.getLine()));
-        drawHighlight(g2d, Set.of(new Coordinate(0, 0)), origin, boardHexagonInnerRadius, boardHexagonOuterRadius, lastMoveStroke.getLineWidth() / 2, UIColor.LAST_MOVE_COLOR, lastMoveStroke);
+        drawHighlight(g2d, Set.of(new Coordinate(0, 0)), origin, boardHexagonInnerRadius, boardHexagonOuterRadius, offset, UIColor.LAST_MOVE_COLOR, lastMoveStroke);
     }
 
     /**
@@ -339,8 +344,8 @@ public class GamePanel extends JComponent implements Observer {
      * @return true si a dessiné une pierre, faux sinon
      */
     private boolean drawSelected(Graphics2D g2d){
-        int m = getmSelected();
-        int n = getnSelected();
+        int m = getMSelected();
+        int n = getNSelected();
         if (n == -1 || m == -1) return false;
 
         Coordinate selectedCoordinate = new Coordinate(n, m);
@@ -352,13 +357,14 @@ public class GamePanel extends JComponent implements Observer {
                 Critter critter = match.getCritterAtCoord(selectedCoordinate);
 
                 if(showBoardHoverHighlight)
-                    drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
+                    drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
 
                 Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(critter.type(), circleShapeTypeIds.get(critter.type()));
                 drawCircleShape(g2d, critter.type(),useNeutralStoneImageForHoverInCircle? imgStoneDisabled : getPlayerImage(critter.player()));
 
-                if(showCircleHoverHighlight)
+                if(showCircleHoverHighlight){
                     drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, 0, UIColor.HOVER_COLOR, circleHighlightStroke);
+                }
             }
             if(contentType == -3){
                 drawBlockingCrittersHighlight(g2d, selectedCoordinate);
@@ -401,7 +407,7 @@ public class GamePanel extends JComponent implements Observer {
         if(showBlockingCrittersHighlight == false) return;
         var neighborCritters = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
         for (Critter critter : neighborCritters) {
-            drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.BLOCKING_CRITTER_COLOR, boardHighlightStroke);
+            drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.BLOCKING_CRITTER_COLOR, boardHighlightStroke);
         }
     }
 
@@ -410,7 +416,7 @@ public class GamePanel extends JComponent implements Observer {
      * @param g2d Le composant Graphic à utiliser pour dessiner.
      */
     private void drawFeedforward(Graphics2D g2d){
-        Coordinate selectedCoordinate = new Coordinate(getnSelected(), getmSelected());
+        Coordinate selectedCoordinate = new Coordinate(getNSelected(), getMSelected());
         Set<Critter> playerNeighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
         int evolveInto = 0;
         Set<Coordinate> evolveCoords = new HashSet<>();
@@ -436,7 +442,7 @@ public class GamePanel extends JComponent implements Observer {
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
                         if(showBoardHighlightEffect)
-                            drawBoardCritterHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, boardHighlightStroke);
+                            drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, boardHighlightStroke);
                         eatenShape = critter.type();
                     }
                 }
@@ -446,7 +452,7 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         if(showBoardHighlightEffect)
-            drawBoardCritterHighlight(g2d, evolveCoords, UIColor.EVOLVE_COLOR, boardHighlightStroke);
+            drawBoardCoordinatesHighlight(g2d, evolveCoords, UIColor.EVOLVE_COLOR, boardHighlightStroke);
 
         if(showCircleShape)
             drawCircleShapeWithHighlight(g2d, evolveInto, UIColor.EVOLVE_COLOR, getPlayerImage(match.getCurrentPlayerIndex()));
@@ -502,8 +508,9 @@ public class GamePanel extends JComponent implements Observer {
      * @param color La couleur du contour.
      * @param stroke Le stroke du contour.
      */
-    private void drawBoardCritterHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color color, BasicStroke stroke){
+    private void drawBoardCoordinatesHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color color, BasicStroke stroke){
         Set<Coordinate> normalizedCoordinates = CritterUtils.normalizeCoordinate(coordinates);
+        coordinatesHighlighted.addAll(coordinates);
         var shapeOriginCoordinates = CritterUtils.getTopLeftCoordinate(coordinates);
         Point2D.Float shapeOriginPos = new Point2D.Float(
                 nToX(shapeOriginCoordinates.col(), shapeOriginCoordinates.line()),
@@ -668,15 +675,8 @@ public class GamePanel extends JComponent implements Observer {
      */
     private void drawEaten(Graphics2D g2d){
         List<Coordinate> coordinates = match.getPreviouslyEatenCrittersCoordinates();
-        for (Coordinate coord : coordinates){
-            if(coord.col() == nSelected && coord.line() == mSelected)
-                continue;
-
-            Point drawPos = getStoneDrawPositions(coord.col(), coord.line());
-
-            BufferedImage imgEatenStone = match.getCurrentPlayerIndex() == 0? imgStonePlayer1Preview : imgStonePlayer2Preview;
-            drawStone(g2d, imgEatenStone, drawPos.x, drawPos.y, boardStoneImageSize);
-        }
+        if(coordinates.isEmpty()) return;
+        drawBoardCoordinatesHighlight(g2d, new HashSet<>(coordinates), match.getOpponentPlayerIndex() == 0? UIColor.RED : UIColor.BLUE, lastMoveStroke);
     }
 
     /**
@@ -777,11 +777,11 @@ public class GamePanel extends JComponent implements Observer {
         return closestTile;
     }
 
-    public int getnSelected() {
+    public int getNSelected() {
         return nSelected;
     }
 
-    public int getmSelected() {
+    public int getMSelected() {
         return mSelected;
     }
 }

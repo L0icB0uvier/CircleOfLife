@@ -12,13 +12,6 @@ public class Game extends Observable {
     /**
      * Crée un nouveau match.
      */
-    public void createMatch(String name1, String name2){
-        match = new Match(name1, name2);
-    }
-
-    /**
-     * Crée un nouveau match.
-     */
     public void createMatch(String name1, String name2, int startingPlayer){
         match = new Match(name1, name2, startingPlayer);
     }
@@ -130,15 +123,17 @@ public class Game extends Observable {
         if(!match.canRedo()) return;
 
         if(match.isReviewModeActive()){
-            if(match.wonByScore){
-                match.toggleCurrentPlayer();
-                Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
-                match.redo();
-            }
-            else{
-                match.redo();
-                match.toggleCurrentPlayer();
-                Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+            switch (match.winType){
+                case SCORE -> {
+                    match.toggleCurrentPlayer();
+                    Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+                    match.redo();
+                }
+                case FILL, GIVE_UP -> {
+                    match.redo();
+                    match.toggleCurrentPlayer();
+                    Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+                }
             }
         }
         else{

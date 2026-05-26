@@ -29,7 +29,7 @@ public class Match extends History<Move> implements Cloneable {
 
     private final int boardSize = 9;
     int winner = -1;
-    public boolean wonByScore = false;
+    public WinType winType;
 
     private static final int[][] HEX_DELTAS = {
             {1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}
@@ -122,7 +122,7 @@ public class Match extends History<Move> implements Cloneable {
     public void endTurn(){
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
-            wonByScore = true;
+            winType = WinType.SCORE;
             gameOver(currentPlayerIndex);
             return;
         }
@@ -131,7 +131,7 @@ public class Match extends History<Move> implements Cloneable {
 
         // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
         if(winByFillUp()){
-            wonByScore = false;
+            winType = WinType.FILL;
             gameOver(currentPlayerIndex);
         }
     }
@@ -307,7 +307,7 @@ public class Match extends History<Move> implements Cloneable {
      * @return true si le critter prédateur peut manger le critter ciblé, faux sinon.
      */
     public boolean canEat(int evolvingCritterType, int targetCritterType){
-        return targetCritterType == (evolvingCritterType + 1)%12;
+        return targetCritterType == (evolvingCritterType + 1) % 12;
     }
 
     /**
