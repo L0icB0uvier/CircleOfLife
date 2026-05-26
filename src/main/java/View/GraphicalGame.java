@@ -4,7 +4,6 @@ import Global.Configuration;
 import Model.Coordinate;
 import Model.Game;
 import Model.PlayerData;
-import Model.WinType;
 import View.Adapter.ControlButtonAdapter;
 import View.CustomComponents.*;
 import View.Utils.FontScaler;
@@ -14,8 +13,6 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GraphicalGame extends JPanel {
@@ -37,7 +34,6 @@ public class GraphicalGame extends JPanel {
         this.game = game;
         this.controller = controller;
         this.crown = Configuration.loadImage("crown.png");
-
 
         playerInfos = new ArrayList<>();
 

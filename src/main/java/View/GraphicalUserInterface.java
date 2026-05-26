@@ -22,6 +22,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     GraphicalLoadGame graphicalLoadGame;
     GraphicalTutorial graphicalTutorial;
 
+    Timer gameAnimationTimer;
+
     private boolean maximized;
 
     public GraphicalUserInterface(Game game, EventCollector controller){
@@ -84,10 +86,23 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         graphicalLoadGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 
+        stopGameAnimationTimer();
+
         frame.setContentPane(graphicalLoadGame);
         frame.revalidate();
     }
 
+    public void startGameAnimationTimer() {
+        Configuration.info("Starting Game Animation Timer");
+        gameAnimationTimer.start();
+    }
+
+    public void stopGameAnimationTimer() {
+        if(gameAnimationTimer.isRunning()) {
+            Configuration.info("Stopping Game Animation Timer");
+            gameAnimationTimer.stop();
+        }
+    }
 
     public void startGame() {
         graphicalGame = new GraphicalGame(game, controller);
@@ -119,6 +134,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         frame.revalidate();
 
         setUpTooltipSettings();
+
+        startGameAnimationTimer();
 
         graphicalGame.updateGUI();
     }
@@ -159,10 +176,9 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalNewGame.startButton.addActionListener(new NewGameAdapter(controller));
         graphicalNewGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 
-        frame.addKeyListener(new KeyboardAdapter(controller));
+        gameAnimationTimer = new Timer(16, new AnimationAdapter(controller));
 
-        Timer timer = new Timer(16, new AnimationAdapter(controller));
-        timer.start();
+        frame.addKeyListener(new KeyboardAdapter(controller));
 
         frame.setContentPane(graphicalMainMenu);
 

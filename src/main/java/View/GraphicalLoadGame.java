@@ -107,7 +107,6 @@ public class GraphicalLoadGame extends JPanel {
 
     }
 
-
     private void loadGame() {
         if(currentGame == null) return;
         if (!controller.loadGame(currentGame)) {
