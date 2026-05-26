@@ -7,7 +7,7 @@ import java.awt.*;
 
 
 public class GameControlBar extends JPanel {
-    private Game game;
+    private final Game game;
     public ImageButton saveBt, forfeitBt, quitGameButton;
 
     public GameControlBar(Game game){

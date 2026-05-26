@@ -144,11 +144,17 @@ public class Match extends History<Move> implements Cloneable {
         this.winner = winner;
     }
 
+    /**
+     * Active le mode Analyse.
+     */
     void enterReviewMode(){
         Configuration.info("Début du mode review");
         reviewModeActive = true;
     }
 
+    /**
+     * Désactive le mode Analyse.
+     */
     void exitReviewMode(){
         Configuration.info("Fin du mode review");
         reviewModeActive = false;
@@ -294,6 +300,12 @@ public class Match extends History<Move> implements Cloneable {
         return eatenCritters;
     }
 
+    /**
+     * Retourne si un critter peut en manger un autre.
+     * @param evolvingCritterType Le type du critter prédateur.
+     * @param targetCritterType Le type du critter ciblé.
+     * @return true si le critter prédateur peut manger le critter ciblé, faux sinon.
+     */
     public boolean canEat(int evolvingCritterType, int targetCritterType){
         return targetCritterType == (evolvingCritterType + 1)%12;
     }
@@ -355,6 +367,11 @@ public class Match extends History<Move> implements Cloneable {
         return result;
     }
 
+    /**
+     * Retourne toutes les coordonnées voisines de la coordonnée passée en arguement.
+     * @param coordinate La coordonnée pour laquelle on veut toutes les coordonnées voisines.
+     * @return La liste des coordonnées voisines.
+     */
     private Set<Coordinate> GetNeighborTiles(Coordinate coordinate) {
         Set<Coordinate> result = new HashSet<>();
         for (int[] delta : HEX_DELTAS) {
@@ -485,12 +502,21 @@ public class Match extends History<Move> implements Cloneable {
         return MatchUtils.copyPlayerData(players);
     }
 
+    /**
+     * Retourne le score d'un joueur.
+     * @param playerIndex L'indice du joueur pour lequel on veut récupérer le score.
+     * @return Le score du joueur si l'indice est valide, sinon -1.
+     */
     public int getPlayerScore(int playerIndex){
         if(playerIndex > 1 || playerIndex < 0)
             return -1;
         return players[playerIndex].getScore();
     }
 
+    /**
+     * Retourne la taille du plateau.
+     * @return La tailel du plateau.
+     */
     public int getBoardSize(){
         return boardSize;
     }
@@ -666,7 +692,7 @@ public class Match extends History<Move> implements Cloneable {
     }
 
     /**
-     * Retour la liste de tous les critters de l'adversaire dans une distance donnée.
+     * Retourne la liste de tous les critters de l'adversaire dans une distance donnée.
      * @param originCritter Le critter pour lequel on cherche des critters adverse.
      * @param maxDistance LA distance autour du critter à laquelle chercher.
      * @return La liste des critters adverse.

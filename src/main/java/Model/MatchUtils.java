@@ -1,5 +1,7 @@
 package Model;
 
+import Global.Configuration;
+
 import java.util.Set;
 
 public class MatchUtils {
@@ -52,7 +54,11 @@ public class MatchUtils {
     public static PlayerData[] copyPlayerData(PlayerData[] players)  {
         PlayerData[] temp = new PlayerData[players.length];
         for (int i = 0; i < players.length; i++) {
-            temp[i] = players[i].clone();
+            try {
+                temp[i] = players[i].clone();
+            } catch (CloneNotSupportedException e) {
+                Configuration.error("Erreur lors du clonage des PlayerData");
+            }
         }
         return temp;
     }

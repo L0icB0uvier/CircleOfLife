@@ -29,7 +29,7 @@ public class PlayerData implements Cloneable {
     }
 
     @Override
-    protected PlayerData clone() {
+    protected PlayerData clone() throws CloneNotSupportedException {
         
         try {
             return (PlayerData) super.clone();

@@ -7,9 +7,7 @@ import java.util.*;
 
 public class HardAI extends AI {
 
-    final long maxStateNumber = 10000000;
     int depth;
-    int predatorEvolutionMalus = 50;
     GamePhase currentPhase;
     int startPhase2 = 3;
     int startPhase3 = 50;
@@ -42,7 +40,6 @@ public class HardAI extends AI {
 
     public HardAI(Match match) {
         super(match);
-        aiLevel = AILevel.HARD;
         currentPhase = GamePhase.Beginning;
         depth = 4;
     }

@@ -6,14 +6,11 @@ import Model.Match;
 import Model.MatchUtils;
 import Model.Move;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 
 public abstract class AI {
     protected Match match;
-    public AILevel aiLevel;
     int minWait = 200, maxWait = 600;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -185,8 +182,6 @@ public abstract class AI {
      */
     void sortPossibleMoves(Match match, List<Coordinate> possibleMoves){
         Coordinate[] movesArray = possibleMoves.toArray(new Coordinate[0]);
-        int currentPlayer = match.getCurrentPlayerIndex();
-        byte[][] boardstate = match.getBoardState();
         int id1 = 0;
         int id2 = movesArray.length - 1;
         int id3 = movesArray.length - 1;

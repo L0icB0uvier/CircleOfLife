@@ -1,6 +1,5 @@
 package View.CustomComponents;
 
-import Global.Configuration;
 import View.Adapter.ChangePageAdapter;
 import View.EventCollector;
 import View.GraphicalUserInterface;
@@ -8,11 +7,8 @@ import View.Utils.UIColor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class PopUpPanel extends JPanel {
 
@@ -99,45 +95,32 @@ public class PopUpPanel extends JPanel {
     }
 
     public void setActionButton(int button, String action, boolean dispose){
-        this.listButton.get(button).addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if(action.equals("Save") && !dispose) {
-                        ((JButton) (e.getSource())).setEnabled(false);
-                    }else{
-                        dialog.dispose();
-                        for(JButton button : listButton){
-                            button.setEnabled(true);
-                        }
-                    }
-                    if (!action.equals("Annuler")) {
-                        controller.performAction(action);
-                    }
+        this.listButton.get(button).addActionListener(e -> {
+            if(action.equals("Save") && !dispose) {
+                ((JButton) (e.getSource())).setEnabled(false);
+            }else{
+                dialog.dispose();
+                for(JButton button1 : listButton){
+                    button1.setEnabled(true);
                 }
-            });
+            }
+            if (!action.equals("Annuler")) {
+                controller.performAction(action);
+            }
+        });
     }
 
     public void setActionButton(int button, ActionListener action, boolean dispose){
         this.listButton.get(button).addActionListener(action);
         if(dispose){
-            this.listButton.get(button).addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dialog.dispose();
-                }
-            });
+            this.listButton.get(button).addActionListener(e -> dialog.dispose());
         }
     }
 
 
     public void setActionButton(int button, GraphicalUserInterface gui, JComponent nPage){
         this.listButton.get(button).addActionListener(new ChangePageAdapter(gui,nPage));
-        this.listButton.get(button).addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
+        this.listButton.get(button).addActionListener(e -> dialog.dispose());
     }
 
 

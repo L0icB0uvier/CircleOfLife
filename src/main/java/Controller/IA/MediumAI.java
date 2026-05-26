@@ -4,17 +4,14 @@ import Model.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class MediumAI extends AI {
     int depth = 2;
 
     public MediumAI(Match match) {
         super(match);
-        aiLevel = AILevel.MEDIUM;
     }
 
-    // TODO : trouver une heuristique pour l'IA moyenne en plus du score
     double evaluate(Match match, int playerID){
         int[] ids = new int[]{playerID, (playerID+1)%2};
         PlayerData[] data = match.getPlayerData();

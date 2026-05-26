@@ -2,9 +2,7 @@ package View.Adapter;
 
 import View.CustomComponents.PopUpPanel;
 import View.EventCollector;
-import View.GraphicalGame;
 import View.GraphicalUserInterface;
-import View.UserInterface;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -64,10 +62,5 @@ public class PopUpAdapter implements ActionListener {
 
     public void setButtonVisibility(int button, boolean b) {
         popup.setButtonVisibility(button, b);
-    }
-
-
-    public void show(){
-        dialog.setVisible(true);
     }
 }

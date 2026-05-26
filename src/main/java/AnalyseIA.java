@@ -9,7 +9,7 @@ public class AnalyseIA {
     public static void main(String[] args) {
         Game game = new Game();
         EventCollector control = new Controller(game);
-        AnalyseIAView analyseIAView = new AnalyseIAView(game, control, args);
+        new AnalyseIAView(game, control, args);
     }
 
 }

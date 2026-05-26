@@ -22,7 +22,6 @@ public class AnalyseIAView implements Observer, UserInterface {
     private AILevel aiLevel1, aiLevel2;
     private int numberOfGames;
     private int gamePlayedCounts;
-    private final String analyseFileDir = "analyses/";
     private Path outputPath;
     private final gameStats[] gameStats = new gameStats[2];
     private boolean sampleTime = false;
@@ -86,6 +85,7 @@ public class AnalyseIAView implements Observer, UserInterface {
         if(parseGameCount(args[2]) == false) return false;
 
         try {
+            String analyseFileDir = "analyses/";
             outputPath = PathValidator.validateAndPrepareOutputPath(analyseFileDir + args[3]);
         } catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());

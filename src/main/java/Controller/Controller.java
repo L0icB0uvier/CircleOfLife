@@ -9,6 +9,9 @@ import View.UserInterface;
 
 import java.io.FileNotFoundException;
 
+/**
+ * Fait l'interface entre la vue et le modèle.
+ */
 public class Controller implements EventCollector, Observer {
     Game game;
     UserInterface view;
@@ -21,7 +24,14 @@ public class Controller implements EventCollector, Observer {
         players = new Player[2];
     }
 
+    /**
+     * Transmet le clique reçu de la vue au joueur actif.
+     * @param l La ligne du plateau sur laquelle le joueur a cliqué.
+     * @param c La colonne du plateau sur laquelle le joueur a cliqué.
+     */
     public void handleClick(int l, int c){
+        if(currentPlayer == null)
+            return;
         currentPlayer.handleClick(l, c);
     }
 
@@ -43,7 +53,7 @@ public class Controller implements EventCollector, Observer {
     }
 
     /**
-     * Gère le undo.
+     * Demande au modèle de faire un Undo.
      */
     private void handleUndo(){
         Configuration.info("Controller received Undo");
@@ -51,18 +61,23 @@ public class Controller implements EventCollector, Observer {
     }
 
     /**
-     * Gère le redo
+     * Demande au modèle de faire un Redo
      */
     private void handleRedo(){
         Configuration.info("Controller received Redo");
         game.redo();
     }
 
-
+    /**
+     * Demande au modèle de Undo tous l'historique.
+     */
     private void handleUndoAll(){
         game.undoAll();
     }
 
+    /**
+     * Demande au modèle de Redo tous l'historique.
+     */
     private void handleRedoAll(){
         game.redoAll();
     }
@@ -111,13 +126,36 @@ public class Controller implements EventCollector, Observer {
         }
     }
 
+    /**
+     * Demande la suppression d'une sauvegarde.
+     * @param gameFile Le nom du fichier à supprimer.
+     */
     public void deleteGame(String gameFile) {
         if(!GameDataManager.deleteMatch(gameFile)) 
             Configuration.warning("Pas de fichier à supprimer trouve pour " + gameFile + ".save");
     }
 
+    /**
+     * Renomme un fichier de sauvegarde.
+     * @param fileName Le nom du fichier original.
+     * @param newName Le nouveau nom.
+     * @return Le nom du fichier renommé si le renommage a fonctionné. Le nom de l'ancien fichier si le renommage a échoué et un empty String si le fichier à renommer n'existe pas.
+     */
     public String renameGame(String fileName, String newName) {
         return GameDataManager.renameMatch(fileName, newName);
+    }
+
+    /**
+     * Demande au GameDataManager de sauvegarder le match en cours.
+     */
+    private void handleSave() {
+        try {
+            GameDataManager.saveMatch(game.getMatch(), Configuration.getSettings());
+            Configuration.info("Match successfully saved");
+        } catch (Exception e) {
+            Configuration.warning("Error while saving match");
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -128,29 +166,28 @@ public class Controller implements EventCollector, Observer {
         currentPlayer.startTurn();
     }
 
+    /**
+     * Demande au modèle l'abandon du match en cours par le joueur actif.
+     */
     private void giveUp(){
         currentPlayer.endTurn();
         game.giveUp();
     }
 
+    /**
+     * Demande au modèle de rejouer le match et relance les PlayerControllers.
+     */
     private void replay(){
         game.replay();
         updateCurrentPlayer();
         currentPlayer.startTurn();
     }
 
+    /**
+     * Demande au modèle de toggle le mode review.
+     */
     private void toggleReviewMode(){
         game.toggleReviewMode();
-    }
-
-    private void handleSave() {
-        try {
-            GameDataManager.saveMatch(game.getMatch(), Configuration.getSettings());
-            Configuration.info("Match successfully saved");
-        } catch (Exception e) {
-            Configuration.warning("Error while saving match");
-            throw new RuntimeException(e);
-        }
     }
 
     /**

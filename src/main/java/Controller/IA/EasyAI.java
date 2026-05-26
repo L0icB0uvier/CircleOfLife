@@ -10,7 +10,6 @@ public class EasyAI extends AI{
 
     public EasyAI(Match match) {
         super(match);
-        aiLevel = AILevel.EASY;
     }
 
     /**
