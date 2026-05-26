@@ -187,7 +187,7 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     private void drawBoardBackground(Graphics2D g2d) {
-        g2d.drawImage(imgBackgroundPlateau,0,0, this.getWidth(), this.getHeight(), null);
+        g2d.drawImage(imgBackgroundPlateau,3,3, this.getWidth()-6, this.getHeight()-6, null);
     }
 
     /**
