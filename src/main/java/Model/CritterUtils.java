@@ -23,16 +23,6 @@ public class CritterUtils {
             Map.entry(11, 1)
     );
 
-    /**
-     * Retourne le type de critter mangeant le type de critter donnée.
-     * @param critterType Le type de critter pour lequel on veut trouver celui qui le mange.
-     * @return Le type de critter mangeant celui passé en paramètre.
-     */
-    public static int getEatingCritterType(int critterType){
-        return Math.floorMod(critterType - 1, 12);
-    }
-
-
     static {
         Map<Set<Coordinate>, Integer> tempShapes = new LinkedHashMap<>();
 
