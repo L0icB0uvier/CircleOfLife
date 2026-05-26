@@ -1,5 +1,6 @@
 package View;
 
+import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
 import Model.WinType;
@@ -23,7 +24,8 @@ public class GraphicalGame extends JPanel {
     GamePanel gamePanel;
     ArrayList<PlayerInfo> playerInfos;
     GameControlBar gameControlBar;
-    CustomLabel gameInfo;
+    GameInfo gameInfo;
+    Image crown;
 
     public JButton undoBt, redoBt, allUndoBt, allRedoBt;
     public CustomButton forfeitBt, replayBt, reviewBt;
@@ -33,10 +35,12 @@ public class GraphicalGame extends JPanel {
     public GraphicalGame(Game game, EventCollector controller){
         this.game = game;
         this.controller = controller;
+        this.crown = Configuration.loadImage("crown.png");
+
 
         playerInfos = new ArrayList<>();
 
-        MigLayout layout = new MigLayout("fill, insets 1.5% 1.5% 1.5% 1.5%", "[grow]1%[grow]1%[58%]1%[grow]1%[grow]1%[14%]","[10%]1%[10%][grow][10%]1%[10%][grow][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 2% 2% 2% 2%", "[grow]1.5%[grow]1.5%[58%]1.5%[grow]1.5%[grow]1.5%[14%]","[10%]1.5%[10%][grow][10%]1.5%[10%][grow][10%]" );
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
@@ -108,11 +112,11 @@ public class GraphicalGame extends JPanel {
         reviewBt.addActionListener(new ControlButtonAdapter(controller, "ToggleReviewMode"));
         reviewBt.setToolTipText("<html><b>Revoir la partie.<b></html>");
 
-        gameInfo = new CustomLabel(game);
+        gameInfo = new GameInfo(game);
 
         gamePanel = new GamePanel(game);
         gamePanel.setBorder(new RoundedBorder(15,Color.BLACK,5));
-        gamePanel.setBackground(UIColor.WHITE);
+        gamePanel.setBackground(new Color(0,0,0,0));
 
         playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[0].getName(),0));
         PlayerInfo player1Info = playerInfos.get(0);
@@ -155,6 +159,7 @@ public class GraphicalGame extends JPanel {
         updateEndGameButtonsVisibility();
         updateUndoRedoEnabled();
         updateGameControlBarVisibility();
+        updateScore(game.getMatch().getPlayerData());
     }
 
     public void updateEndGameButtonsVisibility(){
@@ -172,23 +177,19 @@ public class GraphicalGame extends JPanel {
     }
 
     public void updateGameInfo(){
+        gameInfo.update();
         if (game.isGameOver()) {
             showEndGameButtons();
             if(game.isReviewModeActive()){
-                gameInfo.updateMessage(game.getMatch().winType == WinType.SCORE ? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
                 enableReviewMode();
             }
             else{
-                gameInfo.updateMessage(game.getWinningPlayer(), " a gagné la partie.");
                 disableReviewMode();
             }
         } else {
             hideEndGameButtons();
-            gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
             disableReviewMode();
         }
-
-        updateScore(game.getMatch().getPlayerData());
     }
 
     private void updateUndoRedoEnabled() {
@@ -252,4 +253,22 @@ public class GraphicalGame extends JPanel {
         boolean gameControlBarVisible = game.getMatch().isReviewModeActive() == false;
         gameControlBar.setVisible(gameControlBarVisible);
     }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+
+        if(game.isGameOver() && crown != null){
+            PlayerInfo player = playerInfos.get(game.getWinningPlayer());
+            int min_size = Math.min((int)(this.getWidth()*0.03),(int)(this.getHeight()*0.03));
+            int x = player.getWidth() + player.getX()  - min_size;
+            int y = player.getY()  - min_size;
+            int size = 2*min_size;
+            g.drawImage(crown, x ,y, size, size, this);
+        }
+    }
+
+
+
+
 }

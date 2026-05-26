@@ -372,7 +372,11 @@ public class GameDataManager {
             Files.list(dirPath)
                     .filter(Files::isRegularFile)
                     .map(path -> path.getFileName().toString())
-                    .filter(filename -> filename.endsWith(".save"))
+                    .filter(filename -> filename.endsWith(".save")).sorted((a, b) -> {//trier par les dates
+                        String s1 = removeName(a);
+                        String s2 = removeName(b);
+                        return s2.compareTo(s1);
+                    })
                     .forEach(filename -> res.add(filename.replaceAll(".save", "")));
         } catch (IOException e) {
             Configuration.info("Pas de fichiers de sauvegardes trouvées");

@@ -23,6 +23,7 @@ public class GamePanel extends JComponent implements Observer {
 
     BufferedImage
             imgPlateau,
+            imgBackgroundPlateau,
             imgStonePlayer1,
             imgStonePlayer2,
             imgStonePlayer1LastMove,
@@ -135,6 +136,7 @@ public class GamePanel extends JComponent implements Observer {
      */
     private void loadImages() {
         imgPlateau= (BufferedImage) Configuration.loadImage("Plateau_fleches.png");
+        imgBackgroundPlateau = (BufferedImage) Configuration.loadImage("Board_Background.png");
         imgStonePlayer1 = (BufferedImage) Configuration.loadImage("Blue_Stone.png");
         imgStonePlayer2 = (BufferedImage) Configuration.loadImage("Red_Stone.png");
         imgStonePlayer1LastMove = (BufferedImage) Configuration.loadImage("Blue_Stone_Last_Move.png");
@@ -160,6 +162,7 @@ public class GamePanel extends JComponent implements Observer {
 
         coordinatesHighlighted.clear();
 
+        drawBoardBackground(g2d);
         drawBoard(g2d);
         drawStones(g2d);
 
@@ -181,6 +184,10 @@ public class GamePanel extends JComponent implements Observer {
         super.paintBorder(g2d);
 
         g2d.dispose();
+    }
+
+    private void drawBoardBackground(Graphics2D g2d) {
+        g2d.drawImage(imgBackgroundPlateau,3,3, this.getWidth()-6, this.getHeight()-6, null);
     }
 
     /**
