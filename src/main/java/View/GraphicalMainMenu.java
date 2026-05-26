@@ -19,12 +19,14 @@ public class GraphicalMainMenu extends JPanel {
         menuBox = Box.createVerticalBox();
         this.parent = parent;
 
-        MigLayout layout = new MigLayout("fill, insets 10 10 10 10", "20%[align left]",
-                "[30%][10%][10%][10%][10%][10%]push" );
+        MigLayout layout = new MigLayout("fill, insets 10 10 10 10", "[20%][grow,align left][20%]",
+                "[25%][15%][15%][15%][15%][15%]" );
         this.setLayout(layout);
 
         titleFont = new Font("Arial", Font.BOLD, this.getFont().getSize());
+        JPanel titlePanel = new JPanel();
         JLabel titleLabel = new JLabel("Circle of life");
+        titlePanel.add(titleLabel);
 
         newGameButton = createButton("> Nouvelle partie");
         continueButton = createButton("> Continuer");
@@ -39,22 +41,47 @@ public class GraphicalMainMenu extends JPanel {
         tutorialButton.setFont(buttonFont);
         quitButton.setFont(buttonFont);
 
-        this.add(titleLabel, "cell 0 0, growy");
+        FlowLayout fl = new FlowLayout();
+        fl.setAlignment(FlowLayout.LEFT);
 
-        this.add(newGameButton, "cell 0 1, growy");
-        this.add(continueButton, "cell 0 2, growy");
-        this.add(loadButton, "cell 0 3, growy");
-        this.add(tutorialButton, "cell 0 4, growy");
-        this.add(quitButton, "cell 0 5, growy");
+        JPanel newGamePanel,continuePanel,loadPanel,tutorialPanel,quitPanel;
+        newGamePanel = new JPanel();
+        newGamePanel.setLayout(fl);
+        newGamePanel.add(newGameButton);
 
-        titleLabel.addComponentListener(new FontScaler(0.5f, titleLabel));
-        newGameButton.addComponentListener(new FontScaler(0.5f, newGameButton, continueButton, loadButton, tutorialButton, quitButton));
+        continuePanel = new JPanel();
+        continuePanel.setLayout(fl);
+        continuePanel.add(continueButton);
+
+        loadPanel = new JPanel();
+        loadPanel.setLayout(fl);
+        loadPanel.add(loadButton);
+
+        tutorialPanel =new JPanel();
+        tutorialPanel.setLayout(fl);
+        tutorialPanel.add(tutorialButton);
+
+        quitPanel = new JPanel();
+        quitPanel.setLayout(fl);
+        quitPanel.add(quitButton);
+
+        newGamePanel.addComponentListener(new FontScaler(0.5f, newGameButton, continueButton, loadButton, tutorialButton, quitButton));
+        titlePanel.addComponentListener(new FontScaler(0.5f, 0.9f, titleLabel));
+
+        this.add(titlePanel, "cell 0 0, span 3 0, grow");
+        this.add(newGamePanel, "cell 1 1, grow");
+        this.add(continuePanel, "cell 1 2, grow");
+        this.add(loadPanel, "cell 1 3, grow");
+        this.add(tutorialPanel, "cell 1 4, grow");
+        this.add(quitPanel, "cell 1 5, grow");
+
     }
 
     private JButton createButton(String text) {
         JButton button = new JButton(text);
         button.setFocusable(false);
-        button.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+       // button.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         return button;
     }

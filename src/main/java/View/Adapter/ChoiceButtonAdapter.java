@@ -1,10 +1,7 @@
 package View.Adapter;
 
-import Global.Configuration;
-import View.GraphicalUserInterface;
-import View.Utils.ChoiceBox;
+import View.CustomComponents.ChoiceBox;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class ChoiceButtonAdapter implements java.awt.event.ActionListener {
