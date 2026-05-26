@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,7 +19,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GameDataManager {
-    static String savePath = "./sauvegardes/";
+    private static String savePath = "./sauvegardes/";
+    private static String testPath = "./test_sauvegardes/";
+    static boolean testMode = false;
 
     /**
      * Sauvegarde un match ainsi que ses paramètres.
@@ -112,11 +115,13 @@ public class GameDataManager {
     }
 
     /**
-     * Converti le format du type d'IA lu dans le fichier vers le format attendu par updateAISettings dans configuration.
+     * Converti le format du type d'IA lu dans le fichier vers le format attendu par
+     * updateAISettings dans configuration.
+     * 
      * @param ai Le format du type d'IA lu dans le fichier.
      * @return Le format du type d'IA converti.
      */
-    private static String convertAI(String ai){
+    private static String convertAI(String ai) {
         return switch (ai) {
             case "E" -> "Facile";
             case "M" -> "Moyen";
@@ -132,43 +137,118 @@ public class GameDataManager {
      * @param game     L'instance de game dans laquelle charger le match.
      * @param filename Le nom du fichier à partir duquel charger (sans extension
      *                 .save).
-     * @throws FileNotFoundException Exception retourné si le fichier n'est pas trouvé.
+     * @throws FileNotFoundException Exception retourné si le fichier n'est pas
+     *                               trouvé.
      */
-    public static void loadMatch(Game game, String filename) throws FileNotFoundException {
-        File file = new File(savePath + filename + ".save");
+    public static boolean loadMatch(Game game, String filename) throws FileNotFoundException {
+        if (filename == null || game == null) {
+            Configuration.warning("game et ou filename null");
+            return false;
+        }
+
+        if (!filename.endsWith(".save"))
+            filename += ".save";
+
+        File file;
+
+        if (!testMode)
+            file = new File(savePath + filename);
+        else {
+            try {
+                Files.createDirectories(Paths.get(testPath));
+            } catch (IOException e) {
+                Configuration.warning("impossible de créer le dossier des tests");
+                return false;
+            }
+            file = new File(testPath + filename);
+        }
+
         Scanner scanner = new Scanner(file);
 
         // Read player type
         String[] playerTypes = new String[2];
 
         // Update Settings Joueur 1
-        playerTypes[0] = scanner.next();
-        if(playerTypes[0].equals("J"))
-            Configuration.setPlayerSettings(PlayerNumber.PLAYER_1, null, scanner.next().replaceAll("_", " "));
-        else{
+        if (scanner.hasNext())
+            playerTypes[0] = scanner.next();
+        else {
+            Configuration.warning("Impossible de lire le type de joueur 1 dans le fichier " + filename);
+            return false;
+        }
+        if (playerTypes[0].equals("J")) {
+            if (scanner.hasNext())
+                Configuration.setPlayerSettings(PlayerNumber.PLAYER_1, null, scanner.next().replaceAll("_", " "));
+            else {
+                Configuration.warning("Nom manquantes pour le joueur 1 dans le fichier " + filename);
+                return false;
+            }
+        } else if (playerTypes[0].equals("E") || playerTypes[0].equals("M") || playerTypes[0].equals("H")) {
             Configuration.updateAISettings(convertAI(playerTypes[0]), PlayerNumber.PLAYER_1);
+        } else {
+            Configuration.warning("Le type de joueur incorrecte pour le joueur 1 dans le fichier " + filename);
+            return false;
         }
 
         // Update Settings Joueur 2
-        playerTypes[1] = scanner.next();
-        if(playerTypes[1].equals("J"))
-            Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, null, scanner.next().replaceAll("_", " "));
-        else
+        if (scanner.hasNext())
+            playerTypes[1] = scanner.next();
+        else {
+            Configuration.warning("Impossible de lire le type de joueur 2 dans le fichier " + filename);
+            return false;
+        }
+
+        if (playerTypes[1].equals("J")) {
+            if (scanner.hasNext())
+                Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, null, scanner.next().replaceAll("_", " "));
+            else {
+                Configuration.warning("Nom manquantes pour le joueur 2 dans le fichier " + filename);
+                return false;
+            }
+        } else if (playerTypes[1].equals("E") || playerTypes[1].equals("M") || playerTypes[1].equals("H"))
             Configuration.updateAISettings(convertAI(playerTypes[1]), PlayerNumber.PLAYER_2);
+        else {
+            Configuration.warning("Le type de joueur incorrecte pour le joueur 2 dans le fichier " + filename);
+            return false;
+        }
 
         // Update Setting premier joueur
-        int startingPlayerIndex = scanner.nextInt();
+        int startingPlayerIndex;
+        if (scanner.hasNextInt())
+            startingPlayerIndex = scanner.nextInt();
+        else {
+            Configuration.warning("Impossible de lire le joueur commencant la partie dans le fichier " + filename);
+            return false;
+        }
+
+        if (startingPlayerIndex!=0 && startingPlayerIndex !=1) {
+            Configuration.warning("L'indice de joueur débutant est incorrect dans le fichier " + filename);
+            return false;
+        }
+
         Configuration.setStartingPlayerSetting(startingPlayerIndex);
 
         // Création du match
         game.createMatch(Configuration.getSettings().getPlayer1Settings().getName(),
-                Configuration.getSettings().getPlayer2Settings().getName(), Configuration.getSettings().getStartingPlayerSetting());
+                Configuration.getSettings().getPlayer2Settings().getName(),
+                Configuration.getSettings().getStartingPlayerSetting());
 
         Match m = game.getMatch();
 
         // Reconstruction des moves
-        int lenPast = scanner.nextInt();
-        int lenFuture = scanner.nextInt();
+        int lenPast, lenFuture;
+        if (scanner.hasNextInt())
+            lenPast = scanner.nextInt();
+        else {
+            Configuration.warning("Impossible de lire le nombre du coup joué dans le fichier " + filename);
+            return false;
+        }
+
+        if (scanner.hasNextInt())
+            lenFuture = scanner.nextInt();
+        else {
+            Configuration.warning("Impossible de lire le nombre d'undo dans le fichier " + filename);
+            return false;
+        }
 
         // read past et futur
         for (int k = 0; k < lenPast + lenFuture; k++) {
@@ -177,24 +257,35 @@ public class GameDataManager {
                 temp = readMove(m, scanner);
                 game.playMove(temp);
             } catch (Exception e) {
-                Configuration.error("Impossible de lire move");
+                Configuration.warning("Impossible de lire move");
+                return false;
             }
         }
 
         // revenir en arriere si on a future
         for (int i = 0; i < lenFuture; i++) {
+            if (!game.canUndo()) {
+                Configuration.warning("Plus de undo a faire que des moves totales dans le fichier " + filename);
+                return false;
+            }
             game.undo();
+        }
+
+        if (scanner.hasNextInt()) {
+            Configuration.warning("Pas tous les moves lus dans le fichier " + filename);
+            return false;
         }
 
         // read reviewMode
         boolean reviewModeActive = false;
-        if (scanner.hasNext())
+        if (scanner.hasNextBoolean())
             reviewModeActive = scanner.nextBoolean();
 
         if (reviewModeActive || m.isGameOver())
             m.enterReviewMode();
 
         scanner.close();
+        return true;
     }
 
     /**
@@ -205,7 +296,7 @@ public class GameDataManager {
      * @param scanner Scanner.
      * @return Un Move qui correspond à ce qui a été lu.
      */
-    private static Move readMove(Match m, Scanner scanner) {
+    private static Move readMove(Match m, Scanner scanner) throws Exception {
         int l = scanner.nextInt();
         int c = scanner.nextInt();
         return new Move(m, l, c);
@@ -262,7 +353,11 @@ public class GameDataManager {
      *         supprimée.
      */
     public static List<String> getSaveFiles() {
-        Path dirPath = Paths.get(savePath);
+        Path dirPath;
+        if (!testMode)
+            dirPath = Paths.get(savePath);
+        else
+            dirPath = Paths.get(testPath);
         List<String> res = new ArrayList<>();
 
         try {
@@ -291,7 +386,20 @@ public class GameDataManager {
         };
     }
 
+    private static boolean validDate(String date) {
+        try {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern(
+                "yyyy MM dd HH:mm:ss");
+                LocalDateTime.parse(date, fmt);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
     public static String[] parseFileName(String filename) {
+        if (filename == null)
+            return null;
         String[] res = new String[5];
         String sep = "_";
         filename = filename.replaceAll(".save", "");
@@ -299,14 +407,34 @@ public class GameDataManager {
         String[] arr = filename.split(sep);
         if (hasName(filename)) {
             arr = Arrays.copyOfRange(arr, 1, arr.length);
-        } 
-        String[] date = Arrays.copyOfRange(arr, 0, arr.length - 4);
-        String[] game = Arrays.copyOfRange(arr, arr.length - 4, arr.length);
+        }
 
+        String[] date, game;
+
+        try {
+            date = Arrays.copyOfRange(arr, 0, arr.length - 4);
+            game = Arrays.copyOfRange(arr, arr.length - 4, arr.length);
+        } catch (Exception e) {
+            Configuration.warning("Impossible de lire le nom du fichier");
+            return null;
+        }
+
+        if (date.length != 4) { // annee, mois, jour, temps
+            Configuration.warning("Détails concernant le date manquants");
+            return null;
+        }
         // parse date
         date[date.length - 1] = date[date.length - 1].replaceAll("-", ":");
         res[0] = String.join(" ", date);
+        if (!validDate(res[0])) {
+            Configuration.warning("Date invalide");
+            return null;
+        }
 
+        if (game.length != 4) { // deux joueurs avec leurs propres scores
+            Configuration.warning("Détails concernant le jeu manquants");
+            return null;
+        }
         // parse player 1
         res[1] = parsePlayer(game[1], '1');
 
@@ -316,7 +444,7 @@ public class GameDataManager {
         // parse score (joueur 1 score - joueur 2 score)
         res[3] = game[0] + " - " + game[2];
 
-        //name game
+        // name game
         res[4] = getName(filename);
 
         return res;
@@ -335,19 +463,11 @@ public class GameDataManager {
         return fileToDelete.delete();
     }
 
-    //on suppose que le jeu est nommé si le premier élément de son nom n'est pas un nombre (cad l'année)
+    // on suppose que le jeu est nommé si le premier élément de son nom n'est pas un
+    // nombre (cad l'année)
     private static boolean hasName(String filename) {
         String sep = "_";
-        try {
-            String[] temp = filename.split(sep);
-            if (temp.length == 0)
-                return false;
-            Integer.parseInt(temp[0]);
-        } catch (NumberFormatException e)  {
-            return true;
-        }
-
-        return false;
+        return filename.split(sep).length == 9;
     }
 
     private static String getName(String filename) {
@@ -360,16 +480,26 @@ public class GameDataManager {
         return filename.split(sep)[0].replaceAll(sepAlt, " ");
     }
 
+    private static String removeName(String filename) {
+        if (!hasName(filename)) return filename;
+        else {
+            String sep = "_";
+            String[] temp = filename.split(sep);
+            return String.join(sep, Arrays.copyOfRange(temp, 1, temp.length));
+        }
+    }
+
     private static String constNewName(String filename, String newName) {
         if (!filename.endsWith(".save"))
             filename += ".save";
+        if (newName.equals("")) 
+            return removeName(filename);
         String sep = "_";
         String sepAlt = "-";
         if (!hasName(filename))
             return newName.replaceAll(" ", sepAlt) + sep + filename;
         else {
-            String[] temp = filename.split(sep);
-            return newName.replaceAll(" ", sepAlt) + sep + String.join(sep, Arrays.copyOfRange(temp, 1, temp.length));
+            return newName.replaceAll(" ", sepAlt) + sep + removeName(filename);
         }
     }
 
@@ -378,13 +508,13 @@ public class GameDataManager {
             return "";
         if (!filename.endsWith(".save"))
             filename += ".save";
-        Path source = Paths.get(savePath + filename);
+        Path source = Paths.get((!testMode ? savePath : testPath) + filename);
         String newNameRes = constNewName(filename, newName);
         try {
             Files.move(source,
                     source.resolveSibling(newNameRes));
         } catch (IOException e) {
-            Configuration.error("Erreur lors de rennomage du fichier");
+            Configuration.warning("Erreur lors de rennomage du fichier");
             return filename;
         }
         return newNameRes.replaceAll(".save", "");
