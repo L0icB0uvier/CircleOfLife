@@ -2,7 +2,7 @@ package View;
 
 import View.Adapter.OptionalVisibilityAdapter;
 import View.CustomComponents.PopUpPanel;
-import View.Utils.ChoiceBox;
+import View.CustomComponents.ChoiceBox;
 import View.Utils.FontScaler;
 import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
