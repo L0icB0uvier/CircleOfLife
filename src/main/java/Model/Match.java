@@ -20,7 +20,7 @@ public class Match extends History<Move> implements Cloneable {
 
     Set<Critter> critters;
 
-    List<Critter> previouslyEatenCritters;
+    Set<Critter> previouslyEatenCritters;
 
     private final int winScore;
 
@@ -77,7 +77,7 @@ public class Match extends History<Move> implements Cloneable {
         InitializeBoard();
         resetScores();
         critters = new HashSet<>();
-        previouslyEatenCritters = new ArrayList<>();
+        previouslyEatenCritters = new HashSet<>();
         gameOver = false;
         winner = -1;
     }
@@ -107,16 +107,6 @@ public class Match extends History<Move> implements Cloneable {
      */
     int pickStartingPlayerRandom() {
         return new Random().nextInt(2) == 0? 0: 1;
-    }
-
-    @Override
-    public void apply(Move newMove) {
-        if (!isMoveValid(currentPlayerIndex, newMove.getLine(), newMove.getColumn())){ // invalid Move
-            return;
-        }
-
-        previouslyEatenCritters.clear();
-        super.apply(newMove);
     }
 
     /**
@@ -204,12 +194,23 @@ public class Match extends History<Move> implements Cloneable {
         return MatchUtils.hexagonalManhattanDistance(new Coordinate(l, c), new Coordinate(4, 4)) > 4;
     }
 
+    @Override
+    public void apply(Move newMove) {
+        if (!isMoveValid(currentPlayerIndex, newMove.getLine(), newMove.getColumn())){ // invalid Move
+            return;
+        }
+        newMove.setPreviouslyEatenCritters(new HashSet<>(previouslyEatenCritters));
+        super.apply(newMove);
+    }
+
+
     /**
      * Joue un pion du joueur actif sur la case de coordonnées (l, c)
      * @param l La ligne de la case.
      * @param c La colonne de la case.
      */
     public void playMove(int l, int c){
+        previouslyEatenCritters.clear();
         // on met la case à jour
         boardState[l][c] = (byte) (currentPlayerIndex + 1); // playerOne <-> 1 ; playerTwo <-> 2
         Coordinate newStoneCoordinate = new Coordinate(c, l);
@@ -220,7 +221,7 @@ public class Match extends History<Move> implements Cloneable {
 
         // on nourrit le Critter créé si on peut
         Set<Critter> eatenCritters = feed(newCritter);
-        previouslyEatenCritters.addAll(eatenCritters);
+        previouslyEatenCritters.addAll(new HashSet<>(eatenCritters));
 
         if(!eatenCritters.isEmpty()){
             int pointsEarned = MatchUtils.calculatePointEarned(eatenCritters);
@@ -233,6 +234,18 @@ public class Match extends History<Move> implements Cloneable {
         //Configuration.info("Nombre de critters de taille 4 du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.countPlayerCritterSize(this, currentPlayerIndex, 4));
         //Configuration.info("Distance moyenne entre critters du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.meanPlayerCritterDistance(this, currentPlayerIndex));
     }
+
+    /**
+     * Restore l'état du plateau du tour précédent.
+     * @param previousBoardState L'état du plateau au tour précédent.
+     */
+    public void restoreState(byte[][] previousBoardState, Set<Critter> critters, PlayerData[] previousPlayerData, Set<Critter> previouslyEatenCritters){
+        this.boardState = MatchUtils.copyBoard(previousBoardState);
+        this.critters = new HashSet<>(critters);
+        this.players = MatchUtils.copyPlayerData(previousPlayerData);
+        this.previouslyEatenCritters = previouslyEatenCritters;
+    }
+
 
     /**
      * Met à jour les critters du joueur actif après la pose d'une nouvelle pierre.
@@ -415,16 +428,6 @@ public class Match extends History<Move> implements Cloneable {
      */
     public void updatePlayerScore(int playerIndex, int increaseAmount){
         players[playerIndex].increaseScore(increaseAmount);
-    }
-
-    /**
-     * Restore l'état du plateau du tour précédent.
-     * @param previousBoardState L'état du plateau au tour précédent.
-     */
-    public void restoreState(byte[][] previousBoardState, Set<Critter> critters, PlayerData[] previousPlayerData){
-        this.boardState = MatchUtils.copyBoard(previousBoardState);
-        this.critters = new HashSet<>(critters);
-        this.players=MatchUtils.copyPlayerData(previousPlayerData);
     }
 
     /**
@@ -789,7 +792,7 @@ public class Match extends History<Move> implements Cloneable {
             }
 
             if (this.previouslyEatenCritters != null) {
-                clone.previouslyEatenCritters = new ArrayList<>(this.previouslyEatenCritters);
+                clone.previouslyEatenCritters = new HashSet<>(this.previouslyEatenCritters);
             }
 
             return clone;

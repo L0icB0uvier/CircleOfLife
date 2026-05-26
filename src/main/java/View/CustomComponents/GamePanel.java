@@ -171,9 +171,10 @@ public class GamePanel extends JComponent implements Observer {
 //        }
 
         if(match.isGameOver() == false || match.isReviewModeActive())
-        {
             drawEaten(g2d);
 
+        if(match.isGameOver() == false)
+        {
             if(drawSelected(g2d))
                 drawFeedforward(g2d);
 
