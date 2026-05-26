@@ -19,8 +19,8 @@ public class GraphicalMainMenu extends JPanel {
         menuBox = Box.createVerticalBox();
         this.parent = parent;
 
-        MigLayout layout = new MigLayout("fill, insets 10 10 10 10, debug", "20%[align left]",
-                "[30%][10%][10%][10%][10%][10%]push" );
+        MigLayout layout = new MigLayout("fill, insets 10 10 10 10", "20%[grow,align left]20%",
+                "[25%][15%][15%][15%][15%][15%]" );
         this.setLayout(layout);
 
         titleFont = new Font("Arial", Font.BOLD, this.getFont().getSize());
@@ -41,22 +41,55 @@ public class GraphicalMainMenu extends JPanel {
         tutorialButton.setFont(buttonFont);
         quitButton.setFont(buttonFont);
 
-        this.add(titlePanel, "cell 0 0, grow");
+        FlowLayout fl = new FlowLayout();
+        fl.setAlignment(FlowLayout.LEFT);
 
-        this.add(newGameButton, "cell 0 1, growy");
-        this.add(continueButton, "cell 0 2, growy");
-        this.add(loadButton, "cell 0 3, growy");
-        this.add(tutorialButton, "cell 0 4, growy");
-        this.add(quitButton, "cell 0 5, growy");
+        JPanel newGamePanel,continuePanel,loadPanel,tutorialPanel,quitPanel;
+        newGamePanel = new JPanel();
+        newGamePanel.setLayout(fl);
+        newGamePanel.add(newGameButton);
+        newGamePanel.addComponentListener(new FontScaler(newGameButton));
+
+        continuePanel = new JPanel();
+        continuePanel.setLayout(fl);
+        continuePanel.add(continueButton);
+        continuePanel.addComponentListener(new FontScaler(continueButton));
+
+
+        loadPanel = new JPanel();
+        loadPanel.setLayout(fl);
+        loadPanel.add(loadButton);
+        loadPanel.addComponentListener(new FontScaler(loadButton));
+
+
+        tutorialPanel =new JPanel();
+        tutorialPanel.setLayout(fl);
+        tutorialPanel.add(tutorialButton);
+        tutorialPanel.addComponentListener(new FontScaler(tutorialButton));
+
+
+        quitPanel = new JPanel();
+        quitPanel.setLayout(fl);
+        quitPanel.add(quitButton);
+        quitPanel.addComponentListener(new FontScaler(quitButton));
+
+
+
+        this.add(titlePanel, "cell 0 0, grow");
+        this.add(newGamePanel, "cell 0 1, grow");
+        this.add(continuePanel, "cell 0 2, grow");
+        this.add(loadPanel, "cell 0 3, grow");
+        this.add(tutorialPanel, "cell 0 4, grow");
+        this.add(quitPanel, "cell 0 5, grow");
 
         titlePanel.addComponentListener(new FontScaler(0.5f, titleLabel));
-        newGameButton.addComponentListener(new FontScaler(0.5f, newGameButton, continueButton, loadButton, tutorialButton, quitButton));
     }
 
     private JButton createButton(String text) {
         JButton button = new JButton(text);
         button.setFocusable(false);
-        button.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+       // button.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         return button;
     }

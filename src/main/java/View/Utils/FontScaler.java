@@ -1,13 +1,11 @@
 package View.Utils;
 
-import Global.Configuration;
+import View.CustomComponents.ChoiceBox;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.ObjectInputFilter;
 
 public class FontScaler extends ComponentAdapter {
     private float RATIO = 0.3f;
@@ -47,8 +45,11 @@ public class FontScaler extends ComponentAdapter {
             if (text == null) {
                 throw new ClassCastException("Classe incompatible avec fontScaler : " + comp.getClass().getName());
             }
-            while (width < fontMetrics.stringWidth(text)) {
-                comp.setFont(comp.getFont().deriveFont(e.getComponent().getWidth() * 0.95f));
+            while (width *0.8 < fontMetrics.stringWidth(text)) {
+
+                float current = comp.getFont().getSize2D();
+                comp.setFont(comp.getFont().deriveFont(current * 0.9f));
+                fontMetrics = g.getFontMetrics(comp.getFont());
             }
         }
         e.getComponent().revalidate();

@@ -80,17 +80,17 @@ public class RoundedBorder implements Border {
         if(image != null){
             int widthContainer,heightContainer;
             if(c.getParent().getWidth() == 0){
-                widthContainer= c.getWidth()-(shadow?2*SHADOW_SIZE_HORIZONTAL:0);
+                widthContainer= c.getWidth()-2*SHADOW_SIZE_HORIZONTAL;
             }else {
-                widthContainer = c.getWidth()-(shadow?2*SHADOW_SIZE_HORIZONTAL:0);
+                widthContainer = c.getWidth()-2*SHADOW_SIZE_HORIZONTAL;
             }
             if(c.getParent().getHeight() == 0){
-                heightContainer = c.getHeight()-(shadow?SHADOW_SIZE_BOTTOM:0);
+                heightContainer = c.getHeight()-SHADOW_SIZE_BOTTOM;
             }else {
-                heightContainer= c.getParent().getHeight()-(shadow?SHADOW_SIZE_BOTTOM:0);
+                heightContainer= c.getParent().getHeight()-SHADOW_SIZE_BOTTOM;
             }
             int size = (int) (Math.min(heightContainer,widthContainer)*0.8);
-            int imageX = (widthContainer - size) / 2 + (shadow?SHADOW_SIZE_HORIZONTAL:0);
+            int imageX = (widthContainer - size) / 2 + SHADOW_SIZE_HORIZONTAL;
             int imageY = (heightContainer - size) / 2;
 
             g2d.drawImage(image, imageX, imageY, size, size, c);

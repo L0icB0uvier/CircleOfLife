@@ -1,7 +1,7 @@
 package View;
 
 import View.Adapter.OptionalVisibilityAdapter;
-import View.Utils.ChoiceBox;
+import View.CustomComponents.ChoiceBox;
 import View.Utils.FontScaler;
 import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
@@ -22,7 +22,12 @@ public class GraphicalNewGame extends JPanel {
         this.parent = parent;
         MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10", "[left]","[20%][15%, align top][15%, align top][15%, align top]push[15%]" );
         this.setLayout(layoutPage);
+        JPanel titleLabelPanel = new JPanel();
+        titleLabelPanel.setLayout(new GridLayout());
         JLabel titleLabel = createLabel("Paramètres de la partie");
+        titleLabel.setVerticalAlignment(JLabel.CENTER);
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        titleLabelPanel.add(titleLabel);
 
         player1Choice = new ChoiceBox("Joueur", "IA");
         player2Choice = new ChoiceBox("Joueur", "IA");
@@ -32,25 +37,34 @@ public class GraphicalNewGame extends JPanel {
         AI2LevelChoice = new ChoiceBox("Facile", "Moyen", "Difficile");
         JLabel player1NameLabel = createLabel("Nom :");
         JLabel player2NameLabel = createLabel("Nom :");
+        player1NameLabel.setHorizontalAlignment(JLabel.RIGHT);
+        player2NameLabel.setHorizontalAlignment(JLabel.RIGHT);
         JLabel AI1LevelLabel = createLabel("Difficulté : ");
         JLabel AI2LevelLabel = createLabel("Difficulté : ");
+        AI1LevelLabel.setHorizontalAlignment(JLabel.RIGHT);
+        AI2LevelLabel.setHorizontalAlignment(JLabel.RIGHT);
         JLabel startingPlayerLabel = createLabel("Premier joueur :");
+        startingPlayerLabel.setHorizontalAlignment(JLabel.RIGHT);
 
-        JLabel timerLabel = createLabel("Chronomètre :");
-        JLabel addedTimeLabel = createLabel("Temps additionnel :");
+        //JLabel timerLabel = createLabel("Chronomètre :");
+        //JLabel addedTimeLabel = createLabel("Temps additionnel :");
 
         startingPlayerChoice = new ChoiceBox("Aléatoire", "Joueur 1", "Joueur 2");
 
-        timerChoice = new ChoiceBox("Infini","5:00", "10:00", "15:00", "30:00");
-        addedTimeChoice = new ChoiceBox("0s", "5s", "10s", "15s", "30s", "60s");
+        //timerChoice = new ChoiceBox("Infini","5:00", "10:00", "15:00", "30:00");
+        //addedTimeChoice = new ChoiceBox("0s", "5s", "10s", "15s", "30s", "60s");
 
         
         String playerLayout = "fill, insets 0 10 0 10, hidemode 1";
-        String playerLayoutCol = "[15%, align right][20%][25%, align right][20%]";
+        String playerLayoutCol = "[20%, align right][25%][30%, align right][25%]";
         String playerLayoutRow = "[align center, fill]";
         JComponent player1Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
 
         JLabel player1Label = createLabel("Joueur 1 :");
+        player1Label.setHorizontalAlignment(JLabel.RIGHT);
+        JPanel player1LabelPanel = new JPanel();
+        player1LabelPanel.setLayout(new GridLayout());
+        player1LabelPanel.add(player1Label);
         player1Label.setForeground(UIColor.BLUE);
         AI1LevelLabel.setVisible(false);
 
@@ -60,6 +74,10 @@ public class GraphicalNewGame extends JPanel {
         JComponent player2Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
 
         JLabel player2Label = createLabel("Joueur 2 :");
+        player2Label.setHorizontalAlignment(JLabel.RIGHT);
+        JPanel player2LabelPanel = new JPanel();
+        player2LabelPanel.setLayout(new GridLayout());
+        player2LabelPanel.add(player2Label);
         player2Label.setForeground(UIColor.RED);
         AI2LevelLabel.setVisible(false);
 
@@ -69,11 +87,11 @@ public class GraphicalNewGame extends JPanel {
         String startingPlayerLayout = "fill, insets 0 10 0 10, hidemode 1";
         JComponent startingPlayerComp = new JPanel(new MigLayout(startingPlayerLayout, playerLayoutCol, playerLayoutRow));
 
-        String timerLayout = "fill, insets 0 10 0 10, hidemode 1";
+        /*String timerLayout = "fill, insets 0 10 0 10, hidemode 1";
         JComponent timerComp = new JPanel(new MigLayout(timerLayout, playerLayoutCol, playerLayoutRow));
         JLabel invisLabel = createLabel("");
         addedTimeChoice.setVisible(false);
-        addedTimeLabel.setVisible(false);
+        addedTimeLabel.setVisible(false);*/
 
         MigLayout layoutButtons = new MigLayout("fill, insets 10 10 10 10", "[sg]push[sg]", "[]");
         JComponent buttonsComp = new JPanel(layoutButtons);
@@ -91,40 +109,40 @@ public class GraphicalNewGame extends JPanel {
         player2NameLabel.setMinimumSize(new Dimension(0, 0));
         AI1LevelLabel.setMinimumSize(new Dimension(0, 0));
         AI2LevelLabel.setMinimumSize(new Dimension(0, 0));
-        player1Label.setMinimumSize(new Dimension(0, 0));
-        player2Label.setMinimumSize(new Dimension(0, 0));
+        player1LabelPanel.setMinimumSize(new Dimension(0, 0));
+        player2LabelPanel.setMinimumSize(new Dimension(0, 0));
         player1NameTextField.setMinimumSize(new Dimension(0, 0));
         player2NameTextField.setMinimumSize(new Dimension(0, 0));
         player1Comp.setMinimumSize(new Dimension(0, 0));
         player2Comp.setMinimumSize(new Dimension(0, 0));
         startingPlayerLabel.setMinimumSize(new Dimension(0, 0));
         startingPlayerChoice.setMinimumSize(new Dimension(0, 0));
-        timerLabel.setMinimumSize(new Dimension(0, 0));
-        timerChoice.setMinimumSize(new Dimension(0, 0));
-        addedTimeChoice.setMinimumSize(new Dimension(0, 0));
+        //timerLabel.setMinimumSize(new Dimension(0, 0));
+        //timerChoice.setMinimumSize(new Dimension(0, 0));
+        //addedTimeChoice.setMinimumSize(new Dimension(0, 0));
 
-        player1Comp.add(player1Label, "cell 0 0");
+        player1Comp.add(player1LabelPanel, "cell 0 0,grow");
         player1Comp.add(player1Choice, "cell 1 0, grow");
-        player1Comp.add(player1NameLabel, "cell 2 0");
-        player1Comp.add(AI1LevelLabel, "cell 2 0");
-        player1Comp.add(player1NameTextField, "cell 3 0, growx, hmax 50%");
-        player1Comp.add(AI1LevelChoice, "cell 3 0, growx, height 100%");
+        player1Comp.add(player1NameLabel, "cell 2 0, grow");
+        player1Comp.add(AI1LevelLabel, "cell 2 0,grow");
+        player1Comp.add(player1NameTextField, "cell 3 0, grow, hmax 50%");
+        player1Comp.add(AI1LevelChoice, "cell 3 0, grow, height 100%");
 
-        player2Comp.add(player2Label, "cell 0 0");
+        player2Comp.add(player2LabelPanel, "cell 0 0,grow");
         player2Comp.add(player2Choice, "cell 1 0, grow");
-        player2Comp.add(player2NameLabel, "cell 2 0");
-        player2Comp.add(AI2LevelLabel, "cell 2 0");
-        player2Comp.add(player2NameTextField, "cell 3 0, growx, hmax 50%");
-        player2Comp.add(AI2LevelChoice, "cell 3 0, growx, height 100%");
+        player2Comp.add(player2NameLabel, "cell 2 0,grow");
+        player2Comp.add(AI2LevelLabel, "cell 2 0,grow");
+        player2Comp.add(player2NameTextField, "cell 3 0, grow, hmax 50%");
+        player2Comp.add(AI2LevelChoice, "cell 3 0, grow, height 100%");
 
-        startingPlayerComp.add(startingPlayerLabel, "cell 0 0");
+        startingPlayerComp.add(startingPlayerLabel, "cell 0 0, grow");
         startingPlayerComp.add(startingPlayerChoice, "cell 1 0, grow");
 
-        timerComp.add(timerLabel, "cell 0 0");
+       /* timerComp.add(timerLabel, "cell 0 0");
         timerComp.add(timerChoice, "cell 1 0, grow");
         timerComp.add(addedTimeLabel, "cell 2 0");
         timerComp.add(addedTimeLabel, "cell 2 0");
-        timerComp.add(addedTimeChoice, "cell 3 0, growx, height 100%");
+        timerComp.add(addedTimeChoice, "cell 3 0, growx, height 100%");*/
 
         buttonsComp.add(cancelButton, "cell 0 0, height 25%");
         buttonsComp.add(startButton, "cell 1 0");
@@ -132,16 +150,17 @@ public class GraphicalNewGame extends JPanel {
         buttonsComp.setMinimumSize(new Dimension(0, 0));
 
         this.add(Box.createGlue(), "cell 0 0, grow");
-        this.add(titleLabel, "cell 0 0, growy");
+        this.add(titleLabelPanel, "cell 0 0, grow");
         this.add(Box.createGlue(), "cell 0 0, grow");
         this.add(player1Comp, "cell 0 1, grow, sg comp");
         this.add(player2Comp, "cell 0 2, grow, sg comp");
         this.add(startingPlayerComp, "cell 0 3, grow, sg comp");
-        this.add(timerComp, "cell 0 4, grow, sg comp");
+        //this.add(timerComp, "cell 0 4, grow, sg comp");
         this.add(buttonsComp, "cell 0 5, grow");
 
-        titleLabel.addComponentListener(new FontScaler(titleLabel));
-        player1Comp.addComponentListener(new FontScaler(player1Label, player2Label, player1NameLabel, player2NameLabel, AI1LevelLabel, AI2LevelLabel, startingPlayerLabel, timerLabel, timerChoice, addedTimeLabel, addedTimeChoice));
+        titleLabelPanel.addComponentListener(new FontScaler(titleLabel));
+        player1LabelPanel.addComponentListener(new FontScaler(player1Label, player1NameLabel, AI1LevelLabel, startingPlayerLabel/*, timerLabel, timerChoice, addedTimeLabel, addedTimeChoice*/));
+        player2LabelPanel.addComponentListener(new FontScaler(player2Label, player2NameLabel, AI2LevelLabel));
         player1NameTextField.addComponentListener(new FontScaler(0.5f, player1NameTextField, player2NameTextField));
         buttonsComp.addComponentListener(new FontScaler(cancelButton, startButton));
 
@@ -149,8 +168,8 @@ public class GraphicalNewGame extends JPanel {
         player1Choice.rightBtn.addActionListener(new OptionalVisibilityAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice, 1,"Joueur"));
         player2Choice.leftBtn.addActionListener(new OptionalVisibilityAdapter(player2NameLabel, AI2LevelChoice, player2NameTextField, AI2LevelLabel, player2Choice, -1, "Joueur"));
         player2Choice.rightBtn.addActionListener(new OptionalVisibilityAdapter(player2NameLabel, AI2LevelChoice, player2NameTextField, AI2LevelLabel, player2Choice, 1,"Joueur"));
-        timerChoice.leftBtn.addActionListener(new OptionalVisibilityAdapter(invisLabel, addedTimeChoice, null, addedTimeLabel, timerChoice, -1,"Infini"));
-        timerChoice.rightBtn.addActionListener(new OptionalVisibilityAdapter(invisLabel, addedTimeChoice, null, addedTimeLabel, timerChoice, 1,"Infini"));
+        /*timerChoice.leftBtn.addActionListener(new OptionalVisibilityAdapter(invisLabel, addedTimeChoice, null, addedTimeLabel, timerChoice, -1,"Infini"));
+        timerChoice.rightBtn.addActionListener(new OptionalVisibilityAdapter(invisLabel, addedTimeChoice, null, addedTimeLabel, timerChoice, 1,"Infini"));*/
 
 
         this.setVisible(true);

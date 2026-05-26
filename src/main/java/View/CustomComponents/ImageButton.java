@@ -29,6 +29,17 @@ public class  ImageButton extends JButton {
         init();
     }
 
+    public ImageButton(String path, boolean border) {
+        this.image = Configuration.loadImage(path);
+        if(border) {
+            this.border = new RoundedBorder(15, true, image);
+        }else{
+            this.border = new RoundedBorder(0, false, image);
+            bgColor = getBackground();
+        }
+        init();
+    }
+
     private void init(){
         setContentAreaFilled(false);
         setBackground(bgColor);

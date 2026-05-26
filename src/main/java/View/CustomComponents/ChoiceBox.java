@@ -1,6 +1,8 @@
-package View.Utils;
+package View.CustomComponents;
 
 import View.Adapter.ChoiceButtonAdapter;
+import View.CustomComponents.ImageButton;
+import View.Utils.FontScaler;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
@@ -16,10 +18,10 @@ public class ChoiceBox extends JComponent {
     public ChoiceBox(String... values) {
         this.values = values;
 
-        MigLayout layout = new MigLayout("fill", "[10%, align right][40%, align center][10%, align left]push", "[]");
+        MigLayout layout = new MigLayout("fill", "[15%, align right, align center][40%, align center][15%, align left, align center]push", "[]");
         this.setLayout(layout);
-        leftBtn = createButton("<");
-        rightBtn = createButton(">");
+        leftBtn = createButton("undoIcon.png");
+        rightBtn = createButton("redoIcon.png");
         this.label = createLabel(values[0]);
         leftBtn.addActionListener(new ChoiceButtonAdapter(this, -1));
         rightBtn.addActionListener(new ChoiceButtonAdapter(this, 1));
@@ -53,16 +55,17 @@ public class ChoiceBox extends JComponent {
     }
 
     private JButton createButton(String text) {
-        JButton button = new JButton(text);
+        JButton button = new ImageButton(text,false);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setFocusable(false);
-        button.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        //button.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         button.setContentAreaFilled(false);
         return button;
     }
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
+        label.setHorizontalAlignment(JLabel.CENTER);
         return label;
     }
 }
