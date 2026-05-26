@@ -19,7 +19,7 @@ public class GraphicalMainMenu extends JPanel {
         menuBox = Box.createVerticalBox();
         this.parent = parent;
 
-        MigLayout layout = new MigLayout("fill, insets 10 10 10 10", "20%[grow,align left]20%",
+        MigLayout layout = new MigLayout("fill, insets 10 10 10 10", "[20%][grow,align left][20%]",
                 "[25%][15%][15%][15%][15%][15%]" );
         this.setLayout(layout);
 
@@ -48,41 +48,33 @@ public class GraphicalMainMenu extends JPanel {
         newGamePanel = new JPanel();
         newGamePanel.setLayout(fl);
         newGamePanel.add(newGameButton);
-        newGamePanel.addComponentListener(new FontScaler(newGameButton));
 
         continuePanel = new JPanel();
         continuePanel.setLayout(fl);
         continuePanel.add(continueButton);
-        continuePanel.addComponentListener(new FontScaler(continueButton));
-
 
         loadPanel = new JPanel();
         loadPanel.setLayout(fl);
         loadPanel.add(loadButton);
-        loadPanel.addComponentListener(new FontScaler(loadButton));
-
 
         tutorialPanel =new JPanel();
         tutorialPanel.setLayout(fl);
         tutorialPanel.add(tutorialButton);
-        tutorialPanel.addComponentListener(new FontScaler(tutorialButton));
-
 
         quitPanel = new JPanel();
         quitPanel.setLayout(fl);
         quitPanel.add(quitButton);
-        quitPanel.addComponentListener(new FontScaler(quitButton));
 
+        newGamePanel.addComponentListener(new FontScaler(0.5f, newGameButton, continueButton, loadButton, tutorialButton, quitButton));
+        titlePanel.addComponentListener(new FontScaler(0.5f, 0.9f, titleLabel));
 
+        this.add(titlePanel, "cell 0 0, span 3 0, grow");
+        this.add(newGamePanel, "cell 1 1, grow");
+        this.add(continuePanel, "cell 1 2, grow");
+        this.add(loadPanel, "cell 1 3, grow");
+        this.add(tutorialPanel, "cell 1 4, grow");
+        this.add(quitPanel, "cell 1 5, grow");
 
-        this.add(titlePanel, "cell 0 0, grow");
-        this.add(newGamePanel, "cell 0 1, grow");
-        this.add(continuePanel, "cell 0 2, grow");
-        this.add(loadPanel, "cell 0 3, grow");
-        this.add(tutorialPanel, "cell 0 4, grow");
-        this.add(quitPanel, "cell 0 5, grow");
-
-        titlePanel.addComponentListener(new FontScaler(0.5f, titleLabel));
     }
 
     private JButton createButton(String text) {

@@ -20,7 +20,7 @@ public class GraphicalNewGame extends JPanel {
     public GraphicalNewGame(JFrame parent){
         super(new BorderLayout());
         this.parent = parent;
-        MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10", "[left]","[20%][15%, align top][15%, align top][15%, align top]push[15%]" );
+        MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10", "[center]","[20%][15%, align top][15%, align top][15%, align top]push[15%]" );
         this.setLayout(layoutPage);
         JPanel titleLabelPanel = new JPanel();
         titleLabelPanel.setLayout(new GridLayout());
@@ -84,14 +84,8 @@ public class GraphicalNewGame extends JPanel {
         player2NameTextField = createJTextField("Joueur 2");
         AI2LevelChoice.setVisible(false);
 
-        String startingPlayerLayout = "fill, insets 0 10 0 10, hidemode 1";
-        JComponent startingPlayerComp = new JPanel(new MigLayout(startingPlayerLayout, playerLayoutCol, playerLayoutRow));
-
-        /*String timerLayout = "fill, insets 0 10 0 10, hidemode 1";
-        JComponent timerComp = new JPanel(new MigLayout(timerLayout, playerLayoutCol, playerLayoutRow));
-        JLabel invisLabel = createLabel("");
-        addedTimeChoice.setVisible(false);
-        addedTimeLabel.setVisible(false);*/
+        String startingPlayerLayoutCol = "[50%, align right][25%]push";
+        JComponent startingPlayerComp = new JPanel(new MigLayout(playerLayout, startingPlayerLayoutCol, playerLayoutRow));
 
         MigLayout layoutButtons = new MigLayout("fill, insets 10 10 10 10", "[sg]push[sg]", "[]");
         JComponent buttonsComp = new JPanel(layoutButtons);
@@ -125,33 +119,25 @@ public class GraphicalNewGame extends JPanel {
         player1Comp.add(player1Choice, "cell 1 0, grow");
         player1Comp.add(player1NameLabel, "cell 2 0, grow");
         player1Comp.add(AI1LevelLabel, "cell 2 0,grow");
-        player1Comp.add(player1NameTextField, "cell 3 0, grow, hmax 50%");
+        player1Comp.add(player1NameTextField, "cell 3 0, grow, hmax 40%");
         player1Comp.add(AI1LevelChoice, "cell 3 0, grow, height 100%");
 
         player2Comp.add(player2LabelPanel, "cell 0 0,grow");
         player2Comp.add(player2Choice, "cell 1 0, grow");
         player2Comp.add(player2NameLabel, "cell 2 0,grow");
         player2Comp.add(AI2LevelLabel, "cell 2 0,grow");
-        player2Comp.add(player2NameTextField, "cell 3 0, grow, hmax 50%");
+        player2Comp.add(player2NameTextField, "cell 3 0, grow, hmax 40%");
         player2Comp.add(AI2LevelChoice, "cell 3 0, grow, height 100%");
 
         startingPlayerComp.add(startingPlayerLabel, "cell 0 0, grow");
         startingPlayerComp.add(startingPlayerChoice, "cell 1 0, grow");
-
-       /* timerComp.add(timerLabel, "cell 0 0");
-        timerComp.add(timerChoice, "cell 1 0, grow");
-        timerComp.add(addedTimeLabel, "cell 2 0");
-        timerComp.add(addedTimeLabel, "cell 2 0");
-        timerComp.add(addedTimeChoice, "cell 3 0, growx, height 100%");*/
 
         buttonsComp.add(cancelButton, "cell 0 0, height 25%");
         buttonsComp.add(startButton, "cell 1 0");
 
         buttonsComp.setMinimumSize(new Dimension(0, 0));
 
-        this.add(Box.createGlue(), "cell 0 0, grow");
         this.add(titleLabelPanel, "cell 0 0, grow");
-        this.add(Box.createGlue(), "cell 0 0, grow");
         this.add(player1Comp, "cell 0 1, grow, sg comp");
         this.add(player2Comp, "cell 0 2, grow, sg comp");
         this.add(startingPlayerComp, "cell 0 3, grow, sg comp");
@@ -159,17 +145,15 @@ public class GraphicalNewGame extends JPanel {
         this.add(buttonsComp, "cell 0 5, grow");
 
         titleLabelPanel.addComponentListener(new FontScaler(titleLabel));
-        player1LabelPanel.addComponentListener(new FontScaler(player1Label, player1NameLabel, AI1LevelLabel, startingPlayerLabel/*, timerLabel, timerChoice, addedTimeLabel, addedTimeChoice*/));
-        player2LabelPanel.addComponentListener(new FontScaler(player2Label, player2NameLabel, AI2LevelLabel));
+        player1LabelPanel.addComponentListener(new FontScaler(0.5f, player1Label, player1NameLabel, AI1LevelLabel, startingPlayerLabel, player2Label, player2NameLabel, AI2LevelLabel));
         player1NameTextField.addComponentListener(new FontScaler(0.5f, player1NameTextField, player2NameTextField));
         buttonsComp.addComponentListener(new FontScaler(cancelButton, startButton));
+        player1Choice.getLabelPanel().addComponentListener(new FontScaler(0.5f, 0.9f, player1Choice.getLabel(), player2Choice.getLabel(), AI1LevelChoice.getLabel(), AI2LevelChoice.getLabel(), startingPlayerChoice.getLabel()));
 
         player1Choice.leftBtn.addActionListener(new OptionalVisibilityAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice, -1,"Joueur"));
         player1Choice.rightBtn.addActionListener(new OptionalVisibilityAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice, 1,"Joueur"));
         player2Choice.leftBtn.addActionListener(new OptionalVisibilityAdapter(player2NameLabel, AI2LevelChoice, player2NameTextField, AI2LevelLabel, player2Choice, -1, "Joueur"));
         player2Choice.rightBtn.addActionListener(new OptionalVisibilityAdapter(player2NameLabel, AI2LevelChoice, player2NameTextField, AI2LevelLabel, player2Choice, 1,"Joueur"));
-        /*timerChoice.leftBtn.addActionListener(new OptionalVisibilityAdapter(invisLabel, addedTimeChoice, null, addedTimeLabel, timerChoice, -1,"Infini"));
-        timerChoice.rightBtn.addActionListener(new OptionalVisibilityAdapter(invisLabel, addedTimeChoice, null, addedTimeLabel, timerChoice, 1,"Infini"));*/
 
 
         this.setVisible(true);

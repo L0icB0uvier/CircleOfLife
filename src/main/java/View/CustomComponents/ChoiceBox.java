@@ -12,33 +12,42 @@ public class ChoiceBox extends JComponent {
 
     private final String [] values;
     public JButton leftBtn, rightBtn;
+    Box labelPanel;
     private final JLabel label;
     private int currentLabel = 0;
 
     public ChoiceBox(String... values) {
         this.values = values;
 
-        MigLayout layout = new MigLayout("fill", "[15%, align right, align center][40%, align center][15%, align left, align center]push", "[]");
+        MigLayout layout = new MigLayout("fill", "[15%][70%][15%]", "[align center, grow]");
         this.setLayout(layout);
         leftBtn = createButton("undoIcon.png");
         rightBtn = createButton("redoIcon.png");
+        this.labelPanel = Box.createHorizontalBox();
+        labelPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
         this.label = createLabel(values[0]);
+        labelPanel.add(Box.createGlue());
+        labelPanel.add(label);
+        labelPanel.add(Box.createGlue());
         leftBtn.addActionListener(new ChoiceButtonAdapter(this, -1));
         rightBtn.addActionListener(new ChoiceButtonAdapter(this, 1));
 
-        leftBtn.setMinimumSize(new Dimension(0, 0));
-        label.setMinimumSize(new Dimension(0, 0));
-        rightBtn.setMinimumSize(new Dimension(0, 0));
-
         this.add(leftBtn, "grow");
-        this.add(label, "grow");
+        this.add(labelPanel, "grow");
         this.add(rightBtn, "grow");
         leftBtn.addComponentListener(new FontScaler(leftBtn, rightBtn));
-        label.addComponentListener(new FontScaler(label));
     }
 
     public String getValue() {
         return this.label.getText();
+    }
+
+    public JLabel getLabel() {
+        return label;
+    }
+
+    public Box getLabelPanel() {
+        return labelPanel;
     }
 
     public String getMaxText() {
@@ -65,7 +74,7 @@ public class ChoiceBox extends JComponent {
 
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
-        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setVerticalAlignment(SwingConstants.CENTER);
         return label;
     }
 }

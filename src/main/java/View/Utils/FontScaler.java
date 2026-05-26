@@ -1,5 +1,6 @@
 package View.Utils;
 
+import Global.Configuration;
 import View.CustomComponents.ChoiceBox;
 
 import javax.swing.*;
@@ -30,6 +31,7 @@ public class FontScaler extends ComponentAdapter {
     @Override
     public void componentResized(ComponentEvent e) {
         float size = e.getComponent().getHeight() * RATIO;
+        float maxSize = 0.0f;
         for (JComponent comp : jComponents) {
             int lineNb = 1;
             if (comp instanceof JLabel) {
@@ -40,15 +42,19 @@ public class FontScaler extends ComponentAdapter {
                     lineNb++;
                 }
             }
-            comp.setFont(comp.getFont().deriveFont(size / lineNb));
+            if (size/lineNb > maxSize) maxSize = size/lineNb;
         }
 
-        Graphics g = e.getComponent().getGraphics();
-        FontMetrics fontMetrics = g.getFontMetrics(jComponents[0].getFont());
+
+        String maxText = "";
         for(JComponent comp: jComponents) {
-            int width = e.getComponent().getWidth();
             String text = null;
             if (comp instanceof JLabel) {
+                if(e.getComponent() instanceof ChoiceBox) {
+                    text = ((ChoiceBox) e.getComponent()).getMaxText();
+                    if (text.length() > maxText.length()) maxText = text;
+                    continue;
+                }
                 text = ((JLabel) comp).getText();
                 String[] lines = text.split("<br>");
                 text = "";
@@ -67,12 +73,27 @@ public class FontScaler extends ComponentAdapter {
             if (text == null) {
                 throw new ClassCastException("Classe incompatible avec fontScaler : " + comp.getClass().getName());
             }
-            while (width * WIDTH_PADDING < fontMetrics.stringWidth(text)) {
+            if (text.length() > maxText.length()) maxText = text;
+        }
+        if(e.getComponent() instanceof  ChoiceBox) Configuration.info(maxText);
+        Font maxFont = new Font(null, Font.PLAIN, 0);
+        for(JComponent comp: jComponents) {
+            comp.setFont(comp.getFont().deriveFont(maxSize));
+            JComponent tempComp = new JPanel();
+            tempComp.setFont(comp.getFont());
+            Graphics g = e.getComponent().getGraphics();
+            FontMetrics fontMetrics = g.getFontMetrics(jComponents[0].getFont());
+            int width = e.getComponent().getWidth();
+            while (width * WIDTH_PADDING < fontMetrics.stringWidth(maxText)) {
 
-                float current = comp.getFont().getSize2D();
-                comp.setFont(comp.getFont().deriveFont(current * 0.9f));
-                fontMetrics = g.getFontMetrics(comp.getFont());
+                float current = tempComp.getFont().getSize2D();
+                tempComp.setFont(comp.getFont().deriveFont(current * 0.9f));
+                fontMetrics = g.getFontMetrics(tempComp.getFont());
             }
+            if (tempComp.getFont().getSize2D() > maxFont.getSize2D()) maxFont = tempComp.getFont();
+        }
+        for(JComponent comp: jComponents) {
+            comp.setFont(maxFont);
         }
         e.getComponent().revalidate();
     }

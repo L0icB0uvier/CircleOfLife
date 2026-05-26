@@ -96,7 +96,7 @@ public class GraphicalLoadGame extends JPanel {
         this.add(scrollPane, "cell 0 0, grow");
         this.add(buttonComp, "cell 0 1, grow");
 
-        buttonComp.addComponentListener(new FontScaler(cancelButton, renameBtn, /*deleteBtn,*/ loadBtn));
+        cancelButton.addComponentListener(new FontScaler(0.5f, 0.9f, cancelButton, renameBtn, /*deleteBtn,*/ loadBtn));
 
         this.addMouseListener(getMouseDeselector());
         scrollPane.addMouseListener(getMouseDeselector());
@@ -224,7 +224,7 @@ public class GraphicalLoadGame extends JPanel {
         this.renameBtn.setEnabled(true);
         //this.deleteBtn.setEnabled(true);
         this.loadBtn.setEnabled(true);
-        gamePanel.setBorder(new RoundedBorder(10, UIColor.HOVER_COLOR, 5));
+        gamePanel.setBorder(new RoundedBorder(15, UIColor.HOVER_COLOR, 5));
     }
 
     private void deselectGame() {
@@ -241,7 +241,7 @@ public class GraphicalLoadGame extends JPanel {
     public void addGame(String game) {
         String[] gameData = GameDataManager.parseFileName(game);
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[90%, align left][10%, align right]", "[10%][20%]5%[30%]5%[20%, align center][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[80%, align left][20%, align right]", "[50%]push[40%]" );
         JPanel gamePanel = new JPanel(layout);
         gamePanel.setPreferredSize(new Dimension(500,150));
         gamePanel.setMaximumSize(new Dimension(10000,150));
@@ -253,18 +253,29 @@ public class GraphicalLoadGame extends JPanel {
         String[] dates = gameData[0].split(" ");
         String name = dates[0] + "/" + dates[1] + "/" + dates[2] + ", à " + dates[3];
         if(!gameData[4].isEmpty()) name = gameData[4];
+        Box namePanel = Box.createHorizontalBox();
         JLabel nameLabel = new JLabel(name);
-        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        namePanel.add(nameLabel);
+        namePanel.setBackground(UIColor.BACKGROUND);
+        namePanel.add(Box.createGlue());
 
         String player1 = gameData[1] + " " + gameData[3].substring(0, gameData[3].indexOf(' '));
         String sep = "|";
-        String player2 = gameData[3].substring(gameData[3].lastIndexOf(' ')) + " " + gameData[2];
+        String player2 = gameData[3].substring(gameData[3].lastIndexOf(' ') + 1) + " " + gameData[2];
 
+        Box gameDataPanel = Box.createHorizontalBox();
+        gameDataPanel.setBackground(UIColor.BACKGROUND);
         JLabel player1Label = new JLabel(player1);
         player1Label.setForeground(UIColor.BLUE);
         JLabel sepLabel = new JLabel(sep);
         JLabel player2Label = new JLabel(player2);
         player2Label.setForeground(UIColor.RED);
+
+        gameDataPanel.add(player1Label);
+        gameDataPanel.add(sepLabel);
+        gameDataPanel.add(player2Label);
+        gameDataPanel.add(Box.createGlue());
+
 
         ImageButton deleteBtn = new ImageButton("delete.png", UIColor.RED);
 
@@ -273,14 +284,12 @@ public class GraphicalLoadGame extends JPanel {
         deleteButtonPanel.setOpaque(false);
         deleteButtonPanel.add(deleteBtn);
 
-        gamePanel.add(nameLabel, "cell 0 0,span 1 3, grow");
-        gamePanel.add(player1Label, "cell 0 3,span 1 2, growy");
-        gamePanel.add(sepLabel, "cell 0 3, span 1 2, growy");
-        gamePanel.add(player2Label, "cell 0 3,span 1 2, growy");
-        gamePanel.add(deleteButtonPanel, "cell 1 1,span 1 3, grow");
+        gamePanel.add(namePanel, "cell 0 0, grow");
+        gamePanel.add(gameDataPanel, "cell 0 1, grow");
+        gamePanel.add(deleteButtonPanel, "cell 1 0, span 1 2, grow");
 
-        nameLabel.addComponentListener(new FontScaler(0.7f, nameLabel));
-        player1Label.addComponentListener(new FontScaler(0.7f, player1Label, sepLabel, player2Label));
+        namePanel.addComponentListener(new FontScaler(0.6f, nameLabel));
+        gameDataPanel.addComponentListener(new FontScaler(0.6f, player1Label, sepLabel, player2Label));
 
         gamePanel.addMouseListener(new SelectGameMouseAdapter(this, gamePanel, game));
         PopUpAdapter pua = new PopUpAdapter(this.userInterface.getFrame(), controller,3,"Voulez-vous supprimer "+game+"?","");
