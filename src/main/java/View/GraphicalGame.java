@@ -1,5 +1,6 @@
 package View;
 
+import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
 import View.Adapter.ControlButtonAdapter;
@@ -21,6 +22,7 @@ public class GraphicalGame extends JPanel {
     ArrayList<PlayerInfo> playerInfos;
     GameControlBar gameControlBar;
     CustomLabel gameInfo;
+    Image crown;
 
     public JButton undoBt, redoBt, allUndoBt, allRedoBt;
     public CustomButton forfeitBt, replayBt, reviewBt;
@@ -30,10 +32,12 @@ public class GraphicalGame extends JPanel {
     public GraphicalGame(Game game, EventCollector controller){
         this.game = game;
         this.controller = controller;
+        this.crown = Configuration.loadImage("crown.png");
+
 
         playerInfos = new ArrayList<>();
 
-        MigLayout layout = new MigLayout("fill, insets 1.5% 1.5% 1.5% 1.5%", "[grow]1%[grow]1%[58%]1%[grow]1%[grow]1%[14%]","[10%]1%[10%][grow][10%]1%[10%][grow][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 2% 2% 2% 2%", "[grow]1.5%[grow]1.5%[58%]1.5%[grow]1.5%[grow]1.5%[14%]","[10%]1.5%[10%][grow][10%]1.5%[10%][grow][10%]" );
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
@@ -170,7 +174,6 @@ public class GraphicalGame extends JPanel {
 
     public void updateGameInfo(){
         if (game.isGameOver()) {
-//            this.remove(forfeitBt.getParent());
             showEndGameButtons();
             if(game.isReviewModeActive()){
                 gameInfo.updateMessage(game.getMatch().wonByScore? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
@@ -252,4 +255,22 @@ public class GraphicalGame extends JPanel {
         boolean gameControlBarVisible = game.getMatch().isReviewModeActive() == false;
         gameControlBar.setVisible(gameControlBarVisible);
     }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+
+        if(game.isGameOver() && crown != null){
+            PlayerInfo player = playerInfos.get(game.getWinningPlayer());
+            int min_size = Math.min((int)(this.getWidth()*0.03),(int)(this.getHeight()*0.03));
+            int x = player.getWidth() + player.getX()  - min_size;
+            int y = player.getY()  - min_size;
+            int size = 2*min_size;
+            g.drawImage(crown, x ,y, size, size, this);
+        }
+    }
+
+
+
+
 }

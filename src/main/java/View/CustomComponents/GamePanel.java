@@ -27,8 +27,7 @@ public class GamePanel extends JComponent implements Observer {
             imgStonePlayer2,
             imgStonePlayer1Preview,
             imgStonePlayer2Preview,
-            imgStoneDisabled,
-            imgStoneHover;
+            imgStoneDisabled;
 
     int imgSrcHeight, imgSrcWidth;
     float imageWidth, imageHeight;
@@ -137,7 +136,6 @@ public class GamePanel extends JComponent implements Observer {
         imgStonePlayer1Preview = (BufferedImage) Configuration.loadImage("Blue_Stone_transparent.png");
         imgStonePlayer2Preview = (BufferedImage) Configuration.loadImage("Red_Stone_transparent.png");
         imgStoneDisabled = (BufferedImage) Configuration.loadImage("Disabled_Stone.png");
-        imgStoneHover = (BufferedImage) Configuration.loadImage("stone_hover.png");
     }
 
     @Override
@@ -149,7 +147,6 @@ public class GamePanel extends JComponent implements Observer {
 
         g2d.setColor(this.getBackground());
         g2d.fillRoundRect(5, 5, getWidth()-10, getHeight()-10, 15, 15);
-
 
         if(requireCalculation)
             recalculate();
