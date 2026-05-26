@@ -74,14 +74,6 @@ public class GraphicalLoadGame extends JPanel {
         renameBtn.addActionListener(e -> renameGame());
         renameBtn.setEnabled(false);
 
-        /*deleteBtn = createJButton("Supprimer",false,UIColor.RED);
-        deleteBtn.setMinimumSize(new Dimension(0, 0));
-        deleteBtn.addActionListener(e -> deleteGame());
-        deleteBtn.setEnabled(false);
-        cancelButton.setVerticalTextPosition(SwingConstants.CENTER);
-        cancelButton.setHorizontalTextPosition(SwingConstants.CENTER);
-        cancelButton.setFocusable(false);*/
-
         loadBtn = createJButton("Charger",false,UIColor.GREEN);
         loadBtn.setMinimumSize(new Dimension(0, 0));
         loadBtn.addActionListener(e -> loadGame());
@@ -90,7 +82,6 @@ public class GraphicalLoadGame extends JPanel {
         buttonComp.setBackground(UIColor.BACKGROUND);
         buttonComp.add(cancelButton, "cell 0 0,grow");
         buttonComp.add(renameBtn, "cell 1 0,grow");
-        //buttonComp.add(deleteBtn, "cell 2 0,grow");
         buttonComp.add(loadBtn, "cell 2 0,grow");
 
         this.add(scrollPane, "cell 0 0, grow");
@@ -185,6 +176,7 @@ public class GraphicalLoadGame extends JPanel {
                     textField.setForeground(Color.BLACK);
                 }
             }
+
             @Override
             public void focusLost(FocusEvent e) {
                 if (textField.getText().isEmpty()) {
@@ -197,15 +189,6 @@ public class GraphicalLoadGame extends JPanel {
         textField.setText(placeholder);
         textField.requestFocus(false);
         return textField;
-    }
-
-    private void deleteGame() {
-        if (currentGame == null) return;
-        int indexComponent = Arrays.stream(contentPanel.getComponents()).toList().indexOf(currentGamePanel);
-        contentPanel.remove(currentGamePanel);
-        contentPanel.remove(indexComponent - 1);
-        controller.deleteGame(currentGame);
-        this.revalidate();
     }
 
     private void deleteGame(String game, JPanel gamePanel) {
@@ -222,9 +205,8 @@ public class GraphicalLoadGame extends JPanel {
         this.currentGame = gameFile;
         this.currentGamePanel = gamePanel;
         this.renameBtn.setEnabled(true);
-        //this.deleteBtn.setEnabled(true);
         this.loadBtn.setEnabled(true);
-        gamePanel.setBorder(new RoundedBorder(10, UIColor.HOVER_COLOR, 5));
+        gamePanel.setBorder(new RoundedBorder(15, UIColor.HOVER_COLOR, 5));
     }
 
     private void deselectGame() {
@@ -233,7 +215,6 @@ public class GraphicalLoadGame extends JPanel {
         currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
         currentGamePanel = null;
         this.renameBtn.setEnabled(false);
-        //this.deleteBtn.setEnabled(false);
         this.loadBtn.setEnabled(false);
     }
 
@@ -283,17 +264,13 @@ public class GraphicalLoadGame extends JPanel {
         player1Label.addComponentListener(new FontScaler(0.7f, player1Label, sepLabel, player2Label));
 
         gamePanel.addMouseListener(new SelectGameMouseAdapter(this, gamePanel, game));
-        PopUpAdapter pua = new PopUpAdapter(this.userInterface.getFrame(), controller,3,"Voulez-vous supprimer "+game+"?","");
+        PopUpAdapter pua = new PopUpAdapter(this.userInterface.getFrame(), controller,3,"Voulez-vous supprimer "+
+                (gameData[4].isEmpty() ? name : game) +"?","");
         pua.setButtonVisibility(1,false);
         pua.setButtonLabel(0,"Annuler");
         pua.setButtonLabel(2,"Supprimer");
         pua.setActionButton(0,"Annuler",true);
-        pua.setActionButton(2, new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteGame(game,gamePanel);
-            }
-        },true);
+        pua.setActionButton(2, e -> deleteGame(game,gamePanel),true);
         deleteBtn.addActionListener(pua);
 
         contentPanel.add(gamePanel);
