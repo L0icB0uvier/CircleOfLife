@@ -244,15 +244,15 @@ public class Match extends History<Move> implements Cloneable {
 
         if(neighbors.isEmpty()){
             newCritter = new Critter(Set.of(coord), currentPlayerIndex);
-//            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
+            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
         }
         else{
             newCritter = evolve(neighbors, coord);
             if(neighbors.size() == 1){
-//                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
+                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
             }
             else{
-//                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
+                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
             }
         }
 
@@ -653,7 +653,7 @@ public class Match extends History<Move> implements Cloneable {
      * @param stones Les pierres autour desquelles on cherche des positions jouables.
      * @param player L'indice de joueur pour lequel on cherche des positions jouables.
      * @param distance La distance à laquelle chercher des positions jouable depuis les pierres de départ.
-     * @return
+     * @return Retourne tous les coups jouable par le joueur autour d'un ensemble de position et à une distance donnée.
      */
     public Set<Coordinate> getPlayerPlayableMovesAroundStonesAtDistance(Set<Coordinate> stones, int player, int distance){
         if (distance <= 0) {

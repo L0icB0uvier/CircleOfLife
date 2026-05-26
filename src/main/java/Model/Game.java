@@ -23,12 +23,24 @@ public class Game extends Observable {
         match = new Match(name1, name2, startingPlayer);
     }
 
+    /**
+     * Retourne l'indice du joueur actif.
+     * @return L'indice du joueur actif.
+     */
     public int getCurrentPlayerIndex(){
         return match.currentPlayerIndex;
     }
 
+    /**
+     * Retourne l'indice de l'adversaire du joueur actif.
+     * @return L'indice de l'adversaire du joueur actif.
+     */
     public int getOpponentPlayerIndex() {return match.getOpponentPlayerIndex();}
 
+    /**
+     * Retourne le gagnant de la partie s'il existe.
+     * @return L'indice du gagnant s'il existe, sinon -1.
+     */
     public int getWinningPlayer(){
         return match.getWinner();
     }
@@ -50,17 +62,25 @@ public class Game extends Observable {
         return match;
     }
 
+    /**
+     * Indique si la partie est terminée.
+     * @return true si la partie est terminée, false sinon.
+     */
     public boolean isGameOver(){
         return match.isGameOver();
     }
 
+    /**
+     * Indique si le mode analyse est actif.
+     * @return true si le mode analyse et actif, false sinon.
+     */
     public boolean isReviewModeActive(){
         return match.isReviewModeActive();
     }
 
     /**
      * Joue un move puis appel update pour notifier les observateurs.
-     * @param move
+     * @param move Le Move à jouer.
      */
     public void playMove(Move move){
         if(match.isGameOver()){
@@ -88,6 +108,10 @@ public class Game extends Observable {
         update();
     }
 
+    /**
+     * Indique s'il est possible d'annuler la dernière action.
+     * @return true s'il est possible d'annuler la dernière action, false sinon.
+     */
     public boolean canUndo(){
         if (match.isReviewModeActive()) {
             return match.getPastCount() > 1;
@@ -125,23 +149,35 @@ public class Game extends Observable {
         update();
     }
 
+    /**
+     * Annuler tous les coups jusqu'au début de l'historique.
+     */
     public void undoAll(){
         Configuration.info("Game received Undo all.");
         while (canUndo())
             undo();
     }
 
+    /**
+     * Refaire tous les coups jusqu'à la fin de l'historique.
+     */
     public void redoAll(){
         Configuration.info("Game received Redo all");
         while (match.canRedo())
             redo();
     }
 
+    /**
+     * Termine le match et déclare le joueur adverse du joueur actif vainqueur.
+     */
     public void giveUp(){
         match.gameOver(match.getOpponentPlayerIndex());
         update();
     }
 
+    /**
+     * Toogle le mode analyse.
+     */
     public void toggleReviewMode(){
         if(match.isReviewModeActive()){
             exitReviewMode();
@@ -150,23 +186,36 @@ public class Game extends Observable {
             enterReviewMode();
     }
 
+    /**
+     * Rentre en mode analyse.
+     */
     private void enterReviewMode(){
         match.enterReviewMode();
         update();
     }
 
+    /**
+     * Sort du mode analyse.
+     */
     private void exitReviewMode(){
         redoAll();
         match.exitReviewMode();
         update();
     }
 
+    /**
+     * Rejouer le match en changeant le joueur qui commence.
+     */
     public void replay(){
         match.initMatch();
         match.toggleStartingPlayer();
         update();
     }
 
+    /**
+     * Récupère le nombre de coups joués depuis le début de la partie sans compter les coups annulés.
+     * @return Le nombre de coups joués depuis le début de la partie.
+     */
     public int getNumberOfMovePlayed(){
         return match.getPastCount();
     }
