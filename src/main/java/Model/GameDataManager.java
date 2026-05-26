@@ -503,11 +503,18 @@ public class GameDataManager {
         }
     }
 
+    public static boolean newNameContainsSeparator(String newName) {
+        String sep = "_";
+        return newName.contains(sep);
+    }
+
     public static String renameMatch(String filename, String newName) {
         if (!saveFileExists(filename))
             return "";
         if (!filename.endsWith(".save"))
             filename += ".save";
+        if (newNameContainsSeparator(newName))
+            return "";
         Path source = Paths.get((!testMode ? savePath : testPath) + filename);
         String newNameRes = constNewName(filename, newName);
         try {
