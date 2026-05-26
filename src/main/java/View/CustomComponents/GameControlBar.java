@@ -22,29 +22,11 @@ public class GameControlBar extends JPanel {
 
         saveBt = new ImageButton("saveIcon.png");
         saveBt.setToolTipText("<html><b>Sauvegarder la partie.<b></html>");
-        forfeitBt = new ImageButton("giveUp.png");
-        forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
         quitGameButton = new ImageButton("logout.png");
         quitGameButton.setToolTipText("<html><b>Quitter la partie.<b></html>");
 
         this.add(saveBt);
-        this.add(forfeitBt);
-    }
-
-    public void updateButtons(){
-        if(game.isGameOver()){
-            this.remove(forfeitBt);
-            this.remove(quitGameButton);
-            this.add(quitGameButton);
-        }
-        else{
-            this.remove(forfeitBt);
-            this.remove(quitGameButton);
-            this.add(forfeitBt);
-
-        }
-        this.revalidate();
-        this.repaint();
+        this.add(quitGameButton);
     }
 }
 

@@ -29,7 +29,7 @@ public class Match extends History<Move> implements Cloneable {
 
     private final int boardSize = 9;
     int winner = -1;
-    public boolean wonByScore = false;
+    public WinType winType = WinType.PENDING;
 
     private static final int[][] HEX_DELTAS = {
             {1, 0}, {1, 1}, {0, 1}, {-1, 0}, {-1, -1}, {0, -1}
@@ -60,6 +60,9 @@ public class Match extends History<Move> implements Cloneable {
         initMatch();
     }
 
+    /**
+     * Change le joueur commençant la partie.
+     */
     public void toggleStartingPlayer(){
         startingPlayer = startingPlayer == 0 ? 1 : 0;
         currentPlayerIndex = startingPlayer;
@@ -122,8 +125,7 @@ public class Match extends History<Move> implements Cloneable {
     public void endTurn(){
         // Il faut vérifier si le move joué a accordé la victoire au joueur actif
         if(winByScore()){
-            wonByScore = true;
-            gameOver(currentPlayerIndex);
+            gameOver(currentPlayerIndex, WinType.SCORE);
             return;
         }
 
@@ -131,15 +133,15 @@ public class Match extends History<Move> implements Cloneable {
 
         // Il faut vérifier après avoir changé de joueur si le nouveau joueur a gagné par remplissage
         if(winByFillUp()){
-            wonByScore = false;
-            gameOver(currentPlayerIndex);
+            gameOver(currentPlayerIndex, winType = WinType.FILL);
         }
     }
 
     /**
      * Met fin à la partie.
      */
-    void gameOver(int winner){
+    void gameOver(int winner, WinType winType){
+        this.winType = winType;
         gameOver = true;
         this.winner = winner;
     }
@@ -244,15 +246,15 @@ public class Match extends History<Move> implements Cloneable {
 
         if(neighbors.isEmpty()){
             newCritter = new Critter(Set.of(coord), currentPlayerIndex);
-//            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
+            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
         }
         else{
             newCritter = evolve(neighbors, coord);
             if(neighbors.size() == 1){
-//                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
+                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
             }
             else{
-//                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
+                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
             }
         }
 
@@ -307,7 +309,7 @@ public class Match extends History<Move> implements Cloneable {
      * @return true si le critter prédateur peut manger le critter ciblé, faux sinon.
      */
     public boolean canEat(int evolvingCritterType, int targetCritterType){
-        return targetCritterType == (evolvingCritterType + 1)%12;
+        return targetCritterType == (evolvingCritterType + 1) % 12;
     }
 
     /**
@@ -653,7 +655,7 @@ public class Match extends History<Move> implements Cloneable {
      * @param stones Les pierres autour desquelles on cherche des positions jouables.
      * @param player L'indice de joueur pour lequel on cherche des positions jouables.
      * @param distance La distance à laquelle chercher des positions jouable depuis les pierres de départ.
-     * @return
+     * @return Retourne tous les coups jouable par le joueur autour d'un ensemble de position et à une distance donnée.
      */
     public Set<Coordinate> getPlayerPlayableMovesAroundStonesAtDistance(Set<Coordinate> stones, int player, int distance){
         if (distance <= 0) {

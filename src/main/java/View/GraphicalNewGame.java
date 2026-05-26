@@ -1,6 +1,7 @@
 package View;
 
 import View.Adapter.OptionalVisibilityAdapter;
+import View.CustomComponents.PopUpPanel;
 import View.Utils.ChoiceBox;
 import View.Utils.FontScaler;
 import View.Utils.UIColor;
@@ -191,5 +192,20 @@ public class GraphicalNewGame extends JPanel {
         JButton button = new JButton(text);
         button.setFocusable(false);
         return button;
+    }
+
+    public String[] getTextFields() {
+        return new String[]{player1NameTextField.getText(), player2NameTextField.getText()};
+    }
+
+    public void errorPopup(String string) {
+        JDialog jDialog = new JDialog();
+        jDialog.setSize(800, 300);
+        jDialog.setResizable(false);
+        jDialog.setLocationRelativeTo(parent);
+        PopUpPanel popUpPanel = new PopUpPanel(null, jDialog, 0);
+        popUpPanel.setMainLabel(string);
+        jDialog.add(popUpPanel);
+        jDialog.setVisible(true);
     }
 }

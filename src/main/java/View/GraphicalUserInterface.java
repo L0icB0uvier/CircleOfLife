@@ -101,15 +101,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setActionButton(0, "Annuler", true);
         pua.setButtonLabel(0, "Annuler");
         pua.setActionButton(2, this, graphicalMainMenu);
-        pua.setButtonLabel(2, "Menu");
+        pua.setButtonLabel(2, "Quitter");
         pua.setButtonVisibility(1, false);
-
-        pua = new PopUpAdapter(frame, controller, 2, "Voulez-vous abandonner la partie en en cours ?", "");
-        graphicalGame.gameControlBar.forfeitBt.addActionListener(pua);
-        pua.setActionButton(0, "Annuler", true);
-        pua.setButtonLabel(0, "Non");
-        pua.setActionButton(1, "GiveUp", true);
-        pua.setButtonLabel(1, "Oui");
 
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);
@@ -156,7 +149,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalMainMenu.tutorialButton.addActionListener(new TutorialAdapter(this));
         graphicalMainMenu.quitButton.addActionListener(new QuitAdapter());
 
-        graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this));
+        graphicalNewGame.startButton.addActionListener(new StartGameAdapter(controller, this, graphicalNewGame));
         graphicalNewGame.startButton.addActionListener(new NewGameAdapter(controller));
         graphicalNewGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 

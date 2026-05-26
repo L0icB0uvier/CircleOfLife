@@ -23,16 +23,6 @@ public class CritterUtils {
             Map.entry(11, 1)
     );
 
-    /**
-     * Retourne le type de critter mangeant le type de critter donnée.
-     * @param critterType Le type de critter pour lequel on veut trouver celui qui le mange.
-     * @return Le type de critter mangeant celui passé en paramètre.
-     */
-    public static int getEatingCritterType(int critterType){
-        return Math.floorMod(critterType - 1, 12);
-    }
-
-
     static {
         Map<Set<Coordinate>, Integer> tempShapes = new LinkedHashMap<>();
 
@@ -152,6 +142,11 @@ public class CritterUtils {
         return normalized;
     }
 
+    /**
+     * Récupère la coordonnées la plus en haut à gauche du critter.
+     * @param boardCoordinate La liste de coordonnées dans laquel trouver la coordonnées la plus haut/gauche.
+     * @return La coordonnées la plus haut/gauche.
+     */
     public static Coordinate getTopLeftCoordinate(Set<Coordinate> boardCoordinate){
         int minLine = Integer.MAX_VALUE;
         int minCol = Integer.MAX_VALUE;
@@ -168,6 +163,13 @@ public class CritterUtils {
         return new Coordinate(minCol, minLine);
     }
 
+    /**
+     * Retourne les un critter du type et de l'id donnée.
+     * @param type Le type du critter.
+     * @param id L'id de la variation du critter.
+     * @param player Le type de joueur à assigner au critter.
+     * @return Le critter correspondant.
+     */
     public static Critter critterFromId(int type, int id, int player){
         List<Set<Coordinate>> keys = critters.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), type))
@@ -179,6 +181,12 @@ public class CritterUtils {
         return new Critter(keys.get(id), player);
     }
 
+    /**
+     * Retourne les coordonnées d'un critter du type et de l'id donné.
+     * @param type Le type du critter.
+     * @param id L'id de la variation du critter.
+     * @return Les coordonnées correspondantes.
+     */
     public static Set<Coordinate> getCritterTypeCoordinates(int type, int id){
         List<Set<Coordinate>> keys = critters.entrySet().stream()
                 .filter(entry -> Objects.equals(entry.getValue(), type))

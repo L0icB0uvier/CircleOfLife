@@ -51,6 +51,11 @@ public class MatchUtils {
         return copy;
     }
 
+    /**
+     * Crée une copie profonde des PlayerData.
+     * @param players Les PlayerData à copier.
+     * @return Une copie profonde des PlayerData.
+     */
     public static PlayerData[] copyPlayerData(PlayerData[] players)  {
         PlayerData[] temp = new PlayerData[players.length];
         for (int i = 0; i < players.length; i++) {

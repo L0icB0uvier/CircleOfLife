@@ -2,6 +2,7 @@ package View;
 
 import Model.Game;
 import Model.PlayerData;
+import Model.WinType;
 import View.Adapter.ControlButtonAdapter;
 import View.CustomComponents.*;
 import View.Utils.FontScaler;
@@ -154,7 +155,6 @@ public class GraphicalGame extends JPanel {
         updateEndGameButtonsVisibility();
         updateUndoRedoEnabled();
         updateGameControlBarVisibility();
-        gameControlBar.updateButtons();
     }
 
     public void updateEndGameButtonsVisibility(){
@@ -173,10 +173,9 @@ public class GraphicalGame extends JPanel {
 
     public void updateGameInfo(){
         if (game.isGameOver()) {
-//            this.remove(forfeitBt.getParent());
             showEndGameButtons();
             if(game.isReviewModeActive()){
-                gameInfo.updateMessage(game.getMatch().wonByScore? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
+                gameInfo.updateMessage(game.getMatch().winType == WinType.SCORE ? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
                 enableReviewMode();
             }
             else{
@@ -185,8 +184,6 @@ public class GraphicalGame extends JPanel {
             }
         } else {
             hideEndGameButtons();
-//            this.remove(forfeitBt.getParent());
-//            this.add(forfeitBt.getParent());
             gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
             disableReviewMode();
         }

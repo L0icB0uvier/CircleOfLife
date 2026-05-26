@@ -72,6 +72,7 @@ public class GameDataManager {
         }
 
         writer.write(match.isReviewModeActive() + sep);
+        writer.write(match.winType.name() + sep);
 
         writer.close();
     }
@@ -278,11 +279,18 @@ public class GameDataManager {
 
         // read reviewMode
         boolean reviewModeActive = false;
-        if (scanner.hasNextBoolean())
+        if (scanner.hasNextBoolean()) 
             reviewModeActive = scanner.nextBoolean();
 
         if (reviewModeActive || m.isGameOver())
             m.enterReviewMode();
+
+        if (scanner.hasNext()) {
+            String winTypeText = scanner.next();
+            WinType winType = WinType.valueOf(winTypeText);
+            if(winType == WinType.GIVE_UP)
+                game.giveUp();
+        }
 
         scanner.close();
         return true;
