@@ -100,7 +100,8 @@ public class Controller implements EventCollector, Observer {
     private void continueGame(){
         if (!GameDataManager.hasSaveFile()) return;
         try {
-            GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0));
+            if (!GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0)))
+                return;
             Settings matchSettings = Configuration.getSettings();
             players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
             players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
@@ -114,9 +115,10 @@ public class Controller implements EventCollector, Observer {
      * Charge une partie à partir des données sauvegardées du joueur.
      * @param gameFile le nom du fichier de la partie à charger
      */
-    public void loadGame(String gameFile){
+    public boolean loadGame(String gameFile){
         try {
-            GameDataManager.loadMatch(game, gameFile);
+            if(!GameDataManager.loadMatch(game, gameFile))
+                return false;
             Settings matchSettings = Configuration.getSettings();
             players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
             players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
@@ -124,6 +126,7 @@ public class Controller implements EventCollector, Observer {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
     /**

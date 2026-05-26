@@ -70,8 +70,7 @@ public class GameDataManager {
             writer.write(moveToLineColumn(m) + sep);
 
         }
-
-        writer.write(match.isReviewModeActive() + sep);
+        
         writer.write(match.winType.name() + sep);
 
         writer.close();

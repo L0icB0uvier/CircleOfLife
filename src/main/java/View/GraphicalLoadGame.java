@@ -6,7 +6,9 @@ import Model.GameDataManager;
 import View.Adapter.PopUpAdapter;
 import View.Adapter.SelectGameMouseAdapter;
 import View.CustomComponents.CustomButton;
+import View.CustomComponents.ErrorPopUpPanel;
 import View.CustomComponents.ImageButton;
+import View.CustomComponents.PopUpPanel;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
 import View.Utils.UIColor;
@@ -108,8 +110,15 @@ public class GraphicalLoadGame extends JPanel {
 
     private void loadGame() {
         if(currentGame == null) return;
-        controller.loadGame(currentGame);
+        if (!controller.loadGame(currentGame)) {
+            errorPopup("Erreur, impossible de charger le match sélectionné");
+            return;
+        }
         userInterface.startGame();
+    }
+
+    public void errorPopup(String string) {
+        new ErrorPopUpPanel(string, this);
     }
 
     private void renameGame() {

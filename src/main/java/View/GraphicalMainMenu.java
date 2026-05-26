@@ -1,6 +1,7 @@
 package View;
 
 import Model.GameDataManager;
+import View.CustomComponents.ErrorPopUpPanel;
 import View.Utils.FontScaler;
 import net.miginfocom.swing.MigLayout;
 
@@ -84,6 +85,10 @@ public class GraphicalMainMenu extends JPanel {
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         return button;
+    }
+
+    public void errorPopup(String string) {
+        new ErrorPopUpPanel(string, this);
     }
 
 

@@ -3,12 +3,14 @@ package View;
 import View.Adapter.OptionalVisibilityAdapter;
 import View.CustomComponents.PopUpPanel;
 import View.CustomComponents.ChoiceBox;
+import View.CustomComponents.ErrorPopUpPanel;
 import View.Utils.FontScaler;
 import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -194,13 +196,6 @@ public class GraphicalNewGame extends JPanel {
     }
 
     public void errorPopup(String string) {
-        JDialog jDialog = new JDialog();
-        jDialog.setSize(800, 300);
-        jDialog.setResizable(false);
-        jDialog.setLocationRelativeTo(parent);
-        PopUpPanel popUpPanel = new PopUpPanel(null, jDialog, 0);
-        popUpPanel.setMainLabel(string);
-        jDialog.add(popUpPanel);
-        jDialog.setVisible(true);
+        new ErrorPopUpPanel(string, this);
     }
 }
