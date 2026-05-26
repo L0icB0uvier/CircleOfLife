@@ -461,7 +461,7 @@ public class GamePanel extends JComponent implements Observer {
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
                         if(showBoardHighlightEffect)
-                            drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, boardHighlightStroke);
+                            drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, lastMoveStroke);
                         eatenShape = critter.type();
                     }
                 }
