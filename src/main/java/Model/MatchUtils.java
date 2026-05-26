@@ -2,6 +2,7 @@ package Model;
 
 import Global.Configuration;
 
+import java.awt.*;
 import java.util.Set;
 
 public class MatchUtils {
@@ -74,8 +75,8 @@ public class MatchUtils {
      * @param pointB Le deuxième point.
      * @return La distance Euclidienne entre pointA et pointB.
      */
-    public static double euclidianDistance(Coordinate pointA, Coordinate pointB){
-        return Math.sqrt(Math.pow(pointA.col()- pointB.col(), 2) + Math.pow(pointA.line()- pointB.line(), 2));
+    public static double euclidianDistance(Point pointA, Point pointB){
+        return Math.sqrt(Math.pow(pointA.getX()- pointB.getX(), 2) + Math.pow(pointA.getY()- pointB.getY(), 2));
     }
 
 

@@ -3,6 +3,11 @@ package Model;
 import Global.Configuration;
 import Patterns.Observable;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Classe principale du modèle qui gère les matchs.
  */
@@ -81,11 +86,22 @@ public class Game extends Observable {
             return;
         }
         match.apply(move);
+        checkScoreChange();
         match.endTurn();
         if(match.isGameOver()){
             Configuration.info(String.format("Player %d won!", match.winner + 1));
         }
         update();
+    }
+
+    private void checkScoreChange() {
+        if(match.previouslyEatenCritters.isEmpty() == false){
+            Map<Coordinate, Integer> eatenData = new HashMap<>();
+            for (Critter previouslyEatenCritter : match.previouslyEatenCritters) {
+                eatenData.put(CritterUtils.getAverageCoordinate(previouslyEatenCritter.stonesCoordinates()), MatchUtils.calculatePointEarned(Set.of(previouslyEatenCritter)));
+            }
+            updateScore(eatenData, match.getCurrentPlayerIndex());
+        }
     }
 
     /**
@@ -136,6 +152,7 @@ public class Game extends Observable {
         }
         else{
             match.redo();
+            checkScoreChange();
             match.toggleCurrentPlayer();
             Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
         }

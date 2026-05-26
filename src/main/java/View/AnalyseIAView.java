@@ -4,6 +4,7 @@ import Controller.IA.AILevel;
 import Global.Configuration;
 import Global.PathValidator;
 import Global.PlayerNumber;
+import Model.Coordinate;
 import Model.Game;
 import Patterns.Observer;
 
@@ -50,7 +51,7 @@ public class AnalyseIAView implements Observer, UserInterface {
         //Configuration.setLoggerLevel(Level.WARNING);
         Configuration.initSettings();
 
-        game.addObserver(this);
+        game.addUpdateObserver(this);
         control.addUserInterface(this);
 
         startNewGame();
@@ -298,6 +299,11 @@ public class AnalyseIAView implements Observer, UserInterface {
     public void updateSettings() {
         Configuration.setPlayerSettings(PlayerNumber.PLAYER_1, aiLevel1, "AI1");
         Configuration.setPlayerSettings(PlayerNumber.PLAYER_2, aiLevel2, "AI2");
+    }
+
+    @Override
+    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress) {
+
     }
 
     /**

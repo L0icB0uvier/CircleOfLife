@@ -1,26 +1,36 @@
 package Controller;
 
+import Controller.Animation.Animation;
+import Controller.Animation.ScoreAnimation;
 import Global.Configuration;
 import Model.*;
 import Patterns.Observer;
+import Patterns.ScoreEventObserver;
 import View.EventCollector;
 import Global.Settings;
 import View.UserInterface;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Fait l'interface entre la vue et le modèle.
  */
-public class Controller implements EventCollector, Observer {
+public class Controller implements EventCollector, Observer, ScoreEventObserver {
     Game game;
     UserInterface view;
     Player[] players;
     Player currentPlayer;
+    List<Animation> animations;
 
     public Controller(Game game){
         this.game = game;
-        game.addObserver(this);
+        animations = new ArrayList<>();
+        game.addUpdateObserver(this);
+        game.addUpdateScoreObserver(this);
         players = new Player[2];
     }
 
@@ -174,7 +184,17 @@ public class Controller implements EventCollector, Observer {
      */
     private void giveUp(){
         currentPlayer.endTurn();
+        cleanAnimations();
         game.giveUp();
+    }
+
+    private void cleanAnimations(){
+        Iterator<Animation> it = animations.iterator();
+        while (it.hasNext()) {
+            Animation anim = it.next();
+            anim.endAnimation();
+            it.remove();
+        }
     }
 
     /**
@@ -182,6 +202,7 @@ public class Controller implements EventCollector, Observer {
      */
     private void replay(){
         game.replay();
+        cleanAnimations();
         updateCurrentPlayer();
         currentPlayer.startTurn();
     }
@@ -206,6 +227,26 @@ public class Controller implements EventCollector, Observer {
     }
 
     @Override
+    public void animTic() {
+        if(animations.isEmpty())
+            return;
+
+        Iterator<Animation> it = animations.iterator();
+        while (it.hasNext()) {
+            Animation anim = it.next();
+            anim.tictac();
+            if (anim.isOver()) {
+                Configuration.info("Removing animation");
+                it.remove();
+            }
+        }
+    }
+
+    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress){
+        view.animateScore(groupCoords, scoreGained, player, progress);
+    }
+
+    @Override
     public void update() {
         if(currentPlayer == null) return;
 
@@ -218,5 +259,13 @@ public class Controller implements EventCollector, Observer {
 
         updateCurrentPlayer();
         currentPlayer.startTurn();
+    }
+
+    @Override
+    public void onScoreUpdated(Map<Coordinate, Integer> eatenInfo, int player) {
+        for (Map.Entry<Coordinate, Integer> entry : eatenInfo.entrySet()) {
+            Configuration.info("Creating score animation");
+            animations.add(new ScoreAnimation(0.015, entry.getKey(), entry.getValue(), player, this));
+        }
     }
 }

@@ -198,4 +198,29 @@ public class CritterUtils {
 
         return keys.get(id);
     }
+
+    /**
+     * Calcule la coordonnée moyenne d'un ensemble de coordonnées.
+     * @param coordinates Le set de coordonnées à analyser.
+     * @return La coordonnée moyenne, ou null si l'ensemble est vide ou null.
+     */
+    public static Coordinate getAverageCoordinate(Set<Coordinate> coordinates) {
+        if (coordinates == null || coordinates.isEmpty()) {
+            return null;
+        }
+
+        double sumLine = 0;
+        double sumCol = 0;
+
+        for (Coordinate coord : coordinates) {
+            sumLine += coord.line();
+            sumCol += coord.col();
+        }
+
+        // On arrondit au plus proche pour obtenir des coordonnées entières
+        int avgLine = (int) Math.round(sumLine / coordinates.size());
+        int avgCol = (int) Math.round(sumCol / coordinates.size());
+
+        return new Coordinate(avgCol, avgLine); // Attention à l'ordre (col, line) utilisé dans votre méthode normalizeCoordinate
+    }
 }
