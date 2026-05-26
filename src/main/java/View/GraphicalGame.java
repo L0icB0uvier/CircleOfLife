@@ -21,7 +21,7 @@ public class GraphicalGame extends JPanel {
     GamePanel gamePanel;
     ArrayList<PlayerInfo> playerInfos;
     GameControlBar gameControlBar;
-    CustomLabel gameInfo;
+    GameInfo gameInfo;
 
     public JButton undoBt, redoBt, allUndoBt, allRedoBt;
     public CustomButton forfeitBt, replayBt, reviewBt;
@@ -106,7 +106,7 @@ public class GraphicalGame extends JPanel {
         reviewBt.addActionListener(new ControlButtonAdapter(controller, "ToggleReviewMode"));
         reviewBt.setToolTipText("<html><b>Revoir la partie.<b></html>");
 
-        gameInfo = new CustomLabel(game);
+        gameInfo = new GameInfo(game);
 
         gamePanel = new GamePanel(game);
         gamePanel.setBorder(new RoundedBorder(15,Color.BLACK,5));
@@ -153,6 +153,7 @@ public class GraphicalGame extends JPanel {
         updateEndGameButtonsVisibility();
         updateUndoRedoEnabled();
         updateGameControlBarVisibility();
+        updateScore(game.getMatch().getPlayerData());
     }
 
     public void updateEndGameButtonsVisibility(){
@@ -170,23 +171,19 @@ public class GraphicalGame extends JPanel {
     }
 
     public void updateGameInfo(){
+        gameInfo.update();
         if (game.isGameOver()) {
             showEndGameButtons();
             if(game.isReviewModeActive()){
-                gameInfo.updateMessage(game.getMatch().winType == WinType.SCORE ? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
                 enableReviewMode();
             }
             else{
-                gameInfo.updateMessage(game.getWinningPlayer(), " a gagné la partie.");
                 disableReviewMode();
             }
         } else {
             hideEndGameButtons();
-            gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
             disableReviewMode();
         }
-
-        updateScore(game.getMatch().getPlayerData());
     }
 
     private void updateUndoRedoEnabled() {

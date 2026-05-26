@@ -106,13 +106,7 @@ public class Game extends Observable {
      * @return true s'il est possible d'annuler la dernière action, false sinon.
      */
     public boolean canUndo(){
-        if (match.isReviewModeActive()) {
-            return match.getPastCount() > 1;
-        }
-
-        else{
-            return match.canUndo();
-        }
+        return match.canUndo();
     }
 
     /**
@@ -120,7 +114,7 @@ public class Game extends Observable {
      */
     public void redo(){
         Configuration.info("Game received Redo.");
-        if(!match.canRedo()) return;
+        if(!canRedo()) return;
 
         if(match.isReviewModeActive()){
             switch (match.winType){
@@ -142,6 +136,10 @@ public class Game extends Observable {
             Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
         }
         update();
+    }
+
+    public boolean canRedo(){
+        return match.canRedo();
     }
 
     /**
