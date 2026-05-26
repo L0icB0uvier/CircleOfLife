@@ -316,8 +316,10 @@ public class GamePanel extends JComponent implements Observer {
                         if(match.getCurrentPlayerIndex() == 0)
                             continue;
                         drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        break;
                     case -3:
                         drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        break;
                 }
             }
         }
