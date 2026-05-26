@@ -273,7 +273,7 @@ public class GraphicalLoadGame extends JPanel {
     }
 
     private JButton createJButton(String text,boolean enabled,Color bgColor){
-        CustomButton button = new CustomButton(text,bgColor);
+        CustomButton button = new CustomButton(text,bgColor, true);
         button.setFocusable(false);
         button.setVerticalTextPosition(SwingConstants.CENTER);
         button.setHorizontalTextPosition(SwingConstants.CENTER);

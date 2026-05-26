@@ -16,7 +16,7 @@ public class CustomButton extends JButton  {
     RoundedBorder border;
     String text;
 
-    public CustomButton(String text,Color bgColor){
+    public CustomButton(String text,Color bgColor, boolean toggleable){
         this.bgColor = bgColor;
         this.text = text;
         this.setBackground(this.bgColor);
@@ -45,6 +45,7 @@ public class CustomButton extends JButton  {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if(!toggleable) border.toogle();
                 border.toogle();
                 repaint();
             }

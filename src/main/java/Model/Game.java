@@ -93,6 +93,8 @@ public class Game extends Observable {
      */
     public void undo(){
         Configuration.info("Game received Undo.");
+        if (match.isGameOver() && !match.isReviewModeActive())
+            return;
         if(canUndo() == false) return;
 
         match.undo();
@@ -114,6 +116,8 @@ public class Game extends Observable {
      */
     public void redo(){
         Configuration.info("Game received Redo.");
+        if (match.isGameOver() && !match.isReviewModeActive())
+            return;
         if(!canRedo()) return;
 
         if(match.isReviewModeActive()){
