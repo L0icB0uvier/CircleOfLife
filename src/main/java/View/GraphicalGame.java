@@ -110,7 +110,7 @@ public class GraphicalGame extends JPanel {
 
         gamePanel = new GamePanel(game);
         gamePanel.setBorder(new RoundedBorder(15,Color.BLACK,5));
-        gamePanel.setBackground(UIColor.WHITE);
+        gamePanel.setBackground(new Color(0,0,0,0));
 
         playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[0].getName(),0));
         PlayerInfo player1Info = playerInfos.get(0);
