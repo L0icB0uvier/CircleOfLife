@@ -12,13 +12,6 @@ public class Game extends Observable {
     /**
      * Crée un nouveau match.
      */
-    public void createMatch(String name1, String name2){
-        match = new Match(name1, name2);
-    }
-
-    /**
-     * Crée un nouveau match.
-     */
     public void createMatch(String name1, String name2, int startingPlayer){
         match = new Match(name1, name2, startingPlayer);
     }
@@ -100,6 +93,8 @@ public class Game extends Observable {
      */
     public void undo(){
         Configuration.info("Game received Undo.");
+        if (match.isGameOver() && !match.isReviewModeActive())
+            return;
         if(canUndo() == false) return;
 
         match.undo();
@@ -113,13 +108,7 @@ public class Game extends Observable {
      * @return true s'il est possible d'annuler la dernière action, false sinon.
      */
     public boolean canUndo(){
-        if (match.isReviewModeActive()) {
-            return match.getPastCount() > 1;
-        }
-
-        else{
-            return match.canUndo();
-        }
+        return match.canUndo();
     }
 
     /**
@@ -127,18 +116,22 @@ public class Game extends Observable {
      */
     public void redo(){
         Configuration.info("Game received Redo.");
-        if(!match.canRedo()) return;
+        if (match.isGameOver() && !match.isReviewModeActive())
+            return;
+        if(!canRedo()) return;
 
         if(match.isReviewModeActive()){
-            if(match.wonByScore){
-                match.toggleCurrentPlayer();
-                Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
-                match.redo();
-            }
-            else{
-                match.redo();
-                match.toggleCurrentPlayer();
-                Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+            switch (match.winType){
+                case SCORE -> {
+                    match.toggleCurrentPlayer();
+                    Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+                    match.redo();
+                }
+                case FILL, GIVE_UP -> {
+                    match.redo();
+                    match.toggleCurrentPlayer();
+                    Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+                }
             }
         }
         else{
@@ -147,6 +140,10 @@ public class Game extends Observable {
             Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
         }
         update();
+    }
+
+    public boolean canRedo(){
+        return match.canRedo();
     }
 
     /**
@@ -171,7 +168,7 @@ public class Game extends Observable {
      * Termine le match et déclare le joueur adverse du joueur actif vainqueur.
      */
     public void giveUp(){
-        match.gameOver(match.getOpponentPlayerIndex());
+        match.gameOver(match.getOpponentPlayerIndex(), WinType.GIVE_UP);
         update();
     }
 

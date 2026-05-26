@@ -72,6 +72,7 @@ public class GameDataManager {
         }
 
         writer.write(match.isReviewModeActive() + sep);
+        writer.write(match.winType.name() + sep);
 
         writer.close();
     }
@@ -278,11 +279,18 @@ public class GameDataManager {
 
         // read reviewMode
         boolean reviewModeActive = false;
-        if (scanner.hasNextBoolean())
+        if (scanner.hasNextBoolean()) 
             reviewModeActive = scanner.nextBoolean();
 
         if (reviewModeActive || m.isGameOver())
             m.enterReviewMode();
+
+        if (scanner.hasNext()) {
+            String winTypeText = scanner.next();
+            WinType winType = WinType.valueOf(winTypeText);
+            if(winType == WinType.GIVE_UP)
+                game.giveUp();
+        }
 
         scanner.close();
         return true;
@@ -364,7 +372,11 @@ public class GameDataManager {
             Files.list(dirPath)
                     .filter(Files::isRegularFile)
                     .map(path -> path.getFileName().toString())
-                    .filter(filename -> filename.endsWith(".save"))
+                    .filter(filename -> filename.endsWith(".save")).sorted((a, b) -> {//trier par les dates
+                        String s1 = removeName(a);
+                        String s2 = removeName(b);
+                        return s2.compareTo(s1);
+                    })
                     .forEach(filename -> res.add(filename.replaceAll(".save", "")));
         } catch (IOException e) {
             Configuration.info("Pas de fichiers de sauvegardes trouvées");

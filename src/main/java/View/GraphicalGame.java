@@ -3,6 +3,7 @@ package View;
 import Global.Configuration;
 import Model.Game;
 import Model.PlayerData;
+import Model.WinType;
 import View.Adapter.ControlButtonAdapter;
 import View.CustomComponents.*;
 import View.Utils.FontScaler;
@@ -12,6 +13,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GraphicalGame extends JPanel {
@@ -21,7 +24,7 @@ public class GraphicalGame extends JPanel {
     GamePanel gamePanel;
     ArrayList<PlayerInfo> playerInfos;
     GameControlBar gameControlBar;
-    CustomLabel gameInfo;
+    GameInfo gameInfo;
     Image crown;
 
     public JButton undoBt, redoBt, allUndoBt, allRedoBt;
@@ -73,7 +76,7 @@ public class GraphicalGame extends JPanel {
         allRedoPanel.add(allRedoBt);
         allRedoBt.setToolTipText("<html><b>Refaire la dernière action.<b></html>");
 
-        forfeitBt = new CustomButton("Abandonner", UIColor.WHITE);
+        forfeitBt = new CustomButton("Abandonner", UIColor.WHITE, true);
         forfeitBt.setOpaque(false);
         forfeitPanel = new JPanel();
         forfeitPanel.setOpaque(false);
@@ -85,7 +88,7 @@ public class GraphicalGame extends JPanel {
         forfeitBt.addActionListener(new ControlButtonAdapter(controller, "GiveUp"));
         forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
 
-        replayBt = new CustomButton("Rejouer",UIColor.WHITE);
+        replayBt = new CustomButton("Rejouer",UIColor.WHITE, true);
         replayBt.setOpaque(false);
         replayPanel = new JPanel();
         replayPanel.setOpaque(false);
@@ -97,7 +100,7 @@ public class GraphicalGame extends JPanel {
         replayBt.addActionListener(new ControlButtonAdapter(controller, "Replay"));
         replayBt.setToolTipText("<html><b>Rejouer une partie.<b></html>");
 
-        reviewBt = new CustomButton("Revoir", UIColor.WHITE);
+        reviewBt = new CustomButton("Revoir", UIColor.WHITE, false);
         reviewBt.setOpaque(false);
         reviewPanel = new JPanel();
         reviewPanel.setOpaque(false);
@@ -109,11 +112,11 @@ public class GraphicalGame extends JPanel {
         reviewBt.addActionListener(new ControlButtonAdapter(controller, "ToggleReviewMode"));
         reviewBt.setToolTipText("<html><b>Revoir la partie.<b></html>");
 
-        gameInfo = new CustomLabel(game);
+        gameInfo = new GameInfo(game);
 
         gamePanel = new GamePanel(game);
         gamePanel.setBorder(new RoundedBorder(15,Color.BLACK,5));
-        gamePanel.setBackground(UIColor.WHITE);
+        gamePanel.setBackground(new Color(0,0,0,0));
 
         playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[0].getName(),0));
         PlayerInfo player1Info = playerInfos.get(0);
@@ -156,6 +159,7 @@ public class GraphicalGame extends JPanel {
         updateEndGameButtonsVisibility();
         updateUndoRedoEnabled();
         updateGameControlBarVisibility();
+        updateScore(game.getMatch().getPlayerData());
     }
 
     public void updateEndGameButtonsVisibility(){
@@ -173,25 +177,19 @@ public class GraphicalGame extends JPanel {
     }
 
     public void updateGameInfo(){
+        gameInfo.update();
         if (game.isGameOver()) {
             showEndGameButtons();
             if(game.isReviewModeActive()){
-                gameInfo.updateMessage(game.getMatch().wonByScore? game.getCurrentPlayerIndex() : game.getOpponentPlayerIndex(), " a joué.");
                 enableReviewMode();
             }
             else{
-                gameInfo.updateMessage(game.getWinningPlayer(), " a gagné la partie.");
                 disableReviewMode();
             }
         } else {
             hideEndGameButtons();
-//            this.remove(forfeitBt.getParent());
-//            this.add(forfeitBt.getParent());
-            gameInfo.updateMessage(game.getCurrentPlayerIndex(), " prépare son coup.");
             disableReviewMode();
         }
-
-        updateScore(game.getMatch().getPlayerData());
     }
 
     private void updateUndoRedoEnabled() {
