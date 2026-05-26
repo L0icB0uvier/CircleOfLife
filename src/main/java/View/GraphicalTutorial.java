@@ -15,36 +15,38 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 public class GraphicalTutorial extends JComponent {
     int pageNumber = 0;
     JLabel titleLabel, textLabel;
+    JPanel textPanel;
     BufferedImage[] imagesTuto = new BufferedImage[4];
     ImagePanel image;
     ImageButton buttonNext, buttonPrev, buttonQuit, buttonPrevDisabled;
 
     public GraphicalTutorial(GraphicalUserInterface userInterface) {
-        MigLayout layout = new MigLayout("fill, insets 10 10 20 10", "[align center]", "[8%][17%][57%][grow]");
+        MigLayout layout = new MigLayout("fill, insets 10 10 20 10, debug", "[grow, align center]", "[15%][25%][45%][15%]");
         this.setLayout(layout);
 
         for(int i = 0; i < 4; i++) {
-            imagesTuto[i] = (BufferedImage) readImage(TutorialPages.pages[i].getImageFile());
+            imagesTuto[i] = (BufferedImage) Configuration.loadImage(TutorialPages.pages[i].getImageFile());
         }
 
+        JPanel titlePanel = new JPanel();
         this.titleLabel = new JLabel(TutorialPages.pages[pageNumber].getTitle());
-        this.titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titlePanel.add(titleLabel);
 
+        textPanel = new JPanel();
         this.textLabel = new JLabel(TutorialPages.pages[pageNumber].getText());
+        textPanel.add(textLabel);
 
         this.image = new ImagePanel(imagesTuto[pageNumber]);
 
         this.buttonPrev = new ImageButton("undoIcon.png");
         buttonPrev.addActionListener(e -> previousPage());
-
-        this.buttonPrevDisabled = new ImageButton("undoIcon.png", new Color(210, 210, 210));
-        this.buttonPrevDisabled.setEnabled(false);
 
         this.buttonNext = new ImageButton("redoIcon.png");
         buttonNext.addActionListener(e -> nextPage());
@@ -57,19 +59,18 @@ public class GraphicalTutorial extends JComponent {
         JComponent buttonsComp = new JPanel(layoutButtons);
 
         buttonsComp.add(buttonPrev, "cell 0 0, grow");
-        buttonsComp.add(buttonPrevDisabled, "cell 0 0, grow");
         buttonsComp.add(buttonNext, "cell 1 0, grow");
         buttonsComp.add(buttonQuit, "cell 1 0, grow");
         buttonQuit.setVisible(false);
-        buttonPrev.setVisible(false);
+        buttonPrev.setEnabled(false);
 
-        this.add(titleLabel, "cell 0 0, growy");
-        this.add(textLabel, "cell 0 1, growy");
+        this.add(titlePanel, "cell 0 0, grow");
+        this.add(textPanel, "cell 0 1, grow");
         this.add(image, "cell 0 2, grow");
         this.add(buttonsComp, "cell 0 3, grow");
 
-        titleLabel.addComponentListener(new FontScaler(0.7f, titleLabel));
-        textLabel.addComponentListener(new FontScaler(0.15f, textLabel));
+        titlePanel.addComponentListener(new FontScaler(0.4f, titleLabel));
+        textPanel.addComponentListener(new FontScaler(0.5f, 0.95f, textLabel));
 
     }
 
@@ -80,12 +81,6 @@ public class GraphicalTutorial extends JComponent {
         titleLabel.setText(TutorialPages.pages[pageNumber].getTitle());
         textLabel.setText("<html>" + TutorialPages.pages[pageNumber].getText() + "</html>");
         image.setImage(imagesTuto[pageNumber]);
-        int size = Math.max(Math.max(buttonPrevDisabled.getWidth(), buttonPrevDisabled.getHeight()), Math.max(buttonPrev.getWidth(), buttonPrev.getHeight()));
-        Dimension dim = new Dimension(size, size);
-        buttonPrev.setSize(dim);
-        buttonPrevDisabled.setSize(dim);
-        buttonNext.setSize(dim);
-        buttonQuit.setSize(dim);
     }
 
     public void nextPage() {
@@ -93,38 +88,26 @@ public class GraphicalTutorial extends JComponent {
         boolean isLastPage = (pageNumber == imagesTuto.length - 1);
         buttonNext.setVisible(!isLastPage);
         buttonQuit.setVisible(isLastPage);
-        buttonPrev.setVisible(true);
-        buttonPrevDisabled.setVisible(false);
+        buttonPrev.setEnabled(true);
         repaint();
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
     public void previousPage() {
         pageNumber = Math.max(0, pageNumber - 1);
         buttonNext.setVisible(true);
         buttonQuit.setVisible(false);
-        buttonPrev.setVisible(pageNumber != 0);
-        buttonPrevDisabled.setVisible(pageNumber == 0);
+        buttonPrev.setEnabled(pageNumber != 0);
         repaint();
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
     public void resetPage() {
         pageNumber = 0;
         buttonNext.setVisible(true);
         buttonQuit.setVisible(false);
-        buttonPrev.setVisible(false);
-        buttonPrevDisabled.setVisible(true);
+        buttonPrev.setEnabled(false);
         repaint();
-    }
-
-    private Image readImage(String nom) {
-        InputStream in = Configuration.open("Images/" + nom + ".png");
-        Configuration.info("Chargement de l'image " + nom);
-        try {
-            // Chargement d'une image utilisable dans Swing
-            return ImageIO.read(in);
-        } catch (Exception e) {
-            System.err.println("Impossible de charger l'image " + nom);
-        }
-        return null;
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 }

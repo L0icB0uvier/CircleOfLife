@@ -9,6 +9,7 @@ import java.awt.event.ComponentEvent;
 
 public class FontScaler extends ComponentAdapter {
     private float RATIO = 0.3f;
+    private float WIDTH_PADDING = 0.8f;
     private final JComponent[] jComponents;
 
     public FontScaler(JComponent... jComponents){
@@ -20,12 +21,26 @@ public class FontScaler extends ComponentAdapter {
         this.jComponents = jComponents;
     }
 
+    public FontScaler(float ratio, float width_padding, JComponent... jComponents){
+        this.RATIO = ratio;
+        this.WIDTH_PADDING = width_padding;
+        this.jComponents = jComponents;
+    }
+
     @Override
     public void componentResized(ComponentEvent e) {
-        Font prevFont = jComponents[0].getFont();
         float size = e.getComponent().getHeight() * RATIO;
         for (JComponent comp : jComponents) {
-            comp.setFont(comp.getFont().deriveFont(size));
+            int lineNb = 1;
+            if (comp instanceof JLabel) {
+                lineNb = 0;
+                String text = ((JLabel) comp).getText();
+                String[] lines = text.split("<br>");
+                for (String line: lines) {
+                    lineNb++;
+                }
+            }
+            comp.setFont(comp.getFont().deriveFont(size / lineNb));
         }
 
         Graphics g = e.getComponent().getGraphics();
@@ -35,6 +50,13 @@ public class FontScaler extends ComponentAdapter {
             String text = null;
             if (comp instanceof JLabel) {
                 text = ((JLabel) comp).getText();
+                String[] lines = text.split("<br>");
+                text = "";
+                for (String line: lines) {
+                    line = line.replace("<html>", "");
+                    line = line.replace("</html>", "");
+                    if(line.length() > text.length()) text = line;
+                }
             } else if (comp instanceof JButton) {
                 text = ((JButton) comp).getText();
             } else if (comp instanceof JTextField) {
@@ -45,7 +67,7 @@ public class FontScaler extends ComponentAdapter {
             if (text == null) {
                 throw new ClassCastException("Classe incompatible avec fontScaler : " + comp.getClass().getName());
             }
-            while (width *0.8 < fontMetrics.stringWidth(text)) {
+            while (width * WIDTH_PADDING < fontMetrics.stringWidth(text)) {
 
                 float current = comp.getFont().getSize2D();
                 comp.setFont(comp.getFont().deriveFont(current * 0.9f));
