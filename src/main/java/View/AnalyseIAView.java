@@ -94,13 +94,11 @@ public class AnalyseIAView implements Observer, UserInterface {
 
         if(args.length > 4){
             for (int i = 4; i < args.length; i++) {
-                switch (args[i]) {
-                    case "-t":
-                        sampleTime = true;
-                        break;
-                    default:
-                        System.err.println("Erreur : Option inconnue : " + args[i]);
-                        return false;
+                if (args[i].equals("-t")) {
+                    sampleTime = true;
+                } else {
+                    System.err.println("Erreur : Option inconnue : " + args[i]);
+                    return false;
                 }
             }
         }
@@ -284,12 +282,11 @@ public class AnalyseIAView implements Observer, UserInterface {
      * @return La String correspondant (EASY -> "Facile", MEDIUM -> "Moyenne", HARD -> "Difficile").
      */
     private String convertAILevelToText(AILevel aiLevel){
-        switch (aiLevel){
-            case EASY: return "Facile";
-            case MEDIUM: return "Moyenne";
-            case HARD: return "Difficile";
-            default: return "Non reconnu";
-        }
+        return switch (aiLevel) {
+            case EASY -> "Facile";
+            case MEDIUM -> "Moyenne";
+            case HARD -> "Difficile";
+        };
     }
 
     @Override
@@ -306,7 +303,7 @@ public class AnalyseIAView implements Observer, UserInterface {
     /**
      * Classe contenant les statistiques associées à une partie.
      */
-    public class gameStats {
+    public static class gameStats {
         public int turnPlayed;
         public int winCount;
         public int winByScoreCount;

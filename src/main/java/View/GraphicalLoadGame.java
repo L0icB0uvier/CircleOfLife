@@ -2,14 +2,10 @@ package View;
 
 import Controller.Controller;
 import Global.Configuration;
-import Model.Game;
 import Model.GameDataManager;
-import View.Adapter.LoadGameAdapter;
-import View.Adapter.LoadGamesAdapter;
 import View.Adapter.PopUpAdapter;
 import View.Adapter.SelectGameMouseAdapter;
 import View.CustomComponents.CustomButton;
-import View.CustomComponents.CustomLabel;
 import View.CustomComponents.ImageButton;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
@@ -17,16 +13,9 @@ import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.plaf.ButtonUI;
-import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 
 public class GraphicalLoadGame extends JPanel {
     JPanel contentPanel, currentGamePanel;
@@ -135,7 +124,7 @@ public class GraphicalLoadGame extends JPanel {
         renameMenu.setLocationRelativeTo(userInterface.frame);
         renameMenu.setSize(new Dimension(500, 150));
 
-        JLabel renameLabel = new JLabel("Nouveau nom :\t ");
+        JLabel renameLabel = new JLabel("Nouveau nom : (sans '_')\t ");
         renameLabel.setFocusable(true);
         JTextField renameTextField = createJTextField(gameLabel.getText());
 
@@ -146,6 +135,11 @@ public class GraphicalLoadGame extends JPanel {
         JButton confirmButton = createBorderedButton("Renommer");
         confirmButton.addActionListener(e -> {
             if(!renameTextField.getText().equals(gameLabel.getText())) { //on recupere et mets a jour l'ancien nom du jeu avec le nouvel
+                if (GameDataManager.newNameContainsSeparator(renameTextField.getText())) {
+                    renameLabel.setText("Supprimer des caracteres '_'\t");
+                    renameLabel.requestFocusInWindow();
+                    return;
+                }
                  currentGame = controller.renameGame(currentGame, renameTextField.getText());
                 SelectGameMouseAdapter selectMouseAdapter = (SelectGameMouseAdapter) currentGamePanel.getMouseListeners()[0];
                 selectMouseAdapter.updateGame(currentGame);
@@ -221,6 +215,8 @@ public class GraphicalLoadGame extends JPanel {
 
     public void addGame(String game) {
         String[] gameData = GameDataManager.parseFileName(game);
+        if (gameData == null)
+            return;
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[90%, align left][10%, align right]", "[10%][20%]5%[30%]5%[20%, align center][10%]" );
         JPanel gamePanel = new JPanel(layout);

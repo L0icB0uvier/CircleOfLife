@@ -3,11 +3,9 @@ package View.CustomComponents;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 import java.awt.geom.Path2D;
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import Global.Configuration;
@@ -38,15 +36,12 @@ public class GamePanel extends JComponent implements Observer {
     int nSelected, mSelected;
 
     boolean requireCalculation = true;
-    boolean previewEnabled = false;
     boolean drawCenter = false;
 
     float alpha = 1;
     float oneMinusAlpha;
 
     private final imageRatio boardOriginRatio = new imageRatio(0.35505f, 0.24893f);
-    private final float ratioDistanceX = 0.07248f;
-    private final float boardHexagonHeightRatio = 0.08461f;
     float distance;
     int boardStoneImageSize, circleStoneImageSize;
     int boardX0, boardY0;
@@ -61,14 +56,6 @@ public class GamePanel extends JComponent implements Observer {
     private final boolean showCircleShape = true;
     private final boolean showBlockingCrittersHighlight = true;
 
-    private final float lastMoveThicknessRatio = 0.005f;
-    private final float boardThicknessRatio = 0.005f;
-    private final float circleThicknessRatio = 0.0035f;
-
-    private float lastMoveHighlighThickness;
-    private float boardHighlightThickness;
-    private float circleHighlightThickness;
-
     float dotedLineDashPatternRatio = 0.0085f;
     float dotedLineSpaceRatio = 0.5f;
     float dotedLinePhaseRatio = 1f;
@@ -80,11 +67,8 @@ public class GamePanel extends JComponent implements Observer {
     BasicStroke boardHighlightStroke;
     BasicStroke circleHighlightStroke;
 
-    // Dessin des formes dans le cercle
-    private final float circleHexagonHeightRatio = 0.04708f;
-    private final float circleInterHexagonDistance = 0.04077f;
     private float circleStoneDistance;
-    float circleStoneOffset;
+    private float circleStoneOffset;
 
     private final Point2D.Float[] shapeOriginPoints;
 
@@ -143,6 +127,9 @@ public class GamePanel extends JComponent implements Observer {
         imgSrcWidth = imgPlateau.getWidth();
     }
 
+    /**
+     * Charge toutes les images nécessaires pour dessiner le niveau.
+     */
     private void loadImages() {
         imgPlateau= (BufferedImage) Configuration.loadImage("Plateau_fleches.png");
         imgStonePlayer1 = (BufferedImage) Configuration.loadImage("Blue_Stone.png");
@@ -186,15 +173,16 @@ public class GamePanel extends JComponent implements Observer {
                 drawFeedforward(g2d);
         }
 
-        //drawEaten(g2d);
+        drawEaten(g2d);
 
         super.paintBorder(g2d);
 
         g2d.dispose();
-
-
     }
 
+    /**
+     * Recalcule les informations nécessaires pour pouvoir dessiner les différents éléments du plateau.
+     */
     public void recalculate(){
         Configuration.config("Recalculate Game Panel");
 
@@ -217,16 +205,21 @@ public class GamePanel extends JComponent implements Observer {
         // Calcul du centre de la case 0:0 du plateau
         x0 = Math.round(boardX0 + (boardOriginRatio.xRatio() * imageWidth));
         y0 = Math.round(boardY0 + (boardOriginRatio.yRatio() * imageHeight));
+        float ratioDistanceX = 0.07248f;
         distance = ratioDistanceX * imageWidth;
 
         // Calcule taille de l'image des pierres du cercle
+        float boardHexagonHeightRatio = 0.08461f;
         boardStoneImageSize = Math.round(boardHexagonHeightRatio * imageHeight);
+        // Dessin des formes dans le cercle
+        float circleHexagonHeightRatio = 0.04708f;
         circleStoneImageSize = Math.round(circleHexagonHeightRatio * imageHeight);
 
         boardHexagonOuterRadius = (float) boardStoneImageSize / 2;
         boardHexagonInnerRadius = boardHexagonOuterRadius * OUTER_TO_INNER_RADIUS_RATIO;
 
         // Calcule taille de l'image des pierres du cercle
+        float circleInterHexagonDistance = 0.04077f;
         circleStoneDistance = circleInterHexagonDistance * imageWidth;
         circleStoneImageSize = Math.round(circleHexagonHeightRatio * imageHeight);
 
@@ -239,9 +232,12 @@ public class GamePanel extends JComponent implements Observer {
             shapeOriginPoints[i] = new Point2D.Float(boardX0 + imageWidth * ratio.xRatio(), boardY0 + imageHeight * ratio.yRatio());
         }
 
-        lastMoveHighlighThickness = imageWidth * lastMoveThicknessRatio;
-        boardHighlightThickness = imageWidth * boardThicknessRatio;
-        circleHighlightThickness = imageWidth * circleThicknessRatio;
+        float lastMoveThicknessRatio = 0.005f;
+        float lastMoveHighlighThickness = imageWidth * lastMoveThicknessRatio;
+        float boardThicknessRatio = 0.005f;
+        float boardHighlightThickness = imageWidth * boardThicknessRatio;
+        float circleThicknessRatio = 0.0035f;
+        float circleHighlightThickness = imageWidth * circleThicknessRatio;
 
         float[] dotedLigneDashPattern = {imageWidth * dotedLineDashPatternRatio, imageWidth * dotedLineDashPatternRatio * dotedLineSpaceRatio};
         if(dotedLigneDashPattern[0] == 0.0f && dotedLigneDashPattern[1] == 0.0f){
@@ -265,14 +261,17 @@ public class GamePanel extends JComponent implements Observer {
         requireCalculation = false;
     }
 
-
+    /**
+     * Dessine le plateau de jeu.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     */
     private void drawBoard(Graphics2D g2d){
         g2d.drawImage(imgPlateau, boardX0, boardY0, Math.round(imageWidth), Math.round(imageHeight), null);
     }
 
     /**
      * Dessine les pierres sur le plateau.
-     * @param g2d Le Graphic à utiliser pour dessiner.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
      */
     private void drawStones(Graphics2D g2d){
         int boardSize = match.getBoardSize();
@@ -312,12 +311,22 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
+    /**
+     * Dessine un point au centre d'une case du plateau. Utilisé pour debuger.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param n La colone de la case.
+     * @param m La ligne de la case.
+     */
     private void drawTileCenter(Graphics2D g2d, int n, int m){
         int x = nToX(n, m);
         int y = mToY(m);
         g2d.drawRect(x - 1, y - 1, 2, 2);
     }
 
+    /**
+     * Dessine le contour en pointillé de la dernière pierre posée sur le plateau.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     */
     private void drawLastMoveHighlight(Graphics2D g2d){
         var lastMove = match.getLastMove();
         Point2D.Float origin = new Point2D.Float(nToX(lastMove.getColumn(), lastMove.getLine()), mToY(lastMove.getLine()));
@@ -326,7 +335,7 @@ public class GamePanel extends JComponent implements Observer {
 
     /**
      * Dessine la pierre sous le curseur du joueur actif.
-     * @param g2d Le Graphic à utiliser pour dessiner.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
      * @return true si a dessiné une pierre, faux sinon
      */
     private boolean drawSelected(Graphics2D g2d){
@@ -383,6 +392,11 @@ public class GamePanel extends JComponent implements Observer {
         return true;
     }
 
+    /**
+     * Dessine le contours des critters empêchant une pause de pierre sur une case du plateau.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param selectedCoordinate Les coordonnées de la case du plateau pour laquel on veut afficher le feedback.
+     */
     private void drawBlockingCrittersHighlight(Graphics2D g2d, Coordinate selectedCoordinate) {
         if(showBlockingCrittersHighlight == false) return;
         var neighborCritters = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
@@ -391,6 +405,10 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
+    /**
+     * Dessine les feedforward permettant au joueur de visualiser les conséquences d'une pose de pierre sur une case.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     */
     private void drawFeedforward(Graphics2D g2d){
         Coordinate selectedCoordinate = new Coordinate(getnSelected(), getmSelected());
         Set<Critter> playerNeighbors = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
@@ -423,7 +441,7 @@ public class GamePanel extends JComponent implements Observer {
                     }
                 }
             }
-            if(showCircleShape && eatenShape > 0)
+            if(showCircleShape && eatenShape >= 0)
                 drawCircleShapeWithHighlight(g2d, eatenShape, UIColor.EATEN_COLOR, getPlayerImage(match.getOpponentPlayerIndex()));
         }
 
@@ -434,6 +452,25 @@ public class GamePanel extends JComponent implements Observer {
             drawCircleShapeWithHighlight(g2d, evolveInto, UIColor.EVOLVE_COLOR, getPlayerImage(match.getCurrentPlayerIndex()));
     }
 
+    /**
+     * Dessine le critter sur le cercle autour du plateau avec un contour.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param shapeType Le type de critter à utiliser.
+     * @param color La couleur du contour.
+     * @param img L'image à utiliser pour dessiner les pierres du critter.
+     */
+    private void drawCircleShapeWithHighlight(Graphics2D g2d, int shapeType, Color color, Image img){
+        drawCircleShape(g2d, shapeType, img);
+        Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(shapeType, circleShapeTypeIds.get(shapeType));
+        drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleHighlightStroke);
+    }
+
+    /**
+     * Dessine le critter sur le cercle autour du plateau.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param shapeType Le type de critter à utiliser.
+     * @param img L'image à utiliser pour dessiner les pierres du critter.
+     */
     private void drawCircleShape(Graphics2D g2d, int shapeType, Image img){
         Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(shapeType, circleShapeTypeIds.get(shapeType));
 
@@ -445,18 +482,26 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
-    private void drawCircleShapeWithHighlight(Graphics2D g2d, int shapeType, Color color, Image img){
-        drawCircleShape(g2d, shapeType, img);
-        Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(shapeType, circleShapeTypeIds.get(shapeType));
-        drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleHighlightStroke);
-    }
-
+    /**
+     * Récupère le centre d'une pierre dans le référentiel Swing par rapport à une position de référence.
+     * @param shapeOrigin L'origine du critter dans le référentiel Swing.
+     * @param relativeOffset Les coordonnées relatives à l'origine du critter.
+     * @param distance La distance entre les pierres.
+     * @return le centre de la pierre dans le référentiel Swing.
+     */
     private Point2D.Float getShapeStoneCenterPosition(Point2D.Float shapeOrigin, Coordinate relativeOffset, float distance){
         float x = shapeOrigin.x + (relativeOffset.col() * distance - relativeOffset.line() * distance / 2);
         float y = (shapeOrigin.y + ((float)(Math.sqrt(3) * distance * relativeOffset.line()) / 2));
         return new Point2D.Float(x, y);
     }
 
+    /**
+     * Dessine le contour d'un critter sur le plateau.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param coordinates Les coordonnées des pierres pour lesquelles dessiner le contour.
+     * @param color La couleur du contour.
+     * @param stroke Le stroke du contour.
+     */
     private void drawBoardCritterHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color color, BasicStroke stroke){
         Set<Coordinate> normalizedCoordinates = CritterUtils.normalizeCoordinate(coordinates);
         var shapeOriginCoordinates = CritterUtils.getTopLeftCoordinate(coordinates);
@@ -468,10 +513,28 @@ public class GamePanel extends JComponent implements Observer {
         drawHighlight(g2d, normalizedCoordinates, shapeOriginPos, boardHexagonInnerRadius, boardHexagonOuterRadius, stroke.getLineWidth() / 2 ,color, stroke);
     }
 
+    /**
+     * Retourne l'image associée à un joueur.
+     * @param player Le joueur pour lequel on veut récupérer l'image.
+     * @return L'image correspondant au joueur ou null si le joueur n'est pas valide.
+     */
     private Image getPlayerImage(int player){
+        if(player < 0 || player > 1)
+            return null;
         return player == 0? imgStonePlayer1 : imgStonePlayer2;
     }
 
+    /**
+     * Dessine un contour autour d'un critter.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param coordinates Les coordonnées du critter normalisées.
+     * @param shapeOrigin L'origine en pixels du critter.
+     * @param innerRadius La taille du rayon intérieur de l'hexagone.
+     * @param outerRadius La taille du rayon extérieur de l'hexagone.
+     * @param offset L'offset à appliquer au contour. >0 décalle le contour vers l'intérieur de l'hexagone.
+     * @param highlightColor La couleur du contour.
+     * @param stroke Le Stroke du contour.
+     */
     private void drawHighlight(
             Graphics2D g2d,
             Set<Coordinate> coordinates,
@@ -586,6 +649,12 @@ public class GamePanel extends JComponent implements Observer {
         g2d.setStroke(previousStroke);
     }
 
+    /**
+     * Récupère les coordonnées en pixels correspondantes au coin supérieur gauche de l'image d'une pierre du plateau.
+     * @param n La colonne du plateau.
+     * @param m La ligne du plateau
+     * @return Les coordonnées en pixels où dessiner l'image.
+     */
     private Point getStoneDrawPositions(int n, int m){
         Coordinate pixel = tileToPixel(new Coordinate(n, m));
         int x = pixel.col() - Math.round((float) boardStoneImageSize / 2);
@@ -610,6 +679,14 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
+    /**
+     * Dessine une pierre.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param img L'image à dessiner.
+     * @param x La position x dans le référentiel Swing.
+     * @param y La position y dans le référentiel Swing.
+     * @param size La taille de l'image en pixels.
+     */
     private void drawStone(Graphics2D g2d, Image img, int x, int y, int size){
         g2d.drawImage(img, x, y, size, size, null);
     }
@@ -619,6 +696,11 @@ public class GamePanel extends JComponent implements Observer {
         repaint();
     }
 
+    /**
+     * Met à jour le position du curseur de la souris et converti cette position en ligne et colonnes sur le plateau.
+     * @param x La position x de la souris dans le référentiel Swing.
+     * @param y La position y de la souris dans le référentiel Swing.
+     */
     public void updateMousePosition(int x, int y) {
         mouseX = x;
         mouseY = y;
@@ -627,12 +709,10 @@ public class GamePanel extends JComponent implements Observer {
         int m = mouseToTile.line();
 
         if (MatchUtils.isInsideBoard(new Coordinate(m, n))) {
-        //Configuration.info(String.format("Mouse at %d:%d", x, y));
             if((n != nSelected || m != mSelected)) {
                 nSelected = n;
                 mSelected = m;
                 repaint();
-                //Configuration.info("Focus sur " + n + ", " + m);
             } 
         } else {
             nSelected = -1;
@@ -641,22 +721,30 @@ public class GamePanel extends JComponent implements Observer {
         }
     }
 
-    public int getnSelected() {
-        return nSelected;
-    }
-
-    public int getmSelected() {
-        return mSelected;
-    }
-
+    /**
+     * Converti une colonne en sa position x dans le référentiel Swing.
+     * @param n La colonne de la tuile dans le référentiel hexagonale.
+     * @param m La ligne de la tuile dans le référentiel hexagonale.
+     * @return La position horizontale en pixels dans le référentiel Swing.
+     */
     public int nToX(int n, int m) {
         return (int) Math.round(x0 + (distance * ((double) n - ((double) m / 2))));
     }
 
+    /**
+     * Converti une ligne en sa position y dans le référentiel Swing.
+     * @param m La ligne de la tuile dans le référentiel hexagonale.
+     * @return La position verticale en pixels dans le référentiel Swing.
+     */
     public int mToY(int m) {
         return (int) Math.round(y0 + ((m * Math.sqrt(3) * distance) / 2));
     }
 
+    /**
+     * Converti la position d'une case en coordonnées en pixels.
+     * @param tile La case du plateau.
+     * @return La position de case en coordonnées en pixels.
+     */
     public Coordinate tileToPixel(Coordinate tile){
         int n = tile.col();
         int m = tile.line();
@@ -664,14 +752,11 @@ public class GamePanel extends JComponent implements Observer {
                 (int) Math.round(y0 + ((m * Math.sqrt(3) * distance) / 2)));
     }
 
-    public int xToN(int x, int y) {
-        return (int) (Math.round(((double) (x - x0) / distance) + ((1 / Math.sqrt(3) * ((double) (y - y0) / distance)))));
-    }
-
-    public int yToM(int y) {
-        return (int) (Math.round((2 * (y - y0) / (distance * Math.sqrt(3)))));
-    }
-
+    /**
+     * Converti une coordonnée en pixels en case du plateau.
+     * @param pixels Les coordonnées en pixels.
+     * @return La case du plateau correspondante.
+     */
     public Coordinate pixelToTile(Coordinate pixels){
         int x = pixels.col();
         int y = pixels.line();
@@ -692,7 +777,11 @@ public class GamePanel extends JComponent implements Observer {
         return closestTile;
     }
 
-    public void togglePreview() {
-        previewEnabled = !previewEnabled;
+    public int getnSelected() {
+        return nSelected;
+    }
+
+    public int getmSelected() {
+        return mSelected;
     }
 }

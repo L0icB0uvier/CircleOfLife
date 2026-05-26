@@ -14,16 +14,17 @@ public class PlayerData implements Cloneable {
         reset();
     }
 
+    /**
+     * Augmenter le score de increaseAmount.
+     * @param increaseAmount Le quantité à ajouter au score.
+     */
     public void increaseScore(int increaseAmount){
         score += increaseAmount;
     }
 
-    public int getScore() {
-        return score;
-    }
-
-    public String getName() { return name; }
-
+    /**
+     * Reinitialise le score.
+     */
     public void reset(){
         score = 0;
     }
@@ -38,4 +39,10 @@ public class PlayerData implements Cloneable {
         }
         return null;
     }
+
+    public int getScore() {
+        return score;
+    }
+
+    public String getName() { return name; }
 }

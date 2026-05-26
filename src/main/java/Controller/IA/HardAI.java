@@ -88,10 +88,6 @@ public class HardAI extends AI {
         return score;
     }
 
-    double getFillScore(){
-        return 0;
-    }
-
     /**
      * Trouve un coup à l'aide d'un arbre MIN/MAX.
      * @return Le Move le plus avantageux pour l'IA, trouvé avec l'algorithme Minimax.

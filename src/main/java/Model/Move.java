@@ -16,7 +16,7 @@ public class Move implements Command {
         this.column = c;
         this.previousState = match.getBoardState();
         this.critters = match.getCritters();
-        this.previousScore=match.getPlayerData();
+        this.previousScore = match.getPlayerData();
     }
 
     public int getLine() {
