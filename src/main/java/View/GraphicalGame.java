@@ -1,9 +1,9 @@
 package View;
 
 import Global.Configuration;
+import Model.Coordinate;
 import Model.Game;
 import Model.PlayerData;
-import Model.WinType;
 import View.Adapter.ControlButtonAdapter;
 import View.CustomComponents.*;
 import View.Utils.FontScaler;
@@ -13,9 +13,8 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class GraphicalGame extends JPanel {
     Game game;
@@ -37,10 +36,9 @@ public class GraphicalGame extends JPanel {
         this.controller = controller;
         this.crown = Configuration.loadImage("crown.png");
 
-
         playerInfos = new ArrayList<>();
 
-        MigLayout layout = new MigLayout("fill, insets 2% 2% 2% 2%", "[grow]1.5%[grow]1.5%[58%]1.5%[grow]1.5%[grow]1.5%[14%]","[10%]1.5%[10%][grow][10%]1.5%[10%][grow][10%]" );
+        MigLayout layout = new MigLayout("fill, insets 2% 2% 2% 2%, debug", "[grow]1.5%[grow]1.5%[58%]1.5%[grow]1.5%[grow]1.5%[14%]","[10%]1.5%[10%][grow][10%]1.5%[10%][grow][10%]" );
         this.setLayout(layout);
         this.setBackground(UIColor.BACKGROUND);
 
@@ -83,7 +81,6 @@ public class GraphicalGame extends JPanel {
         forfeitPanel.setLayout(new GridLayout());
         forfeitPanel.add(forfeitBt);
         forfeitPanel.setBackground(UIColor.WHITE);
-        forfeitPanel.addComponentListener(new FontScaler(forfeitBt));
         forfeitBt.setVisible(true);
         forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
 
@@ -94,7 +91,6 @@ public class GraphicalGame extends JPanel {
         replayPanel.setLayout(new GridLayout());
         replayPanel.add(replayBt);
         replayPanel.setBackground(UIColor.WHITE);
-        replayPanel.addComponentListener(new FontScaler(replayBt));
         replayPanel.setVisible(false);
         replayBt.addActionListener(new ControlButtonAdapter(controller, "Replay"));
         replayBt.setToolTipText("<html><b>Rejouer une partie.<b></html>");
@@ -106,7 +102,6 @@ public class GraphicalGame extends JPanel {
         reviewPanel.setLayout(new GridLayout());
         reviewPanel.add(reviewBt);
         reviewPanel.setBackground(UIColor.WHITE);
-        reviewPanel.addComponentListener(new FontScaler(reviewBt));
         reviewPanel.setVisible(false);
         reviewBt.addActionListener(new ControlButtonAdapter(controller, "ToggleReviewMode"));
         reviewBt.setToolTipText("<html><b>Revoir la partie.<b></html>");
@@ -143,6 +138,10 @@ public class GraphicalGame extends JPanel {
         this.add(player2Info,"cell 5 1, grow, sg top");
         this.add(gamePanel,"cell 0 1, span 5 6, grow");
         this.add(gameControlBar,"cell 5 6, grow, sg top");
+
+        forfeitPanel.addComponentListener(new FontScaler(forfeitBt));
+        replayPanel.addComponentListener(new FontScaler(replayBt));
+        reviewPanel.addComponentListener(new FontScaler(reviewBt));
 
         this.setVisible(true);
 
@@ -274,7 +273,7 @@ public class GraphicalGame extends JPanel {
 
     }
 
-
-
-
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
+        gamePanel.animateScore(groupCoords, scoreGained, player, progress);
+    }
 }

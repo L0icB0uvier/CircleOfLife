@@ -57,28 +57,34 @@ public class GraphicalLoadGame extends JPanel {
         MigLayout layoutBtns = new MigLayout("fill", "10%[15%, sg]push[15%, sg]push[15%, sg]10%", "");
         JPanel buttonComp = new JPanel(layoutBtns);
 
+        JPanel cancelPanel = new JPanel(new GridLayout());
         cancelButton = createJButton("Annuler",true,UIColor.ORANGE);
-        cancelButton.setMinimumSize(new Dimension(0, 0));
+        cancelPanel.add(cancelButton);
+        cancelPanel.setBackground(UIColor.BACKGROUND);
 
+        JPanel renamePanel = new JPanel(new GridLayout());
         renameBtn = createJButton("Renommer",false,UIColor.BROWN);
-        renameBtn.setMinimumSize(new Dimension(0, 0));
         renameBtn.addActionListener(e -> renameGame());
         renameBtn.setEnabled(false);
+        renamePanel.add(renameBtn);
+        renamePanel.setBackground(UIColor.BACKGROUND);
 
+        JPanel loadPanel = new JPanel(new GridLayout());
         loadBtn = createJButton("Charger",false,UIColor.GREEN);
-        loadBtn.setMinimumSize(new Dimension(0, 0));
         loadBtn.addActionListener(e -> loadGame());
         loadBtn.setEnabled(false);
+        loadPanel.add(loadBtn);
+        loadPanel.setBackground(UIColor.BACKGROUND);
 
         buttonComp.setBackground(UIColor.BACKGROUND);
-        buttonComp.add(cancelButton, "cell 0 0,grow");
-        buttonComp.add(renameBtn, "cell 1 0,grow");
-        buttonComp.add(loadBtn, "cell 2 0,grow");
+        buttonComp.add(cancelPanel, "cell 0 0,grow");
+        buttonComp.add(renamePanel, "cell 1 0,grow");
+        buttonComp.add(loadPanel, "cell 2 0,grow");
 
         this.add(scrollPane, "cell 0 0, grow");
         this.add(buttonComp, "cell 0 1, grow");
 
-        cancelButton.addComponentListener(new FontScaler(0.5f, 0.9f, cancelButton, renameBtn, /*deleteBtn,*/ loadBtn));
+        cancelPanel.addComponentListener(new FontScaler(cancelButton, renameBtn, /*deleteBtn,*/ loadBtn));
 
         this.addMouseListener(getMouseDeselector());
         scrollPane.addMouseListener(getMouseDeselector());
@@ -103,22 +109,15 @@ public class GraphicalLoadGame extends JPanel {
 
             }
         });
-
-
     }
-
 
     private void loadGame() {
         if(currentGame == null) return;
         if (!controller.loadGame(currentGame)) {
-            errorPopup("Erreur, impossible de charger le match sélectionné");
+            userInterface.errorPopup("Erreur, impossible de charger le match sélectionné", this);
             return;
         }
         userInterface.startGame();
-    }
-
-    public void errorPopup(String string) {
-        new ErrorPopUpPanel(string, this);
     }
 
     private void renameGame() {
@@ -293,8 +292,6 @@ public class GraphicalLoadGame extends JPanel {
     private JButton createJButton(String text,boolean enabled,Color bgColor){
         CustomButton button = new CustomButton(text,bgColor, true);
         button.setFocusable(false);
-        button.setVerticalTextPosition(SwingConstants.CENTER);
-        button.setHorizontalTextPosition(SwingConstants.CENTER);
         button.setEnabled(enabled);
         return button;
 

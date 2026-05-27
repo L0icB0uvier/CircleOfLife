@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class GameDataManager {
-    private static String savePath = "./sauvegardes/";
-    private static String testPath = "./test_sauvegardes/";
+    private static final String savePath = "./sauvegardes/";
+    private static final String testPath = "./test_sauvegardes/";
     static boolean testMode = false;
 
     /**
@@ -70,7 +70,7 @@ public class GameDataManager {
             writer.write(moveToLineColumn(m) + sep);
 
         }
-        
+
         writer.write(match.winType.name() + sep);
 
         writer.close();
@@ -137,6 +137,7 @@ public class GameDataManager {
      * @param game     L'instance de game dans laquelle charger le match.
      * @param filename Le nom du fichier à partir duquel charger (sans extension
      *                 .save).
+     * @return true si la fonction a réussi du load, false sinon
      * @throws FileNotFoundException Exception retourné si le fichier n'est pas
      *                               trouvé.
      */
@@ -355,7 +356,7 @@ public class GameDataManager {
      * répertoire courant (l'extension "".save" étant supprimée).
      * 
      * @return Une Liste des Strings de nom de fichier avec l'extension ".save"
-     *         supprimée.
+     *         supprimée triée en ordre décroissante par rapport leurs champs de date.
      */
     public static List<String> getSaveFiles() {
         Path dirPath;
@@ -406,6 +407,19 @@ public class GameDataManager {
         return true;
     }
 
+    
+    /**
+     * Analyser un nom de fichier et le convertir en un tableau de 5 éléments : 
+     * -0 la date 
+     * -1 le nom du premier joueur 
+     * -2 le nom du deuxième joueur
+     * -3 le score du match, 
+     * -4 le nom du match (s'il existe, sinon une chaîne vide "").
+     * 
+     * @param filename nom du fichier.
+     * 
+     * @return Un tableau de string en cas du succes, null sinon.
+     */
     public static String[] parseFileName(String filename) {
         if (filename == null)
             return null;
@@ -459,6 +473,12 @@ public class GameDataManager {
         return res;
     }
 
+    /**
+     * Vérifie si un fichier existe dans la répertoire des saves
+     * 
+     * @param filename nom du fichier
+     * @return true si le fichier existe dans la répertoire des saves, false sinon
+     */
     public static boolean saveFileExists(String filename) {
         filename = filename.replaceAll(".save", "");
         List<String> temp = getSaveFiles();
@@ -467,13 +487,18 @@ public class GameDataManager {
 
     }
 
+    /**
+     * Supprime un fichier de save dans la répertoire des saves
+     * 
+     * @param fileName nom du fichier
+     * @return true si le fichier a été supprimé avec succes, false sinon
+     */
     public static boolean deleteMatch(String fileName) {
         File fileToDelete = new File(savePath + fileName + ".save");
         return fileToDelete.delete();
     }
 
-    // on suppose que le jeu est nommé si le premier élément de son nom n'est pas un
-    // nombre (cad l'année)
+    
     private static boolean hasName(String filename) {
         String sep = "_";
         return filename.split(sep).length == 9;
@@ -512,11 +537,26 @@ public class GameDataManager {
         }
     }
 
+    /**
+     * Vérifie si le string donné contient des caracteres illegales (des separateurs des différents champs des nom cad underscore)
+     * 
+     * @param newName string
+     * @return true si le fichier contient des caracteres illegales, false sinon
+     */
     public static boolean newNameContainsSeparator(String newName) {
         String sep = "_";
         return newName.contains(sep);
     }
 
+    /**
+     * Renomme le fichier de sauvegarde correspondant à filename en lui attribuant
+     * le nouveau nom « newName » (ajoute « newName » comme suffixe si c'est un nom
+     * valide, ou supprime le fichier si « newName » est une chaîne vide).
+     * 
+     * @param filename nom du fichier de sauvegarde
+     * @param newName nouvel nom candidat pour ce fichier
+     * @return le nouvel nom du fichier du sauvegarde en cas du succes (sans extension .save), chaine vide sinon
+     */
     public static String renameMatch(String filename, String newName) {
         if (!saveFileExists(filename))
             return "";

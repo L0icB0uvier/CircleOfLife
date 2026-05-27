@@ -1,26 +1,33 @@
 package Controller;
 
+import Controller.Animation.Animation;
+import Controller.Animation.ScoreAnimation;
 import Global.Configuration;
 import Model.*;
 import Patterns.Observer;
+import Patterns.ScoreEventObserver;
 import View.EventCollector;
 import Global.Settings;
 import View.UserInterface;
 
 import java.io.FileNotFoundException;
+import java.util.*;
 
 /**
  * Fait l'interface entre la vue et le modèle.
  */
-public class Controller implements EventCollector, Observer {
+public class Controller implements EventCollector, Observer, ScoreEventObserver {
     Game game;
     UserInterface view;
     Player[] players;
     Player currentPlayer;
+    List<Animation> animations;
 
     public Controller(Game game){
         this.game = game;
-        game.addObserver(this);
+        animations = new ArrayList<>();
+        game.addUpdateObserver(this);
+        game.addUpdateScoreObserver(this);
         players = new Player[2];
     }
 
@@ -38,6 +45,7 @@ public class Controller implements EventCollector, Observer {
     @Override
     public void performAction(String actionName) {
         switch (actionName) {
+            case "FullScreen" -> view.toggleFullscreen();
             case "NewGame" -> createNewGame();
             case "StartGame" -> startGame();
             case "ContinueGame" -> continueGame();
@@ -95,13 +103,14 @@ public class Controller implements EventCollector, Observer {
     }
 
     /**
-     * Charge une partie à partir des données sauvegardées du joueur.
+     * Charge la derniere partie à partir des données sauvegardées du joueur.
+     * @return true si la partie a été chargée avec succes, false sinon
      */
-    private void continueGame(){
-        if (!GameDataManager.hasSaveFile()) return;
+    public boolean continueGame(){
+        if (!GameDataManager.hasSaveFile()) return false;
         try {
             if (!GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0)))
-                return;
+                return false;
             Settings matchSettings = Configuration.getSettings();
             players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
             players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
@@ -109,11 +118,13 @@ public class Controller implements EventCollector, Observer {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 
     /**
      * Charge une partie à partir des données sauvegardées du joueur.
      * @param gameFile le nom du fichier de la partie à charger
+     * @return true si la partie a été chargée avec succes, false sinon
      */
     public boolean loadGame(String gameFile){
         try {
@@ -165,6 +176,7 @@ public class Controller implements EventCollector, Observer {
      * Lance la partie.
      */
     private void startGame(){
+        game.startPlaying();
         updateCurrentPlayer();
         currentPlayer.startTurn();
     }
@@ -174,7 +186,17 @@ public class Controller implements EventCollector, Observer {
      */
     private void giveUp(){
         currentPlayer.endTurn();
+        cleanAnimations();
         game.giveUp();
+    }
+
+    private void cleanAnimations(){
+        Iterator<Animation> it = animations.iterator();
+        while (it.hasNext()) {
+            Animation anim = it.next();
+            anim.endAnimation();
+            it.remove();
+        }
     }
 
     /**
@@ -182,6 +204,7 @@ public class Controller implements EventCollector, Observer {
      */
     private void replay(){
         game.replay();
+        cleanAnimations();
         updateCurrentPlayer();
         currentPlayer.startTurn();
     }
@@ -206,6 +229,26 @@ public class Controller implements EventCollector, Observer {
     }
 
     @Override
+    public void animTic() {
+        if(animations.isEmpty())
+            return;
+
+        Iterator<Animation> it = animations.iterator();
+        while (it.hasNext()) {
+            Animation anim = it.next();
+            anim.tictac();
+            if (anim.isOver()) {
+                Configuration.info("Removing animation");
+                it.remove();
+            }
+        }
+    }
+
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress){
+        view.animateScore(groupCoords, scoreGained, player, progress);
+    }
+
+    @Override
     public void update() {
         if(currentPlayer == null) return;
 
@@ -218,5 +261,13 @@ public class Controller implements EventCollector, Observer {
 
         updateCurrentPlayer();
         currentPlayer.startTurn();
+    }
+
+    @Override
+    public void onScoreUpdated(Map<Set<Coordinate>, Integer> eatenInfo, int player) {
+        for (Map.Entry<Set<Coordinate>, Integer> entry : eatenInfo.entrySet()) {
+            Configuration.info("Creating score animation");
+            animations.add(new ScoreAnimation(0.015f, entry.getKey(), entry.getValue(), player, this));
+        }
     }
 }

@@ -1,6 +1,7 @@
 package View.Adapter;
 
 import Global.Configuration;
+import View.GraphicalGame;
 import View.GraphicalUserInterface;
 
 import javax.swing.*;
@@ -18,6 +19,12 @@ public class ChangePageAdapter implements java.awt.event.ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Configuration.info("Changement de page vers " + newPage.getClass());
+
+        if(newPage.getClass() != GraphicalGame.class)
+            userInterface.stopGameAnimationTimer();
+        else
+            userInterface.startGameAnimationTimer();
+
         userInterface.getFrame().setContentPane(newPage);
         userInterface.getFrame().revalidate();
     }

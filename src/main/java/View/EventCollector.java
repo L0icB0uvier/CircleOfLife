@@ -19,4 +19,6 @@ public interface EventCollector {
      * @param i L'interface utilisateur à enregistrer.
      */
     void addUserInterface(UserInterface i);
+
+    void animTic();
 }

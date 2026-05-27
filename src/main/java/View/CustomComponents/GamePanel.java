@@ -30,7 +30,8 @@ public class GamePanel extends JComponent implements Observer {
             imgStonePlayer2LastMove,
             imgStonePlayer1Preview,
             imgStonePlayer2Preview,
-            imgStoneDisabled;
+            imgPlayer1ImpossibleMove,
+            imgPlayer2ImpossibleMove;
 
     int imgSrcHeight, imgSrcWidth;
     float imageWidth, imageHeight;
@@ -51,12 +52,12 @@ public class GamePanel extends JComponent implements Observer {
     float boardHexagonInnerRadius, boardHexagonOuterRadius;
     float circleHexagonInnerRadius, circleHexagonOuterRadius;
 
-    private final boolean showCircleHoverHighlight = true;
-    private final boolean showBoardHoverHighlight = true;
-    private final boolean useNeutralStoneImageForHoverInCircle = false;
-    private final boolean showBoardHighlightEffect = true;
-    private final boolean showCircleShape = true;
-    private final boolean showBlockingCrittersHighlight = true;
+    private boolean showCircleHoverHighlight = true;
+    private boolean showBoardHoverHighlight = true;
+    private boolean showBoardHighlightEffect = true;
+    private boolean showCircleShape = true;
+    private boolean showBlockingCrittersHighlight = true;
+    private boolean showEatenCrittersFeedback = true;
 
     float dotedLineDashPatternRatio = 0.0085f;
     float dotedLineSpaceRatio = 0.5f;
@@ -64,6 +65,9 @@ public class GamePanel extends JComponent implements Observer {
 
     float dotedLineMitterLimit = 1f;
     float dotedLinePhase = 0.5f;
+
+    float animationTravelRatio = 0.2f;
+    float animationTravelDistance;
 
     BasicStroke lastMoveStroke;
     BasicStroke boardHighlightStroke;
@@ -74,7 +78,9 @@ public class GamePanel extends JComponent implements Observer {
 
     private final Point2D.Float[] shapeOriginPoints;
 
-    private Set<Coordinate> coordinatesHighlighted = new HashSet<>();
+    private final Map<Set<Coordinate>, ScoreAnimation> scoreAnimations;
+    private float animationOffset = 0;
+    private Font scoreAnimationFont;
 
     private final imageRatio[] shapePositionRatios = new imageRatio[]{
             new imageRatio(0.48825f, 0.07045f), // 0
@@ -116,8 +122,10 @@ public class GamePanel extends JComponent implements Observer {
             }
         });
 
-        game.addObserver(this);
+        game.addUpdateObserver(this);
         match = game.getMatch();
+
+        scoreAnimations = new HashMap<>();
 
         shapeOriginPoints = new Point2D.Float[12];
 
@@ -143,7 +151,9 @@ public class GamePanel extends JComponent implements Observer {
         imgStonePlayer2LastMove = (BufferedImage) Configuration.loadImage("Red_Stone_Last_Move.png");
         imgStonePlayer1Preview = (BufferedImage) Configuration.loadImage("Blue_Stone_transparent.png");
         imgStonePlayer2Preview = (BufferedImage) Configuration.loadImage("Red_Stone_transparent.png");
-        imgStoneDisabled = (BufferedImage) Configuration.loadImage("Disabled_Stone.png");
+        imgPlayer1ImpossibleMove = (BufferedImage) Configuration.loadImage("Player1_Impossible_Move.png");
+        imgPlayer2ImpossibleMove = (BufferedImage) Configuration.loadImage("Player2_Impossible_Move.png");
+
     }
 
     @Override
@@ -160,35 +170,24 @@ public class GamePanel extends JComponent implements Observer {
         if(requireCalculation)
             recalculate();
 
-        coordinatesHighlighted.clear();
-
         drawBoardBackground(g2d);
         drawBoard(g2d);
         drawStones(g2d);
 
-//        if(match.isReviewModeActive() && match.canUndo()){
-//            drawLastMoveHighlight(g2d);
-//        }
-
-        if(match.isGameOver() == false || match.isReviewModeActive())
+        if(showEatenCrittersFeedback && (match.isGameOver() == false || match.isReviewModeActive()))
             drawEaten(g2d);
 
         if(match.isGameOver() == false)
         {
             if(drawSelected(g2d))
                 drawFeedforward(g2d);
-
-//            if(match.canUndo())
-//                drawLastMoveHighlight(g2d);
         }
+
+        drawScoreAnimations(g2d);
 
         super.paintBorder(g2d);
 
         g2d.dispose();
-    }
-
-    private void drawBoardBackground(Graphics2D g2d) {
-        g2d.drawImage(imgBackgroundPlateau,3,3, this.getWidth()-6, this.getHeight()-6, null);
     }
 
     /**
@@ -270,7 +269,15 @@ public class GamePanel extends JComponent implements Observer {
         boardHighlightStroke = new BasicStroke(boardHighlightThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         circleHighlightStroke = new BasicStroke(circleHighlightThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
+        animationTravelDistance = height * animationTravelRatio;
+        scoreAnimationFont = new Font("Arial", Font.BOLD, (int) (0.05 * getHeight()));
+        animationOffset = (float)boardStoneImageSize / 2;
+
         requireCalculation = false;
+    }
+
+    private void drawBoardBackground(Graphics2D g2d) {
+        g2d.drawImage(imgBackgroundPlateau,3,3, this.getWidth()-6, this.getHeight()-6, null);
     }
 
     /**
@@ -310,15 +317,15 @@ public class GamePanel extends JComponent implements Observer {
                     case -1:
                         if(match.getCurrentPlayerIndex() == 1)
                             continue;
-                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, imgPlayer1ImpossibleMove, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -2:
                         if(match.getCurrentPlayerIndex() == 0)
                             continue;
-                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, imgPlayer2ImpossibleMove, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -3:
-                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, match.getCurrentPlayerIndex() == 0 ? imgPlayer1ImpossibleMove : imgPlayer2ImpossibleMove, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                 }
             }
@@ -349,17 +356,6 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     /**
-     * Dessine le contour en pointillé de la dernière pierre posée sur le plateau.
-     * @param g2d Le composant Graphic à utiliser pour dessiner.
-     */
-    private void drawLastMoveHighlight(Graphics2D g2d){
-        Move lastMove = match.getLastMove();
-        float offset = coordinatesHighlighted.contains(new Coordinate(lastMove.getColumn(), lastMove.getLine()))? lastMoveStroke.getLineWidth() * 1.5f : lastMoveStroke.getLineWidth() / 2;
-        Point2D.Float origin = new Point2D.Float(nToX(lastMove.getColumn(), lastMove.getLine()), mToY(lastMove.getLine()));
-        drawHighlight(g2d, Set.of(new Coordinate(0, 0)), origin, boardHexagonInnerRadius, boardHexagonOuterRadius, offset, UIColor.LAST_MOVE_COLOR, lastMoveStroke);
-    }
-
-    /**
      * Dessine la pierre sous le curseur du joueur actif.
      * @param g2d Le composant Graphic à utiliser pour dessiner.
      * @return true si a dessiné une pierre, faux sinon
@@ -381,7 +377,7 @@ public class GamePanel extends JComponent implements Observer {
                     drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
 
                 Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(critter.type(), circleShapeTypeIds.get(critter.type()));
-                drawCircleShape(g2d, critter.type(),useNeutralStoneImageForHoverInCircle? imgStoneDisabled : getPlayerImage(critter.player()));
+                drawCircleShape(g2d, critter.type(), getPlayerImage(critter.player()));
 
                 if(showCircleHoverHighlight){
                     drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, 0, UIColor.HOVER_COLOR, circleHighlightStroke);
@@ -531,7 +527,6 @@ public class GamePanel extends JComponent implements Observer {
      */
     private void drawBoardCoordinatesHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color color, BasicStroke stroke){
         Set<Coordinate> normalizedCoordinates = CritterUtils.normalizeCoordinate(coordinates);
-        coordinatesHighlighted.addAll(coordinates);
         var shapeOriginCoordinates = CritterUtils.getTopLeftCoordinate(coordinates);
         Point2D.Float shapeOriginPos = new Point2D.Float(
                 nToX(shapeOriginCoordinates.col(), shapeOriginCoordinates.line()),
@@ -684,9 +679,9 @@ public class GamePanel extends JComponent implements Observer {
      * @return Les coordonnées en pixels où dessiner l'image.
      */
     private Point getStoneDrawPositions(int n, int m){
-        Coordinate pixel = tileToPixel(new Coordinate(n, m));
-        int x = pixel.col() - Math.round((float) boardStoneImageSize / 2);
-        int y = pixel.line() - Math.round((float) boardStoneImageSize / 2);
+        Point pixel = tileToPixel(new Coordinate(n, m));
+        int x = (int) pixel.getX() - Math.round((float) boardStoneImageSize / 2);
+        int y = (int) pixel.getY() - Math.round((float) boardStoneImageSize / 2);
         return new Point(x, y);
     }
 
@@ -697,7 +692,22 @@ public class GamePanel extends JComponent implements Observer {
     private void drawEaten(Graphics2D g2d){
         List<Coordinate> coordinates = match.getPreviouslyEatenCrittersCoordinates();
         if(coordinates.isEmpty()) return;
-        drawBoardCoordinatesHighlight(g2d, new HashSet<>(coordinates), match.getOpponentPlayerIndex() == 0? UIColor.RED : UIColor.BLUE, lastMoveStroke);
+        Color col = getEatenStonesColor();
+        drawBoardCoordinatesHighlight(g2d, new HashSet<>(coordinates), col, lastMoveStroke);
+    }
+
+    /**
+     * Récupère la bonne couleur pour l'affichage du contour des pierres mangées.
+     * @return La couleur correspondant à l'état du jeu.
+     */
+    private Color getEatenStonesColor() {
+        Color col;
+        if(match.isReviewModeActive()){
+            col = match.getOpponentPlayerIndex() == 0? UIColor.BLUE : UIColor.RED;
+        }
+        else
+            col = match.getOpponentPlayerIndex() == 0? UIColor.RED : UIColor.BLUE;
+        return col;
     }
 
     /**
@@ -710,6 +720,75 @@ public class GamePanel extends JComponent implements Observer {
      */
     private void drawStone(Graphics2D g2d, Image img, int x, int y, int size){
         g2d.drawImage(img, x, y, size, size, null);
+    }
+
+    /**
+     * Dessine les animations de score.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     */
+    private void drawScoreAnimations(Graphics2D g2d) {
+        if(scoreAnimations.isEmpty())
+            return;
+
+        Font prevFont = g2d.getFont();
+        g2d.setFont(scoreAnimationFont);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        for (Map.Entry<Set<Coordinate>, ScoreAnimation> entry : scoreAnimations.entrySet()) {
+
+            String text = String.format("+%d", entry.getValue().scoreGained);
+
+            Point pixelPos = calculateAverageStonePosition(entry.getKey());
+            int yPos = Math.round(pixelPos.y - animationOffset - (entry.getValue().progress * animationTravelDistance));
+            pixelPos.setLocation(pixelPos.x, yPos);
+
+            FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+            int x = pixelPos.x - (metrics.stringWidth(text) / 2);
+            int y = Math.round(pixelPos.y - (entry.getValue().progress * animationTravelDistance));
+            printScoreGainedText(g2d, text, x, y, entry.getValue().player == 0 ? UIColor.BLUE : UIColor.RED ,1 - entry.getValue().progress);
+        }
+
+        g2d.setFont(prevFont);
+    }
+
+    /**
+     * Calcule la position moyenne en pixel d'un ensemble de pierre du plateau.
+     * @param coords Les coordonnées des pierres sur plateau.
+     * @return La position moyenne en pixels.
+     */
+    private Point calculateAverageStonePosition(Set<Coordinate> coords){
+        int sumX = 0;
+        int sumY = 0;
+
+        for (Coordinate coord : coords) {
+            Point position = tileToPixel(coord);
+            sumX += position.x;
+            sumY += position.y;
+        }
+
+        int averageX = sumX / coords.size();
+        int averageY = sumY / coords.size();
+
+        return new Point(averageX, averageY);
+    }
+
+    /**
+     * Dessine un texte aux positions données.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param text Le texte à dessiner.
+     * @param x La position x où dessiner dans le référentiel Swing.
+     * @param y La position y où dessiner dans le référentiel Swing.
+     * @param textColor La couleur à utiliser pour dessiner.
+     * @param alpha L'alpha à appliquer à la couleur.
+     */
+    private void printScoreGainedText(Graphics2D g2d, String text, int x, int y, Color textColor, float alpha){
+        Color prevCol = g2d.getColor();
+        Color color = new Color(textColor.getRed(), textColor.getGreen(), textColor.getBlue(), Math.round(255 * alpha));
+        g2d.setColor(color);
+
+        g2d.drawString(text, x, y);
+
+        g2d.setColor(prevCol);
     }
 
     @Override
@@ -725,7 +804,7 @@ public class GamePanel extends JComponent implements Observer {
     public void updateMousePosition(int x, int y) {
         mouseX = x;
         mouseY = y;
-        Coordinate mouseToTile = pixelToTile(new Coordinate(mouseX, mouseY));
+        Coordinate mouseToTile = pixelToTile(new Point(mouseX, mouseY));
         int n = mouseToTile.col();
         int m = mouseToTile.line();
 
@@ -766,10 +845,10 @@ public class GamePanel extends JComponent implements Observer {
      * @param tile La case du plateau.
      * @return La position de case en coordonnées en pixels.
      */
-    public Coordinate tileToPixel(Coordinate tile){
+    public Point tileToPixel(Coordinate tile){
         int n = tile.col();
         int m = tile.line();
-        return new Coordinate((int) Math.round(x0 + (distance * ((double) n - ((double) m / 2)))),
+        return new Point((int) Math.round(x0 + (distance * ((double) n - ((double) m / 2)))),
                 (int) Math.round(y0 + ((m * Math.sqrt(3) * distance) / 2)));
     }
 
@@ -778,9 +857,9 @@ public class GamePanel extends JComponent implements Observer {
      * @param pixels Les coordonnées en pixels.
      * @return La case du plateau correspondante.
      */
-    public Coordinate pixelToTile(Coordinate pixels){
-        int x = pixels.col();
-        int y = pixels.line();
+    public Coordinate pixelToTile(Point pixels){
+        int x = (int) pixels.getX();
+        int y = (int) pixels.getY();
         int c = (int) (Math.round(((double) (x - x0) / distance) + ((1 / Math.sqrt(3) * ((double) (y - y0) / distance)))));
         int l = (int) (Math.round((2 * (y - y0) / (distance * Math.sqrt(3)))));
         Set<Coordinate> tiles = new HashSet<>(Set.of(new Coordinate(c,l), new Coordinate(c-1, l), new Coordinate(c+1, l),
@@ -798,11 +877,91 @@ public class GamePanel extends JComponent implements Observer {
         return closestTile;
     }
 
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
+        if(match.isPlaying() == false) return;
+        if(scoreAnimations.containsKey(groupCoords)){
+            if(progress >= 1){
+                Configuration.info("Removing animation in GamePanel");
+                scoreAnimations.remove(groupCoords);
+            }
+            else
+                scoreAnimations.get(groupCoords).updateProgress(progress);
+        }
+        else{
+            scoreAnimations.put(groupCoords, new ScoreAnimation(scoreGained, player, progress));
+        }
+        repaint();
+    }
+
+    static class ScoreAnimation {
+        int scoreGained;
+        int player;
+        float progress;
+
+        public ScoreAnimation(int scoreGained, int player, float progress){
+            this.scoreGained = scoreGained;
+            this.player = player;
+            this.progress = progress;
+        }
+
+        public void updateProgress(float newProgress){
+            progress = newProgress;
+        }
+    }
+
     public int getNSelected() {
         return nSelected;
     }
 
     public int getMSelected() {
         return mSelected;
+    }
+
+    public boolean isShowCircleHoverHighlight() {
+        return showCircleHoverHighlight;
+    }
+
+    public boolean isShowBoardHoverHighlight() {
+        return showBoardHoverHighlight;
+    }
+
+    public boolean isShowCircleShape() {
+        return showCircleShape;
+    }
+
+    public boolean isShowBlockingCrittersHighlight() {
+        return showBlockingCrittersHighlight;
+    }
+
+    public boolean isShowBoardHighlightEffect() {
+        return showBoardHighlightEffect;
+    }
+
+    public boolean isShowEatenCrittersFeedback() {
+        return showEatenCrittersFeedback;
+    }
+
+    public void setShowEatenCrittersFeedback(boolean showEatenCrittersFeedback) {
+        this.showEatenCrittersFeedback = showEatenCrittersFeedback;
+    }
+
+    public void setShowCircleHoverHighlight(boolean showCircleHoverHighlight) {
+        this.showCircleHoverHighlight = showCircleHoverHighlight;
+    }
+
+    public void setShowBoardHoverHighlight(boolean showBoardHoverHighlight) {
+        this.showBoardHoverHighlight = showBoardHoverHighlight;
+    }
+
+    public void setShowBoardHighlightEffect(boolean showBoardHighlightEffect) {
+        this.showBoardHighlightEffect = showBoardHighlightEffect;
+    }
+
+    public void setShowCircleShape(boolean showCircleShape) {
+        this.showCircleShape = showCircleShape;
+    }
+
+    public void setShowBlockingCrittersHighlight(boolean showBlockingCrittersHighlight) {
+        this.showBlockingCrittersHighlight = showBlockingCrittersHighlight;
     }
 }

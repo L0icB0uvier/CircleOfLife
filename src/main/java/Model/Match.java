@@ -24,6 +24,7 @@ public class Match extends History<Move> implements Cloneable {
 
     private final int winScore;
 
+    private boolean playing = false;
     private boolean gameOver = false;
     private boolean reviewModeActive;
 
@@ -743,6 +744,10 @@ public class Match extends History<Move> implements Cloneable {
         return foundCritters;
     }
 
+    public void startPlaying() {
+        playing = true;
+    }
+
     private record Node(Coordinate coord, int distance) {}
 
     public boolean isGameOver(){
@@ -761,6 +766,9 @@ public class Match extends History<Move> implements Cloneable {
         return future.size();
     }
 
+    public boolean isPlaying() {
+        return playing;
+    }
 
     /**
      * Récupère le nombre de critters actuellement présent sur le plateau.

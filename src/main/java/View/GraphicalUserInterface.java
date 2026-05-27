@@ -3,12 +3,15 @@ package View;
 import Controller.Controller;
 import Global.Configuration;
 import Global.PlayerNumber;
+import Model.Coordinate;
 import Model.Game;
 import Patterns.Observer;
 import View.Adapter.*;
+import View.CustomComponents.ErrorPopUpPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Set;
 
 public class GraphicalUserInterface implements Runnable, UserInterface, Observer {
     Game game;
@@ -21,6 +24,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     GraphicalLoadGame graphicalLoadGame;
     GraphicalTutorial graphicalTutorial;
 
+    Timer gameAnimationTimer;
+
     private boolean maximized;
 
     public GraphicalUserInterface(Game game, EventCollector controller){
@@ -30,6 +35,10 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
     public GraphicalTutorial getGraphicalTutorial() {
         return graphicalTutorial;
+    }
+
+    public GraphicalMainMenu getGraphicalMainMenu() {
+        return graphicalMainMenu;
     }
 
     public static void start(Game game, EventCollector controller) {
@@ -73,15 +82,33 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         Configuration.updateStartingPlayerSetting(graphicalNewGame.startingPlayerChoice.getValue());
     }
 
+    @Override
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
+        graphicalGame.animateScore(groupCoords, scoreGained, player, progress);
+    }
+
     public void startLoadPage() {
         graphicalLoadGame = new GraphicalLoadGame((Controller) controller, this);
 
         graphicalLoadGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 
+        stopGameAnimationTimer();
+
         frame.setContentPane(graphicalLoadGame);
         frame.revalidate();
     }
 
+    public void startGameAnimationTimer() {
+        Configuration.info("Starting Game Animation Timer");
+        gameAnimationTimer.start();
+    }
+
+    public void stopGameAnimationTimer() {
+        if(gameAnimationTimer.isRunning()) {
+            Configuration.info("Stopping Game Animation Timer");
+            gameAnimationTimer.stop();
+        }
+    }
 
     public void startGame() {
         graphicalGame = new GraphicalGame(game, controller);
@@ -122,6 +149,8 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         setUpTooltipSettings();
 
+        startGameAnimationTimer();
+
         graphicalGame.updateGUI();
     }
 
@@ -145,7 +174,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         Configuration.initSettings();
         frame.setSize(Configuration.readInt("WindowWidth"), Configuration.readInt("WindowHeight"));
         frame.setMinimumSize(new Dimension(800, 600));
-        game.addObserver(this);
+        game.addUpdateObserver(this);
 
         graphicalMainMenu = new GraphicalMainMenu(frame);
         graphicalNewGame = new GraphicalNewGame(frame);
@@ -161,12 +190,19 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalNewGame.startButton.addActionListener(new NewGameAdapter(controller));
         graphicalNewGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 
+        gameAnimationTimer = new Timer(16, new AnimationAdapter(controller));
+        gameAnimationTimer.setCoalesce(true);
+
         frame.addKeyListener(new KeyboardAdapter(controller));
 
         frame.setContentPane(graphicalMainMenu);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+
+    public void errorPopup(String string, Component c) {
+        new ErrorPopUpPanel(string, c);
     }
 
 }

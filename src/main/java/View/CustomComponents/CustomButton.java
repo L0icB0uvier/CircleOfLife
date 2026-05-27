@@ -22,9 +22,9 @@ public class CustomButton extends JButton  {
         this.setBackground(this.bgColor);
         this.setFocusable(false);
         this.setOpaque(false);
+        this.setContentAreaFilled(false);
         this.border = new RoundedBorder(15,true, this.text);
         this.setBorder(border);
-        setContentAreaFilled(false);
         this.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -60,5 +60,9 @@ public class CustomButton extends JButton  {
         this.setBorder(border);
     }
 
+    @Override
+    public String getText() {
+        return this.text;
+    }
 
 }
