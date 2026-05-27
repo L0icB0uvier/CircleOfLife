@@ -35,7 +35,8 @@ public class GraphicalLoadGame extends JPanel {
         this.setBackground(UIColor.BACKGROUND);
 
         scrollPane = new JScrollPane();
-        scrollPane.setBorder(new RoundedBorder(15, UIColor.LIGHT_BLUE, 3));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
         contentPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(contentPanel, BoxLayout.Y_AXIS);
         contentPanel.setLayout(boxLayout);
@@ -203,18 +204,18 @@ public class GraphicalLoadGame extends JPanel {
     }
 
     public void selectGame(JPanel gamePanel, String gameFile) {
-        if(currentGame != null) currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
+        if(currentGame != null) currentGamePanel.setBackground(UIColor.WHITE);
         this.currentGame = gameFile;
         this.currentGamePanel = gamePanel;
         this.renameBtn.setEnabled(true);
         this.loadBtn.setEnabled(true);
-        gamePanel.setBorder(new RoundedBorder(15, UIColor.HOVER_COLOR, 5));
+        currentGamePanel.setBackground(Color.LIGHT_GRAY);
     }
 
     private void deselectGame() {
         if(currentGame == null) return;
         currentGame = null;
-        currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
+        currentGamePanel.setBackground(UIColor.WHITE);
         currentGamePanel = null;
         this.renameBtn.setEnabled(false);
         this.loadBtn.setEnabled(false);
@@ -226,13 +227,15 @@ public class GraphicalLoadGame extends JPanel {
         if (gameData == null)
             return;
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[80%, align left][20%, align right]", "[50%]push[40%]" );
+        MigLayout layout = new MigLayout("fill, insets 1%", "[90%]push[10%]", "[15%][40%][30%][15%]");
+
         JPanel gamePanel = new JPanel(layout);
         gamePanel.setPreferredSize(new Dimension(500,150));
         gamePanel.setMaximumSize(new Dimension(10000,150));
         gamePanel.setFocusable(true);
-        gamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
-        gamePanel.setBackground(UIColor.BACKGROUND);
+        gamePanel.setBackground(UIColor.WHITE);
+        gamePanel.setOpaque(false);
+        gamePanel.setBorder(new RoundedBorder(15, true));
         gamePanel.setName(game);
 
         String[] dates = gameData[0].split(" ");
@@ -269,9 +272,9 @@ public class GraphicalLoadGame extends JPanel {
         deleteButtonPanel.setOpaque(false);
         deleteButtonPanel.add(deleteBtn);
 
-        gamePanel.add(namePanel, "cell 0 0, grow");
-        gamePanel.add(gameDataPanel, "cell 0 1, grow");
-        gamePanel.add(deleteButtonPanel, "cell 1 0, span 1 2, grow");
+        gamePanel.add(namePanel, "cell 0 0, span 1 2, grow");
+        gamePanel.add(gameDataPanel, "cell 0 2,span 1 2, grow");
+        gamePanel.add(deleteButtonPanel, "cell 1 1, span 1 2, grow");
 
         namePanel.addComponentListener(new FontScaler(0.6f, nameLabel));
         gameDataPanel.addComponentListener(new FontScaler(0.6f, player1Label, sepLabel, player2Label));
