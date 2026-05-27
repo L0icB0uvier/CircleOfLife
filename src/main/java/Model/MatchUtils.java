@@ -108,23 +108,6 @@ public class MatchUtils {
     }
 
     /**
-     * Compte le nombre de critters d'un type appartenant à un joueur dans un match.
-     * @param match Le match dont la configuration actuelle sera mesurée.
-     * @param playerID L'index du joueur dont on doit compter les critters.
-     * @param type Le type de critters à compter.
-     * @return Le nombre des critters mesuré.
-     */
-    public static int countPlayerCritterType(Match match, int playerID, int type){
-        int result = 0;
-        for (Critter critter : match.critters){
-            if (critter.type() == type && critter.player() == playerID){
-                result++;
-            }
-        }
-        return result;
-    }
-
-    /**
      * Compte le nombre de critters d'une taille appartenant à un joueur dans un match.
      * @param match Le match dont la configuration actuelle sera mesurée.
      * @param playerID L'index du joueur dont on doit compter les critters.
@@ -138,34 +121,6 @@ public class MatchUtils {
                 result++;
             }
         }
-        return result;
-    }
-
-    /**
-     * Mesure la distance moyenne entre les critters de deux joueurs (potentiellement le même).
-     * @param match Le match dont la configuration actuelle sera mesurée.
-     * @param playerID1 L'index du premier joueur.
-     * @param playerID2 L'index du deuxième joueur.
-     * @return La distance moyenne entre critters des deux joueurs.
-     */
-    public static double meanPlayersCritterDistance(Match match, int playerID1, int playerID2){
-        double result = 0;
-        int counter = 0;
-        for (Critter critter1 : match.critters){
-            if (critter1.player() == playerID1) {
-                for (Critter critter2 : match.critters) {
-                    if (critter2.player() == playerID2 && critter2 != critter1) {
-                        for (Coordinate coordinate1 : critter1.stonesCoordinates()) {
-                            for (Coordinate coordinate2 : critter2.stonesCoordinates()) {
-                                result += hexagonalManhattanDistance(coordinate1, coordinate2);
-                                counter++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        result /= counter;
         return result;
     }
 

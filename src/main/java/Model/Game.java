@@ -94,8 +94,8 @@ public class Game extends Observable {
     }
 
     private void checkScoreChange() {
-        if(match.isPlaying() == false) return;
-        if(match.previouslyEatenCritters.isEmpty() == false){
+        if(!match.isPlaying()) return;
+        if(!match.previouslyEatenCritters.isEmpty()){
             Map<Set<Coordinate>, Integer> eatenData = new HashMap<>();
             for (Critter previouslyEatenCritter : match.previouslyEatenCritters) {
                 eatenData.put(previouslyEatenCritter.stonesCoordinates(), MatchUtils.calculatePointEarned(Set.of(previouslyEatenCritter)));
@@ -111,7 +111,7 @@ public class Game extends Observable {
         Configuration.info("Game received Undo.");
         if (match.isGameOver() && !match.isReviewModeActive())
             return;
-        if(canUndo() == false) return;
+        if(!canUndo()) return;
 
         match.undo();
         match.toggleCurrentPlayer();

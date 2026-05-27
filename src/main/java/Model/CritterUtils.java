@@ -5,24 +5,6 @@ import java.util.*;
 public class CritterUtils {
     private static final Map<Set<Coordinate>, Integer> critters;
 
-    /**
-     * Représente la distance entre les deux pierres les plus éloignées d'un critter.
-     */
-    public static final Map<Integer, Integer> critterEvolutionMaxDistance = Map.ofEntries(
-            Map.entry(0, 0),
-            Map.entry(1, 3),
-            Map.entry(2, 2),
-            Map.entry(3, 2),
-            Map.entry(4, 3),
-            Map.entry(5, 3),
-            Map.entry(6, 3),
-            Map.entry(7, 2),
-            Map.entry(8, 1),
-            Map.entry(9, 2),
-            Map.entry(10, 2),
-            Map.entry(11, 1)
-    );
-
     static {
         Map<Set<Coordinate>, Integer> tempShapes = new LinkedHashMap<>();
 
@@ -197,30 +179,5 @@ public class CritterUtils {
             return Collections.emptySet();
 
         return keys.get(id);
-    }
-
-    /**
-     * Calcule la coordonnée moyenne d'un ensemble de coordonnées.
-     * @param coordinates Le set de coordonnées à analyser.
-     * @return La coordonnée moyenne, ou null si l'ensemble est vide ou null.
-     */
-    public static Coordinate getAverageCoordinate(Set<Coordinate> coordinates) {
-        if (coordinates == null || coordinates.isEmpty()) {
-            return null;
-        }
-
-        double sumLine = 0;
-        double sumCol = 0;
-
-        for (Coordinate coord : coordinates) {
-            sumLine += coord.line();
-            sumCol += coord.col();
-        }
-
-        // On arrondit au plus proche pour obtenir des coordonnées entières
-        int avgLine = (int) Math.round(sumLine / coordinates.size());
-        int avgCol = (int) Math.round(sumCol / coordinates.size());
-
-        return new Coordinate(avgCol, avgLine); // Attention à l'ordre (col, line) utilisé dans votre méthode normalizeCoordinate
     }
 }

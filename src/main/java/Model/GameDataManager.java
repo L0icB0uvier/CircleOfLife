@@ -247,7 +247,7 @@ public class GameDataManager {
         if (scanner.hasNextInt())
             lenFuture = scanner.nextInt();
         else {
-            Configuration.warning("Impossible de lire le nombre d'undo dans le fichier " + filename);
+            Configuration.warning("Impossible de lire le nombre de undo dans le fichier " + filename);
             return false;
         }
 
@@ -277,12 +277,6 @@ public class GameDataManager {
             return false;
         }
 
-        // read reviewMode
-        boolean reviewModeActive = false;
-        if (scanner.hasNextBoolean()) 
-            reviewModeActive = scanner.nextBoolean();
-
-
         if (scanner.hasNext()) {
             String winTypeText = scanner.next();
             WinType winType = WinType.valueOf(winTypeText);
@@ -302,7 +296,7 @@ public class GameDataManager {
      * @param scanner Scanner.
      * @return Un Move qui correspond à ce qui a été lu.
      */
-    private static Move readMove(Match m, Scanner scanner) throws Exception {
+    private static Move readMove(Match m, Scanner scanner) {
         int l = scanner.nextInt();
         int c = scanner.nextInt();
         return new Move(m, l, c);
@@ -526,7 +520,7 @@ public class GameDataManager {
     private static String constNewName(String filename, String newName) {
         if (!filename.endsWith(".save"))
             filename += ".save";
-        if (newName.equals("")) 
+        if (newName.isEmpty())
             return removeName(filename);
         String sep = "_";
         String sepAlt = "-";
@@ -538,7 +532,7 @@ public class GameDataManager {
     }
 
     /**
-     * Vérifie si le string donné contient des caractères illégaux (des séparateurs des différents champs des noms cad underscore)
+     * Vérifie si le string donné contient des caractères illégaux (des séparateurs des différents champs des noms c.-à-d. underscore)
      * 
      * @param newName string
      * @return true si le fichier contient des caractères illégaux, false sinon

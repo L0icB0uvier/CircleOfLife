@@ -26,7 +26,7 @@ public class History<E extends Command> {
      * @return true s'il existe des actions annulables, false sinon.
      */
     public boolean canUndo() {
-        return past.isEmpty() == false;
+        return !past.isEmpty();
     }
 
     /**
@@ -34,7 +34,7 @@ public class History<E extends Command> {
      * @return true s'il existe des actions re-faisable, false sinon.
      */
     public boolean canRedo() {
-        return future.isEmpty() == false;
+        return !future.isEmpty();
     }
 
     /**
@@ -51,26 +51,22 @@ public class History<E extends Command> {
 
     /**
      * Annule la dernière commande.
-     * @return La commande annulée.
      */
-    public E undo() {
+    public void undo() {
         var cmd = transfer(past, future);
         pastCount--;
         futureCount++;
         cmd.desexecute();
-        return cmd;
     }
 
     /**
      * Refait la dernière commande annulée.
-     * @return La commande refaite.
      */
-    public E redo() {
+    public void redo() {
         var cmd = transfer(future, past);
         futureCount--;
         pastCount++;
         cmd.execute();
-        return cmd;
     }
 
     /**
@@ -89,7 +85,7 @@ public class History<E extends Command> {
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        History resultat = (History) super.clone();
+        History<?> resultat = (History<?>) super.clone();
         resultat.reset();
         return resultat;
     }
