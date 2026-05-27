@@ -1,5 +1,6 @@
 package View.CustomComponents;
 
+import Global.Configuration;
 import Model.Coordinate;
 import Model.Game;
 import Model.Move;
@@ -12,12 +13,15 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.io.ObjectInputFilter;
 
 public class GameInfo extends JPanel {
     JLabel turn;
     JLabel playerName;
     JLabel mainMessage;
     JLabel winMessage;
+    JLabel textLabel;
     Game game;
 
     public GameInfo(Game game) {
@@ -59,7 +63,11 @@ public class GameInfo extends JPanel {
         this.setBackground(UIColor.LIGHT_BLUE);
         setBorder(new RoundedBorder(15,true));
 
-        this.addComponentListener(new FontScaler(turn, mainMessage, playerName, winMessage));
+        textLabel = new JLabel(turn.getText() + playerName.getText() + mainMessage.getText() + winMessage.getText());
+        this.add(textLabel);
+        textLabel.setVisible(false);
+
+        this.addComponentListener(new FontScaler(0.5f, 0.9f, turn, mainMessage, playerName, winMessage, textLabel));
     }
 
     public void update(){
@@ -75,15 +83,19 @@ public class GameInfo extends JPanel {
                 else{
                     updatePlayerTurn(playerName, game.getMatch().winType == WinType.SCORE ? game.getOpponentPlayerIndex() : game.getCurrentPlayerIndex());
                 }
+                textLabel.setText(turn.getText() + playerName.getText() + mainMessage.getText() + (!game.canRedo() ? winMessage.getText(): ""));
             }
             else{
                 updatePlayerTurn(playerName, game.getWinningPlayer());
+                textLabel.setText(turn.getText() + playerName.getText() + mainMessage.getText() + winMessage.getText());
             }
         }
         else {
             updatePlayerTurn(playerName, game.getCurrentPlayerIndex());
+            textLabel.setText(turn.getText() + playerName.getText() + mainMessage.getText());
         }
-
+        Configuration.info(textLabel.getText());
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(this, ComponentEvent.COMPONENT_RESIZED));
         repaint();
     }
 
@@ -113,12 +125,25 @@ public class GameInfo extends JPanel {
                 case SCORE -> {
                     winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
                 }
-                case FILL, GIVE_UP -> {
-                    if(game.getWinningPlayer() != game.getCurrentPlayerIndex()){
+                case FILL -> {
+                    if(game.getWinningPlayer() != game.getOpponentPlayerIndex()){
                         winMessage.setText(String.format(" et perd %s", getWinTypeString()));
                     }
                     else{
                         winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
+                    }
+                }
+                case GIVE_UP ->{
+                    if(game.canUndo() == false){
+                        winMessage.setText(String.format(" et perd %s", getWinTypeString()));
+                    }
+                    else{
+                        if(game.getWinningPlayer() != game.getOpponentPlayerIndex()){
+                            winMessage.setText(String.format(" et perd %s", getWinTypeString()));
+                        }
+                        else{
+                            winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
+                        }
                     }
                 }
             }

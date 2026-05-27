@@ -137,10 +137,10 @@ public class GraphicalNewGame extends JPanel {
         this.add(buttonsComp, "cell 0 5, grow");
 
         titleLabelPanel.addComponentListener(new FontScaler(titleLabel));
-        player1LabelPanel.addComponentListener(new FontScaler(0.5f, player1Label, player1NameLabel, AI1LevelLabel, startingPlayerLabel, player2Label, player2NameLabel, AI2LevelLabel));
+        player1LabelPanel.addComponentListener(new FontScaler(0.65f, 0.9f, player1Label, player1NameLabel, AI1LevelLabel, startingPlayerLabel, player2Label, player2NameLabel, AI2LevelLabel));
         player1NameTextField.addComponentListener(new FontScaler(0.5f, player1NameTextField, player2NameTextField));
         buttonsComp.addComponentListener(new FontScaler(cancelButton, startButton));
-        player1Choice.getLabelPanel().addComponentListener(new FontScaler(0.5f, 0.9f, player1Choice.getLabel(), player2Choice.getLabel(), AI1LevelChoice.getLabel(), AI2LevelChoice.getLabel(), startingPlayerChoice.getLabel()));
+        player1Choice.getLabelPanel().addComponentListener(new FontScaler(0.5f, player1Choice.getLabel(), player2Choice.getLabel(), AI1LevelChoice.getLabel(), AI2LevelChoice.getLabel(), startingPlayerChoice.getLabel()));
 
         player1Choice.leftBtn.addActionListener(new OptionalVisibilityAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice, -1,"Joueur"));
         player1Choice.rightBtn.addActionListener(new OptionalVisibilityAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice, 1,"Joueur"));
