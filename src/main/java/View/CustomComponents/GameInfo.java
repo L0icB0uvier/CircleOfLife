@@ -94,8 +94,8 @@ public class GameInfo extends JPanel {
             textLabel.setText(turn.getText() + playerName.getText() + mainMessage.getText());
         }
         Configuration.info(textLabel.getText());
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(this, ComponentEvent.COMPONENT_RESIZED));
         repaint();
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(this, ComponentEvent.COMPONENT_RESIZED));
     }
 
     private void updateMessage(){
