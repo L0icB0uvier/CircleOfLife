@@ -94,7 +94,7 @@ public class FontScaler extends ComponentAdapter {
                 lineNb = 0;
                 String text = ((JLabel) comp).getText();
                 String[] lines = text.split("<br>");
-                for (String line: lines) {
+                for (String ignored : lines) {
                     lineNb++;
                 }
             }

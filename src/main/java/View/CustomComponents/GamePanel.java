@@ -1,6 +1,8 @@
 package View.CustomComponents;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -65,7 +67,9 @@ public class GamePanel extends JComponent implements Observer {
     float dotedLinePhase = 0.5f;
 
     float animationTravelRatio = 0.2f;
+    float animationTextHighlightRatio = 0.01f;
     float animationTravelDistance;
+    float animationTextHighlightStroke;
 
     BasicStroke lastMoveStroke;
     BasicStroke boardHighlightStroke;
@@ -268,6 +272,7 @@ public class GamePanel extends JComponent implements Observer {
         animationTravelDistance = height * animationTravelRatio;
         scoreAnimationFont = new Font("Arial", Font.BOLD, (int) (0.05 * getHeight()));
         animationOffset = (float)boardStoneImageSize / 2;
+        animationTextHighlightStroke = imageWidth * animationTextHighlightRatio;
 
         requireCalculation = false;
     }
@@ -776,14 +781,35 @@ public class GamePanel extends JComponent implements Observer {
      * @param textColor La couleur à utiliser pour dessiner.
      * @param alpha L'alpha à appliquer à la couleur.
      */
-    private void printScoreGainedText(Graphics2D g2d, String text, int x, int y, Color textColor, float alpha){
+    private void printScoreGainedText(Graphics2D g2d, String text, int x, int y, Color textColor, float alpha) {
+        if (text == null || text.isEmpty()) return;
+
         Color prevCol = g2d.getColor();
-        Color color = new Color(textColor.getRed(), textColor.getGreen(), textColor.getBlue(), Math.round(255 * alpha));
-        g2d.setColor(color);
+        Stroke prevStroke = g2d.getStroke();
 
-        g2d.drawString(text, x, y);
+        int alphaInt = Math.round(255 * alpha);
+        Color fillColor = new Color(textColor.getRed(), textColor.getGreen(), textColor.getBlue(), alphaInt);
+        Color outlineBaseColor = UIColor.SCORE_ANIMATION_HIGHLIGHT_COLOR;
+        Color outlineColor = new Color(outlineBaseColor.getRed(), outlineBaseColor.getGreen(), outlineBaseColor.getBlue(), alphaInt); // Contour noir (0, 0, 0)
 
+        FontRenderContext frc = g2d.getFontRenderContext();
+        TextLayout textLayout = new TextLayout(text, g2d.getFont(), frc);
+
+        g2d.translate(x, y);
+        Shape textShape = textLayout.getOutline(null);
+
+        g2d.setColor(outlineColor);
+
+        g2d.setStroke(new BasicStroke(animationTextHighlightStroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2d.draw(textShape);
+
+        g2d.setColor(fillColor);
+        g2d.fill(textShape);
+
+        // 5. Restauration de l'état d'origine du Graphics2D
+        g2d.translate(-x, -y); // Remise à zéro du repère
         g2d.setColor(prevCol);
+        g2d.setStroke(prevStroke);
     }
 
     @Override

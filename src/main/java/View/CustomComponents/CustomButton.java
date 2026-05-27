@@ -3,8 +3,6 @@ package View.CustomComponents;
 import View.Utils.RoundedBorder;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

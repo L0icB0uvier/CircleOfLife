@@ -11,13 +11,11 @@ public class UIColor {
     static public Color GREEN = new Color(0,155,78);
     static public Color LIGHT_BLUE = new Color(204,199,221);
     static public Color LIGHT_RED = new Color(249,199,195);
-    static public Color ALT_BLUE = new Color(77, 178, 255);
-    static public Color ALT_RED = new Color(255, 52, 32);
     static public Color BACKGROUND = new Color(237, 223, 198);
 
     static public Color EVOLVE_COLOR = Color.GREEN;
     static public Color EATEN_COLOR = Color.YELLOW;
     static public Color HOVER_COLOR = Color.WHITE;
-    static public Color LAST_MOVE_COLOR = null;
     static public Color BLOCKING_CRITTER_COLOR = Color.LIGHT_GRAY;
+    static public Color SCORE_ANIMATION_HIGHLIGHT_COLOR = Color.WHITE;
 }
