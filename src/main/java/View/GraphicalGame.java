@@ -13,6 +13,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -24,7 +25,9 @@ public class GraphicalGame extends JPanel {
     ArrayList<PlayerInfo> playerInfos;
     GameControlBar gameControlBar;
     GameInfo gameInfo;
-    Image crown;
+    Image crown, overlayIcon;
+
+    JLayer<GamePanel> gameLayer;
 
     public JButton undoBt, redoBt, allUndoBt, allRedoBt;
     public CustomButton forfeitBt, replayBt, reviewBt;
@@ -35,6 +38,7 @@ public class GraphicalGame extends JPanel {
         this.game = game;
         this.controller = controller;
         this.crown = Configuration.loadImage("crown.png");
+        this.overlayIcon = Configuration.loadImage("display_options_button.png");
 
         playerInfos = new ArrayList<>();
 
@@ -109,8 +113,15 @@ public class GraphicalGame extends JPanel {
         gameInfo = new GameInfo(game);
 
         gamePanel = new GamePanel(game);
-        gamePanel.setBorder(new RoundedBorder(15,Color.BLACK,5));
-        gamePanel.setBackground(new Color(0,0,0,0));
+        gamePanel.setBorder(new RoundedBorder(15, Color.BLACK, 5));
+        gamePanel.setBackground(new Color(0, 0, 0, 0));
+
+        GamePanelOverlayUI overlayUI = new GamePanelOverlayUI(gamePanel, overlayIcon);
+        gameLayer = new JLayer<>(gamePanel, overlayUI);
+
+        gameLayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+        gameLayer.addMouseMotionListener(new MouseMotionAdapter() {});
+        gameLayer.setMinimumSize(new Dimension(0, 0));
 
         playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[0].getName(),0));
         PlayerInfo player1Info = playerInfos.get(0);
@@ -136,7 +147,7 @@ public class GraphicalGame extends JPanel {
         this.add(gameInfo,"cell 2 0, grow, sg top");
         this.add(player1Info,"cell 5 0, grow, sg top");
         this.add(player2Info,"cell 5 1, grow, sg top");
-        this.add(gamePanel,"cell 0 1, span 5 6, grow");
+        this.add(gameLayer,"cell 0 1, span 5 6, grow");
         this.add(gameControlBar,"cell 5 6, grow, sg top");
 
         forfeitPanel.addComponentListener(new FontScaler(forfeitBt));
