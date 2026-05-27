@@ -17,7 +17,7 @@ public interface UserInterface {
 
     /**
      * Anime un gain de score.
-     * @param groupCoords
+     * @param groupCoords Les coordonnées des pierres ayant été mangées.
      * @param scoreGained La quantité de points gagnés.
      * @param player Le joueur ayant gagné les points.
      * @param progress Le stage de l'animation entre 0 et 1.

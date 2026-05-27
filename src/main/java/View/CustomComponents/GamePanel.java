@@ -51,12 +51,12 @@ public class GamePanel extends JComponent implements Observer {
     float boardHexagonInnerRadius, boardHexagonOuterRadius;
     float circleHexagonInnerRadius, circleHexagonOuterRadius;
 
-    private final boolean showCircleHoverHighlight = true;
-    private final boolean showBoardHoverHighlight = true;
-    private final boolean useNeutralStoneImageForHoverInCircle = false;
-    private final boolean showBoardHighlightEffect = true;
-    private final boolean showCircleShape = true;
-    private final boolean showBlockingCrittersHighlight = true;
+    private boolean showCircleHoverHighlight = true;
+    private boolean showBoardHoverHighlight = true;
+    private boolean showBoardHighlightEffect = true;
+    private boolean showCircleShape = true;
+    private boolean showBlockingCrittersHighlight = true;
+    private boolean showEatenCrittersFeedback = true;
 
     float dotedLineDashPatternRatio = 0.0085f;
     float dotedLineSpaceRatio = 0.5f;
@@ -76,8 +76,6 @@ public class GamePanel extends JComponent implements Observer {
     private float circleStoneOffset;
 
     private final Point2D.Float[] shapeOriginPoints;
-
-    private final Set<Coordinate> coordinatesHighlighted = new HashSet<>();
 
     private final Map<Set<Coordinate>, ScoreAnimation> scoreAnimations;
     private float animationOffset = 0;
@@ -169,12 +167,11 @@ public class GamePanel extends JComponent implements Observer {
         if(requireCalculation)
             recalculate();
 
-        coordinatesHighlighted.clear();
-
         drawBoardBackground(g2d);
         drawBoard(g2d);
         drawStones(g2d);
-        if(match.isGameOver() == false || match.isReviewModeActive())
+
+        if(showEatenCrittersFeedback && (match.isGameOver() == false || match.isReviewModeActive()))
             drawEaten(g2d);
 
         if(match.isGameOver() == false)
@@ -356,17 +353,6 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     /**
-     * Dessine le contour en pointillé de la dernière pierre posée sur le plateau.
-     * @param g2d Le composant Graphic à utiliser pour dessiner.
-     */
-    private void drawLastMoveHighlight(Graphics2D g2d){
-        Move lastMove = match.getLastMove();
-        float offset = coordinatesHighlighted.contains(new Coordinate(lastMove.getColumn(), lastMove.getLine()))? lastMoveStroke.getLineWidth() * 1.5f : lastMoveStroke.getLineWidth() / 2;
-        Point2D.Float origin = new Point2D.Float(nToX(lastMove.getColumn(), lastMove.getLine()), mToY(lastMove.getLine()));
-        drawHighlight(g2d, Set.of(new Coordinate(0, 0)), origin, boardHexagonInnerRadius, boardHexagonOuterRadius, offset, UIColor.LAST_MOVE_COLOR, lastMoveStroke);
-    }
-
-    /**
      * Dessine la pierre sous le curseur du joueur actif.
      * @param g2d Le composant Graphic à utiliser pour dessiner.
      * @return true si a dessiné une pierre, faux sinon
@@ -388,7 +374,7 @@ public class GamePanel extends JComponent implements Observer {
                     drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
 
                 Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(critter.type(), circleShapeTypeIds.get(critter.type()));
-                drawCircleShape(g2d, critter.type(),useNeutralStoneImageForHoverInCircle? imgStoneDisabled : getPlayerImage(critter.player()));
+                drawCircleShape(g2d, critter.type(), getPlayerImage(critter.player()));
 
                 if(showCircleHoverHighlight){
                     drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, 0, UIColor.HOVER_COLOR, circleHighlightStroke);
@@ -538,7 +524,6 @@ public class GamePanel extends JComponent implements Observer {
      */
     private void drawBoardCoordinatesHighlight(Graphics2D g2d, Set<Coordinate> coordinates, Color color, BasicStroke stroke){
         Set<Coordinate> normalizedCoordinates = CritterUtils.normalizeCoordinate(coordinates);
-        coordinatesHighlighted.addAll(coordinates);
         var shapeOriginCoordinates = CritterUtils.getTopLeftCoordinate(coordinates);
         Point2D.Float shapeOriginPos = new Point2D.Float(
                 nToX(shapeOriginCoordinates.col(), shapeOriginCoordinates.line()),
@@ -742,7 +727,7 @@ public class GamePanel extends JComponent implements Observer {
             FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
             int x = pixelPos.x - (metrics.stringWidth(text) / 2);
             int y = Math.round(pixelPos.y - (entry.getValue().progress * animationTravelDistance));
-            printScoreGainedText(g2d, text, x, y, entry.getValue().player == 0 ? UIColor.BLUE : UIColor.RED ,1 - (float) entry.getValue().progress);
+            printScoreGainedText(g2d, text, x, y, entry.getValue().player == 0 ? UIColor.BLUE : UIColor.RED ,1 - entry.getValue().progress);
         }
 
         g2d.setFont(prevFont);
@@ -874,14 +859,6 @@ public class GamePanel extends JComponent implements Observer {
         return closestTile;
     }
 
-    public int getNSelected() {
-        return nSelected;
-    }
-
-    public int getMSelected() {
-        return mSelected;
-    }
-
     public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
         if(scoreAnimations.containsKey(groupCoords)){
             if(progress >= 1){
@@ -911,5 +888,61 @@ public class GamePanel extends JComponent implements Observer {
         public void updateProgress(float newProgress){
             progress = newProgress;
         }
+    }
+
+    public int getNSelected() {
+        return nSelected;
+    }
+
+    public int getMSelected() {
+        return mSelected;
+    }
+
+    public boolean isShowCircleHoverHighlight() {
+        return showCircleHoverHighlight;
+    }
+
+    public boolean isShowBoardHoverHighlight() {
+        return showBoardHoverHighlight;
+    }
+
+    public boolean isShowCircleShape() {
+        return showCircleShape;
+    }
+
+    public boolean isShowBlockingCrittersHighlight() {
+        return showBlockingCrittersHighlight;
+    }
+
+    public boolean isShowBoardHighlightEffect() {
+        return showBoardHighlightEffect;
+    }
+
+    public boolean isShowEatenCrittersFeedback() {
+        return showEatenCrittersFeedback;
+    }
+
+    public void setShowEatenCrittersFeedback(boolean showEatenCrittersFeedback) {
+        this.showEatenCrittersFeedback = showEatenCrittersFeedback;
+    }
+
+    public void setShowCircleHoverHighlight(boolean showCircleHoverHighlight) {
+        this.showCircleHoverHighlight = showCircleHoverHighlight;
+    }
+
+    public void setShowBoardHoverHighlight(boolean showBoardHoverHighlight) {
+        this.showBoardHoverHighlight = showBoardHoverHighlight;
+    }
+
+    public void setShowBoardHighlightEffect(boolean showBoardHighlightEffect) {
+        this.showBoardHighlightEffect = showBoardHighlightEffect;
+    }
+
+    public void setShowCircleShape(boolean showCircleShape) {
+        this.showCircleShape = showCircleShape;
+    }
+
+    public void setShowBlockingCrittersHighlight(boolean showBlockingCrittersHighlight) {
+        this.showBlockingCrittersHighlight = showBlockingCrittersHighlight;
     }
 }

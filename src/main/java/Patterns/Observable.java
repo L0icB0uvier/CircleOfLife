@@ -40,19 +40,13 @@ public class Observable {
      * Appel update sur tous les observateurs enregistrés.
      */
     public void update() {
-        var it = updateObserver.iterator();
-
-        while (it.hasNext()) {
-            Observer o = it.next();
+        for (Observer o : updateObserver) {
             o.update();
         }
     }
 
     public void updateScore(Map<Set<Coordinate>, Integer> crittersEaten, int player){
-        var it = scoreEventObserver.iterator();
-
-        while (it.hasNext()) {
-            ScoreEventObserver o = it.next();
+        for (ScoreEventObserver o : scoreEventObserver) {
             o.onScoreUpdated(crittersEaten, player);
         }
     }
