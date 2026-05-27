@@ -30,7 +30,8 @@ public class GamePanel extends JComponent implements Observer {
             imgStonePlayer2LastMove,
             imgStonePlayer1Preview,
             imgStonePlayer2Preview,
-            imgStoneDisabled;
+            imgPlayer1ImpossibleMove,
+            imgPlayer2ImpossibleMove;
 
     int imgSrcHeight, imgSrcWidth;
     float imageWidth, imageHeight;
@@ -150,7 +151,9 @@ public class GamePanel extends JComponent implements Observer {
         imgStonePlayer2LastMove = (BufferedImage) Configuration.loadImage("Red_Stone_Last_Move.png");
         imgStonePlayer1Preview = (BufferedImage) Configuration.loadImage("Blue_Stone_transparent.png");
         imgStonePlayer2Preview = (BufferedImage) Configuration.loadImage("Red_Stone_transparent.png");
-        imgStoneDisabled = (BufferedImage) Configuration.loadImage("Disabled_Stone.png");
+        imgPlayer1ImpossibleMove = (BufferedImage) Configuration.loadImage("Player1_Impossible_Move.png");
+        imgPlayer2ImpossibleMove = (BufferedImage) Configuration.loadImage("Player2_Impossible_Move.png");
+
     }
 
     @Override
@@ -314,15 +317,15 @@ public class GamePanel extends JComponent implements Observer {
                     case -1:
                         if(match.getCurrentPlayerIndex() == 1)
                             continue;
-                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, imgPlayer1ImpossibleMove, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -2:
                         if(match.getCurrentPlayerIndex() == 0)
                             continue;
-                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, imgPlayer2ImpossibleMove, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -3:
-                        drawStone(g2d, imgStoneDisabled, drawPos.x, drawPos.y, boardStoneImageSize);
+                        drawStone(g2d, match.getCurrentPlayerIndex() == 0 ? imgPlayer1ImpossibleMove : imgPlayer2ImpossibleMove, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                 }
             }
