@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class GraphicalLoadGame extends JPanel {
     JPanel contentPanel, currentGamePanel;
     JScrollPane scrollPane;
-    JButton cancelButton, renameBtn, deleteBtn, loadBtn;
+    JButton cancelButton, renameBtn, loadBtn;
     String currentGame;
     Controller controller;
     GraphicalUserInterface userInterface;

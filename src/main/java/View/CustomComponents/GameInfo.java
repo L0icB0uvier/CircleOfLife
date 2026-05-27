@@ -14,7 +14,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
-import java.io.ObjectInputFilter;
 
 public class GameInfo extends JPanel {
     JLabel turn;
@@ -122,9 +121,9 @@ public class GameInfo extends JPanel {
     private void updateWinMessage() {
         if(game.isGameOver() && game.isReviewModeActive() && game.canRedo() == false){
             switch (game.getMatch().winType){
-                case SCORE -> {
+                case SCORE ->
                     winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
-                }
+
                 case FILL -> {
                     if(game.getWinningPlayer() != game.getOpponentPlayerIndex()){
                         winMessage.setText(String.format(" et perd %s", getWinTypeString()));

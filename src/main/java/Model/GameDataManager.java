@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class GameDataManager {
     private static final String savePath = "./sauvegardes/";
@@ -360,11 +361,12 @@ public class GameDataManager {
             dirPath = Paths.get(testPath);
         List<String> res = new ArrayList<>();
 
-        try {
-            Files.list(dirPath)
-                    .filter(Files::isRegularFile)
+        // On déclare le Stream dans le try(...) pour qu'il soit fermé automatiquement
+        try (Stream<Path> stream = Files.list(dirPath)) {
+            stream.filter(Files::isRegularFile)
                     .map(path -> path.getFileName().toString())
-                    .filter(filename -> filename.endsWith(".save")).sorted((a, b) -> {//trier par les dates
+                    .filter(filename -> filename.endsWith(".save"))
+                    .sorted((a, b) -> { // trier par les dates
                         String s1 = removeName(a);
                         String s2 = removeName(b);
                         return s2.compareTo(s1);
