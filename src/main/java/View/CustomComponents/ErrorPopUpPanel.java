@@ -3,16 +3,17 @@ package View.CustomComponents;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import java.awt.Component;
 import java.awt.event.ActionListener;
 
 public class ErrorPopUpPanel {
     PopUpPanel popUpPanel;
 
-    public ErrorPopUpPanel(String string, JPanel parent) {
+    public ErrorPopUpPanel(String string, Component c) {
         JDialog jDialog = new JDialog();
         jDialog.setSize(800, 300);
         jDialog.setResizable(false);
-        jDialog.setLocationRelativeTo(parent);
+        jDialog.setLocationRelativeTo(c);
         PopUpPanel popUpPanel = new PopUpPanel(null, jDialog, 1);
         popUpPanel.setMainLabel(string);
         popUpPanel.setButtonLabel(0, "Ok");
