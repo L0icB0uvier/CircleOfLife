@@ -177,7 +177,7 @@ public class Match extends History<Move> implements Cloneable {
     /**
      * Retourne si une case du plateau est jouable pour un joueur donné.
      * @param l La ligne de la case.
-     * @param c La colone de la case.
+     * @param c La colonne de la case.
      * @param player L'indice du joueur.
      * @return true s'il peut jouer sur la case et false sinon.
      */
@@ -384,7 +384,7 @@ public class Match extends History<Move> implements Cloneable {
     }
 
     /**
-     * Retourne toutes les coordonnées voisines de la coordonnée passée en arguement.
+     * Retourne toutes les coordonnées voisines de la coordonnée passée en argument.
      * @param coordinate La coordonnée pour laquelle on veut toutes les coordonnées voisines.
      * @return La liste des coordonnées voisines.
      */
@@ -497,8 +497,8 @@ public class Match extends History<Move> implements Cloneable {
     }
 
     /**
-     * Retourn l'index de l'adversaire du joueur actif.
-     * @return L''index de l'adversaire du joueur actif.
+     * Retourne l'index de l'adversaire du joueur actif.
+     * @return L'index de l'adversaire du joueur actif.
      */
     public int getOpponentPlayerIndex(){
         return (currentPlayerIndex + 1) % 2;
@@ -521,7 +521,7 @@ public class Match extends History<Move> implements Cloneable {
 
     /**
      * Retourne la taille du plateau.
-     * @return La tailel du plateau.
+     * @return La taille du plateau.
      */
     public int getBoardSize(){
         return boardSize;
@@ -611,7 +611,7 @@ public class Match extends History<Move> implements Cloneable {
     }
 
     /**
-     * Retourne la liste de tous les critters appartenant à 1 joueur.
+     * Retourne la liste de tous les critters appartenant à un joueur.
      * @param playerId Le joueur pour lequel on souhaite récupérer les critters
      * @return La liste des critters appartenant au joueur.
      */
@@ -680,9 +680,9 @@ public class Match extends History<Move> implements Cloneable {
     }
 
     /**
-     * Indique si un critter sur le board a la possibilité d'évoluer en un autre en 1 pose de pierre.
+     * Indique si un critter sur le board a la possibilité d'évoluer en un autre en une pose de pierre.
      * @param critter Le Critter à évoluer.
-     * @param evolutionTarget Le type de critter dans lesquel évoluer.
+     * @param evolutionTarget Le type de critter dans lesquels évoluer.
      * @return true s'il a la possibilité d'évoluer dans le critter cible, false sinon.
      */
     public boolean canEvolveIn1Move(Critter critter, int evolutionTarget){

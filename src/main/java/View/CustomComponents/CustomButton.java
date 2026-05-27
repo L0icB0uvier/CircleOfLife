@@ -3,7 +3,6 @@ package View.CustomComponents;
 import View.Utils.RoundedBorder;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -39,14 +38,14 @@ public class CustomButton extends JButton  {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                border.toogle();
+                border.toggle();
                 repaint();
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(!toggleable) border.toogle();
-                border.toogle();
+                if(!toggleable) border.toggle();
+                border.toggle();
                 repaint();
             }
 

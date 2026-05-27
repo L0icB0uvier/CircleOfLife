@@ -6,7 +6,7 @@ public class CritterUtils {
     private static final Map<Set<Coordinate>, Integer> critters;
 
     /**
-     * Représente la distance entre les 2 pierres les plus éloignées d'un critter.
+     * Représente la distance entre les deux pierres les plus éloignées d'un critter.
      */
     public static final Map<Integer, Integer> critterEvolutionMaxDistance = Map.ofEntries(
             Map.entry(0, 0),
@@ -124,8 +124,8 @@ public class CritterUtils {
 
     /**
      * Normalize un Set de coordonnées.
-     * @param boardCoordinate Un Set de coordonnées relative à leur position sur le plateau.
-     * @return Une normalization du Set d'entré.
+     * @param boardCoordinate Un Set de coordonnées relatives à leur position sur le plateau.
+     * @return Une normalization du Set d'entrée.
      */
     public static Set<Coordinate> normalizeCoordinate(Set<Coordinate> boardCoordinate) {
         if(boardCoordinate == null || boardCoordinate.isEmpty()) return null;
@@ -144,7 +144,7 @@ public class CritterUtils {
 
     /**
      * Récupère la coordonnées la plus en haut à gauche du critter.
-     * @param boardCoordinate La liste de coordonnées dans laquel trouver la coordonnées la plus haut/gauche.
+     * @param boardCoordinate La liste de coordonnées dans laquelle trouver la coordonnée la plus en haut/gauche.
      * @return La coordonnées la plus haut/gauche.
      */
     public static Coordinate getTopLeftCoordinate(Set<Coordinate> boardCoordinate){
@@ -164,7 +164,7 @@ public class CritterUtils {
     }
 
     /**
-     * Retourne les un critter du type et de l'id donnée.
+     * Retourne les critter du type et de l'id donnée.
      * @param type Le type du critter.
      * @param id L'id de la variation du critter.
      * @param player Le type de joueur à assigner au critter.

@@ -1,16 +1,13 @@
 package View;
 
 import View.Adapter.OptionalVisibilityAdapter;
-import View.CustomComponents.PopUpPanel;
 import View.CustomComponents.ChoiceBox;
-import View.CustomComponents.ErrorPopUpPanel;
 import View.Utils.FontScaler;
 import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -23,7 +20,7 @@ public class GraphicalNewGame extends JPanel {
     public GraphicalNewGame(JFrame parent){
         super(new BorderLayout());
         this.parent = parent;
-        MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10", "[center]","[20%][15%, align top][15%, align top][15%, align top]push[15%]" );
+        MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10, debug", "[center]","[20%][20%, align top][20%, align top][20%, align top][20%]" );
         this.setLayout(layoutPage);
         JPanel titleLabelPanel = new JPanel();
         titleLabelPanel.setLayout(new GridLayout());
@@ -53,7 +50,7 @@ public class GraphicalNewGame extends JPanel {
         startingPlayerChoice = new ChoiceBox("Aléatoire", "Joueur 1", "Joueur 2");
 
         
-        String playerLayout = "fill, insets 0 10 0 10, hidemode 1";
+        String playerLayout = "fill, insets 0 10 0 10, hidemode 1, debug";
         String playerLayoutCol = "[20%, align right][25%][30%, align right][25%]";
         String playerLayoutRow = "[align center, fill]";
         JComponent player1Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
@@ -115,14 +112,14 @@ public class GraphicalNewGame extends JPanel {
         player1Comp.add(player1NameLabel, "cell 2 0, grow");
         player1Comp.add(AI1LevelLabel, "cell 2 0,grow");
         player1Comp.add(player1NameTextField, "cell 3 0, grow, hmax 40%");
-        player1Comp.add(AI1LevelChoice, "cell 3 0, grow, height 100%");
+        player1Comp.add(AI1LevelChoice, "cell 3 0, grow");
 
         player2Comp.add(player2LabelPanel, "cell 0 0,grow");
         player2Comp.add(player2Choice, "cell 1 0, grow");
         player2Comp.add(player2NameLabel, "cell 2 0,grow");
         player2Comp.add(AI2LevelLabel, "cell 2 0,grow");
         player2Comp.add(player2NameTextField, "cell 3 0, grow, hmax 40%");
-        player2Comp.add(AI2LevelChoice, "cell 3 0, grow, height 100%");
+        player2Comp.add(AI2LevelChoice, "cell 3 0, grow");
 
         startingPlayerComp.add(startingPlayerLabel, "cell 0 0, grow");
         startingPlayerComp.add(startingPlayerChoice, "cell 1 0, grow");
@@ -133,17 +130,16 @@ public class GraphicalNewGame extends JPanel {
         buttonsComp.setMinimumSize(new Dimension(0, 0));
 
         this.add(titleLabelPanel, "cell 0 0, grow");
-        this.add(player1Comp, "cell 0 1, grow, sg comp");
-        this.add(player2Comp, "cell 0 2, grow, sg comp");
-        this.add(startingPlayerComp, "cell 0 3, grow, sg comp");
-        //this.add(timerComp, "cell 0 4, grow, sg comp");
-        this.add(buttonsComp, "cell 0 5, grow");
+        this.add(player1Comp, "cell 0 1, grow");
+        this.add(player2Comp, "cell 0 2, grow");
+        this.add(startingPlayerComp, "cell 0 3, grow");
+        this.add(buttonsComp, "cell 0 4, grow");
 
-        titleLabelPanel.addComponentListener(new FontScaler(titleLabel));
-        player1LabelPanel.addComponentListener(new FontScaler(0.5f, player1Label, player1NameLabel, AI1LevelLabel, startingPlayerLabel, player2Label, player2NameLabel, AI2LevelLabel));
+        titleLabelPanel.addComponentListener(new FontScaler(0.6f, titleLabel));
+        player1LabelPanel.addComponentListener(new FontScaler(0.75f, 1.5f, player1Label, player1NameLabel, AI1LevelLabel, startingPlayerLabel, player2Label, player2NameLabel, AI2LevelLabel));
         player1NameTextField.addComponentListener(new FontScaler(0.5f, player1NameTextField, player2NameTextField));
         buttonsComp.addComponentListener(new FontScaler(cancelButton, startButton));
-        player1Choice.getLabelPanel().addComponentListener(new FontScaler(0.5f, 0.9f, player1Choice.getLabel(), player2Choice.getLabel(), AI1LevelChoice.getLabel(), AI2LevelChoice.getLabel(), startingPlayerChoice.getLabel()));
+        player1Choice.getLabelPanel().addComponentListener(new FontScaler(0.7f, 0.95f, player1Choice.getLabel(), player2Choice.getLabel(), AI1LevelChoice.getLabel(), AI2LevelChoice.getLabel(), startingPlayerChoice.getLabel()));
 
         player1Choice.leftBtn.addActionListener(new OptionalVisibilityAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice, -1,"Joueur"));
         player1Choice.rightBtn.addActionListener(new OptionalVisibilityAdapter(player1NameLabel, AI1LevelChoice, player1NameTextField, AI1LevelLabel, player1Choice, 1,"Joueur"));

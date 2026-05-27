@@ -1,11 +1,6 @@
 package View.Utils;
 
-import Global.Configuration;
-import Model.Coordinate;
-
-import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
 import java.awt.*;
 
 public class RoundedBorder implements Border {
@@ -19,8 +14,8 @@ public class RoundedBorder implements Border {
     private final boolean shadow ;
     private Image image = null;
     private String text = null;
-    private boolean toogle = false;
-    private boolean isToogled = true;
+    private boolean toggle = false;
+    private boolean isToggled = true;
 
     public RoundedBorder(int radius, Color color, int thickness) {
         this.radius = radius;
@@ -62,7 +57,7 @@ public class RoundedBorder implements Border {
             g2d.drawRoundRect(x + thickness / 2, y + thickness / 2, width - thickness, height - thickness, radius, radius);
         }else {
             if(shadow){
-                if(toogle && isToogled) {
+                if(toggle && isToggled) {
                     g2d.setColor(c.getBackground());
                     g2d.fillRoundRect(x + SHADOW_SIZE_HORIZONTAL, y, width - SHADOW_SIZE_HORIZONTAL * 2, height - SHADOW_SIZE_BOTTOM, radius, radius);
                     paintShadow(g2d, x, y, width, height);
@@ -102,7 +97,7 @@ public class RoundedBorder implements Border {
     private void paintShadow(Graphics2D g2d, int x, int y, int width, int height) {
         Color prevColor = g2d.getColor();
         for (int i = SHADOW_SIZE_BOTTOM; i >= 1; i--) {
-            if(toogle && isToogled) {
+            if(toggle && isToggled) {
                 int alpha = (int)(50 - Math.pow((double)(SHADOW_SIZE_BOTTOM - i) / (SHADOW_SIZE_BOTTOM - 1), 0.9) * 40);
                 g2d.setColor(new Color(0, 0, 0,alpha ));
 
@@ -130,12 +125,12 @@ public class RoundedBorder implements Border {
 
     }
 
-    public void toogle(){
-        toogle = !toogle;
+    public void toggle(){
+        toggle = !toggle;
     }
 
     public void setToggled(boolean b){
-        isToogled = b;
+        isToggled = b;
     }
 
     @Override

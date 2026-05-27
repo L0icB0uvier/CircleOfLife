@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class MatchUtils {
     /**
-     * Vérifie si 2 coordonnées sont voisines.
+     * Vérifie si deux coordonnées sont voisines.
      * @param first La première coordonnée.
      * @param second La deuxième coordonnée.
      * @return true si les deux coordonnées sont voisines, false sinon.
@@ -75,7 +75,7 @@ public class MatchUtils {
      * @param pointB Le deuxième point.
      * @return La distance Euclidienne entre pointA et pointB.
      */
-    public static double euclidianDistance(Point pointA, Point pointB){
+    public static double euclideanDistance(Point pointA, Point pointB){
         return Math.sqrt(Math.pow(pointA.getX()- pointB.getX(), 2) + Math.pow(pointA.getY()- pointB.getY(), 2));
     }
 
@@ -83,7 +83,7 @@ public class MatchUtils {
     /**
      * Réalise une copie profonde d'un match.
      * @param match Le match à copier.
-     * @return Un match ayant un état, des joueurs, des critters et un joueur actif égaux à celui donné en argument
+     * @return Un match ayant un état, des joueurs, des critters et un joueur actif égaux à ceux de celui donné en argument
      */
     public static Match copy(Match match){
         return match.clone();

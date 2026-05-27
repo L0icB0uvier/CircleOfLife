@@ -18,7 +18,7 @@ public class GameControlBar extends JPanel {
     private void init(){
         this.setLayout(new GridLayout());
 
-        //TODO: ajouter les sprites des bouttons disabled
+        //TODO: ajouter les sprites des boutons disabled
 
         saveBt = new ImageButton("saveIcon.png");
         saveBt.setToolTipText("<html><b>Sauvegarder la partie.<b></html>");

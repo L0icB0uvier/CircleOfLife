@@ -244,7 +244,7 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         float lastMoveThicknessRatio = 0.005f;
-        float lastMoveHighlighThickness = imageWidth * lastMoveThicknessRatio;
+        float lastMoveHighlightThickness = imageWidth * lastMoveThicknessRatio;
         float boardThicknessRatio = 0.005f;
         float boardHighlightThickness = imageWidth * boardThicknessRatio;
         float circleThicknessRatio = 0.0035f;
@@ -259,7 +259,7 @@ public class GamePanel extends JComponent implements Observer {
         dotedLinePhase = dotedLigneDashPattern[0] * dotedLinePhaseRatio;
 
         lastMoveStroke = new BasicStroke(
-                lastMoveHighlighThickness,
+                lastMoveHighlightThickness,
                 BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER,
                 dotedLineMitterLimit,
@@ -344,9 +344,9 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     /**
-     * Dessine un point au centre d'une case du plateau. Utilisé pour debuger.
+     * Dessine un point au centre d'une case du plateau. Utilisé pour debugger.
      * @param g2d Le composant Graphic à utiliser pour dessiner.
-     * @param n La colone de la case.
+     * @param n La colonne de la case.
      * @param m La ligne de la case.
      */
     private void drawTileCenter(Graphics2D g2d, int n, int m){
@@ -416,9 +416,9 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     /**
-     * Dessine le contours des critters empêchant une pause de pierre sur une case du plateau.
+     * Dessine les contours des critters empêchant une pose de pierre sur une case du plateau.
      * @param g2d Le composant Graphic à utiliser pour dessiner.
-     * @param selectedCoordinate Les coordonnées de la case du plateau pour laquel on veut afficher le feedback.
+     * @param selectedCoordinate Les coordonnées de la case du plateau pour laquelle on veut afficher le feedback.
      */
     private void drawBlockingCrittersHighlight(Graphics2D g2d, Coordinate selectedCoordinate) {
         if(showBlockingCrittersHighlight == false) return;
@@ -439,7 +439,7 @@ public class GamePanel extends JComponent implements Observer {
         Set<Coordinate> evolveCoords = new HashSet<>();
         evolveCoords.add(selectedCoordinate);
 
-        // Est-ce qu'il y a des voisins a faire évoluer
+        // Est-ce qu'il y a des voisins à faire évoluer
         if(!playerNeighbors.isEmpty()) {
             for (Critter critter : playerNeighbors) {
                 evolveCoords.addAll(critter.stonesCoordinates());
@@ -554,7 +554,7 @@ public class GamePanel extends JComponent implements Observer {
      * @param shapeOrigin L'origine en pixels du critter.
      * @param innerRadius La taille du rayon intérieur de l'hexagone.
      * @param outerRadius La taille du rayon extérieur de l'hexagone.
-     * @param offset L'offset à appliquer au contour. >0 décalle le contour vers l'intérieur de l'hexagone.
+     * @param offset L'offset à appliquer au contour. >0 décale le contour vers l'intérieur de l'hexagone.
      * @param highlightColor La couleur du contour.
      * @param stroke Le Stroke du contour.
      */
@@ -868,7 +868,7 @@ public class GamePanel extends JComponent implements Observer {
         Coordinate closestTile = null;
         double shortestDistance = Double.POSITIVE_INFINITY;
         for (Coordinate tile : tiles){
-            double distance = MatchUtils.euclidianDistance(tileToPixel(tile), pixels);
+            double distance = MatchUtils.euclideanDistance(tileToPixel(tile), pixels);
             if (distance < shortestDistance){
                 closestTile = tile;
                 shortestDistance = distance;

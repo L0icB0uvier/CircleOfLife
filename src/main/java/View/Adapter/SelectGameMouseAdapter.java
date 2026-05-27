@@ -8,8 +8,8 @@ import javax.swing.JPanel;
 import View.GraphicalLoadGame;
 
 public class SelectGameMouseAdapter implements MouseListener {
-    private GraphicalLoadGame graphicalLoadGame;
-    private JPanel gamePanel;
+    private final GraphicalLoadGame graphicalLoadGame;
+    private final JPanel gamePanel;
     private String game;
 
 

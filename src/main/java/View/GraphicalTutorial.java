@@ -5,19 +5,13 @@ import View.Adapter.ChangePageAdapter;
 import View.CustomComponents.ImageButton;
 import View.CustomComponents.ImagePanel;
 import View.Utils.FontScaler;
-import View.Utils.RoundedBorder;
 import View.Utils.TutorialPages;
-import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
 
 public class GraphicalTutorial extends JComponent {
     int pageNumber = 0;

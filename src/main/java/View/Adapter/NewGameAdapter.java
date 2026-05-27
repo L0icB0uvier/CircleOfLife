@@ -2,7 +2,6 @@ package View.Adapter;
 
 import Global.Configuration;
 import View.EventCollector;
-import View.GraphicalUserInterface;
 
 import java.awt.event.ActionEvent;
 

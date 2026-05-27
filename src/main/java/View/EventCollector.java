@@ -9,7 +9,7 @@ public interface EventCollector {
     void handleClick(int l, int c);
 
     /**
-     * Gestion d'une demande d'action reçu depuis la vue.
+     * Gestion d'une demande d'action reçue depuis la vue.
      * @param t Le nom de l'action à exécuter.
      */
     void performAction(String t);

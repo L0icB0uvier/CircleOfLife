@@ -158,7 +158,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         ToolTipManager ttm = ToolTipManager.sharedInstance();
 
         ttm.setInitialDelay(200);  // Temps d'attente avant apparition (en millisecondes)
-        ttm.setDismissDelay(5000); // Temps avant que l'info-bulle ne disparaisse (5 secondes)
+        ttm.setDismissDelay(5000); // Temps avant que l'infobulle ne disparaisse (5 secondes)
         ttm.setReshowDelay(100);   // Temps d'attente si on passe d'un bouton à un autre
     }
 

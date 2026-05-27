@@ -59,13 +59,13 @@ public class  ImageButton extends JButton {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                border.toogle();
+                border.toggle();
                 repaint();
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                border.toogle();
+                border.toggle();
                 repaint();
             }
         });

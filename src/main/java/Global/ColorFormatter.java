@@ -26,7 +26,7 @@ public class ColorFormatter extends Formatter {
             color = WHITE;
         }
 
-        // Utilisation de formatMessage pour supporter les paramètres (ex: %s)
+        // Utilisation de formatMessage pour supporter les paramètres (ex : %s)
         return color + "[" + record.getLevel() + "] "
                 + formatMessage(record) + RESET + "\n";
     }
