@@ -25,8 +25,9 @@ public class StartGameAdapter implements java.awt.event.ActionListener {
         String[] res = graphicalNewGame.getTextFields();
         for (int i = 0; i < res.length; i++) {
             if (GameDataManager.newNameContainsSeparator(res[i])) {
-                graphicalNewGame
-                        .errorPopup("Nom incorrecte pour joueur " + (i + 1) + ", les underscores ('_') sont interdits");
+                userInterface.errorPopup(
+                        "Nom incorrecte pour joueur " + (i + 1) + ", les underscores ('_') sont interdits",
+                        graphicalNewGame);
                 return;
             }
         }

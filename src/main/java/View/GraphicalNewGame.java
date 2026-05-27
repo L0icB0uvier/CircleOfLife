@@ -195,7 +195,5 @@ public class GraphicalNewGame extends JPanel {
         return new String[]{player1NameTextField.getText(), player2NameTextField.getText()};
     }
 
-    public void errorPopup(String string) {
-        new ErrorPopUpPanel(string, this);
-    }
+    
 }

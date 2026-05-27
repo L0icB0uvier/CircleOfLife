@@ -7,6 +7,7 @@ import Model.Coordinate;
 import Model.Game;
 import Patterns.Observer;
 import View.Adapter.*;
+import View.CustomComponents.ErrorPopUpPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +35,10 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
     public GraphicalTutorial getGraphicalTutorial() {
         return graphicalTutorial;
+    }
+
+    public GraphicalMainMenu getGraphicalMainMenu() {
+        return graphicalMainMenu;
     }
 
     public static void start(Game game, EventCollector controller) {
@@ -186,6 +191,10 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+
+    public void errorPopup(String string, Component c) {
+        new ErrorPopUpPanel(string, c);
     }
 
 }

@@ -110,14 +110,10 @@ public class GraphicalLoadGame extends JPanel {
     private void loadGame() {
         if(currentGame == null) return;
         if (!controller.loadGame(currentGame)) {
-            errorPopup("Erreur, impossible de charger le match sélectionné");
+            userInterface.errorPopup("Erreur, impossible de charger le match sélectionné", this);
             return;
         }
         userInterface.startGame();
-    }
-
-    public void errorPopup(String string) {
-        new ErrorPopUpPanel(string, this);
     }
 
     private void renameGame() {

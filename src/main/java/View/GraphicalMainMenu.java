@@ -87,10 +87,6 @@ public class GraphicalMainMenu extends JPanel {
         return button;
     }
 
-    public void errorPopup(String string) {
-        new ErrorPopUpPanel(string, this);
-    }
-
 
     @Override
     protected void paintComponent(Graphics g) {

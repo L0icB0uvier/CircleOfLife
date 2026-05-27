@@ -4,6 +4,8 @@ import View.GraphicalUserInterface;
 
 import java.awt.event.ActionEvent;
 
+import Controller.Controller;
+
 
 public class ContinueGameAdapter implements java.awt.event.ActionListener{
     EventCollector controller;
@@ -16,7 +18,10 @@ public class ContinueGameAdapter implements java.awt.event.ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        controller.performAction("ContinueGame");
+        if (!((Controller)controller).continueGame()) {
+            userInterface.errorPopup("Erreur, impossible de charger le dernier match" ,userInterface.getGraphicalMainMenu());
+            return;
+        }
         userInterface.startGame();
     }
 }
