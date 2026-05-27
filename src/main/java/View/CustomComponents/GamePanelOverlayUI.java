@@ -49,15 +49,11 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
         } else {
             // --- MODE MENU : Voile sombre et options ---
 
-            // 1. Fond semi-transparent sur tout le panneau de jeu
-            g2.setColor(new Color(0, 0, 0, 180));
-            g2.fillRect(0, 0, c.getWidth(), c.getHeight());
-
             // 2. Dimensions du panneau central adaptées à l'écran
             int menuWidth = 260;
             int menuHeight = 220;
-            int menuX = (c.getWidth() - menuWidth) / 2;
-            int menuY = (c.getHeight() - menuHeight) / 2;
+            int menuX = (c.getWidth() - menuWidth) - MARGIN;
+            int menuY = MARGIN;
 
             // Dessin du cadre du menu
             g2.setColor(new Color(45, 45, 45));
