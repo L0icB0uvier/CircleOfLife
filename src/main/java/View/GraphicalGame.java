@@ -172,7 +172,7 @@ public class GraphicalGame extends JPanel {
     }
 
     public void updateEndGameButtonsVisibility(){
-        boolean replayBtnVisible = game.isGameOver() && game.isReviewModeActive() == false;
+        boolean replayBtnVisible = game.isGameOver() && !game.isReviewModeActive();
         boolean reviewBtnVisible = game.isGameOver();
 
         reviewBt.updateText(game.getMatch().isReviewModeActive()? "Retour" : "Revoir");
@@ -202,7 +202,7 @@ public class GraphicalGame extends JPanel {
     }
 
     private void updateUndoRedoEnabled() {
-        boolean undoRedoEnabled = game.isGameOver() == false || game.isReviewModeActive();
+        boolean undoRedoEnabled = !game.isGameOver() || game.isReviewModeActive();
 
         undoBt.setEnabled(undoRedoEnabled && game.canUndo());
         allUndoBt.setEnabled(undoRedoEnabled && game.canUndo());
@@ -259,7 +259,7 @@ public class GraphicalGame extends JPanel {
     }
 
     private void updateGameControlBarVisibility(){
-        boolean gameControlBarVisible = game.getMatch().isReviewModeActive() == false;
+        boolean gameControlBarVisible = !game.getMatch().isReviewModeActive();
         gameControlBar.setVisible(gameControlBarVisible);
     }
 

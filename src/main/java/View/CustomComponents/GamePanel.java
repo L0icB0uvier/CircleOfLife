@@ -174,10 +174,10 @@ public class GamePanel extends JComponent implements Observer {
         drawBoard(g2d);
         drawStones(g2d);
 
-        if(showEatenCrittersFeedback && (match.isGameOver() == false || match.isReviewModeActive()))
+        if(showEatenCrittersFeedback && (!match.isGameOver() || match.isReviewModeActive()))
             drawEaten(g2d);
 
-        if(match.isGameOver() == false)
+        if(!match.isGameOver())
         {
             if(drawSelected(g2d))
                 drawFeedforward(g2d);
@@ -421,7 +421,7 @@ public class GamePanel extends JComponent implements Observer {
      * @param selectedCoordinate Les coordonnées de la case du plateau pour laquelle on veut afficher le feedback.
      */
     private void drawBlockingCrittersHighlight(Graphics2D g2d, Coordinate selectedCoordinate) {
-        if(showBlockingCrittersHighlight == false) return;
+        if(!showBlockingCrittersHighlight) return;
         var neighborCritters = match.getPlayerNeighborsCritters(match.getCurrentPlayerIndex(), selectedCoordinate);
         for (Critter critter : neighborCritters) {
             drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.BLOCKING_CRITTER_COLOR, boardHighlightStroke);
@@ -727,7 +727,7 @@ public class GamePanel extends JComponent implements Observer {
      * @param g2d Le composant Graphic à utiliser pour dessiner.
      */
     private void drawScoreAnimations(Graphics2D g2d) {
-        if(showScoreAnimation == false || scoreAnimations.isEmpty())
+        if(!showScoreAnimation || scoreAnimations.isEmpty())
             return;
 
         Font prevFont = g2d.getFont();
@@ -908,7 +908,7 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
-        if(match.isPlaying() == false) return;
+        if(!match.isPlaying()) return;
         if(scoreAnimations.containsKey(groupCoords)){
             if(progress >= 1){
                 Configuration.info("Removing animation in GamePanel");

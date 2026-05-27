@@ -26,7 +26,6 @@ public class PlayerInfo extends JPanel {
     }
 
     private void init(){
-        Font sizedFont = UIFont.getFont();
         //TODO modifier la font du projet
 
         winScore = Configuration.readInt("WinScore");

@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.event.ActionListener;
 
 public class ErrorPopUpPanel {
-    PopUpPanel popUpPanel;
 
     public ErrorPopUpPanel(String string, Component c) {
         JDialog jDialog = new JDialog();

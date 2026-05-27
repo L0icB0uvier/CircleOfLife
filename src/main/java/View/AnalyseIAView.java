@@ -37,7 +37,7 @@ public class AnalyseIAView implements Observer, UserInterface {
         this.game = game;
         this.control = control;
 
-        if (parseArgs(args) == false) {
+        if (!parseArgs(args)) {
             System.err.println("Erreur : Mauvais arguments.");
             showUsage();
             System.exit(1); // Arrête le programme avec un code d'erreur
@@ -84,7 +84,7 @@ public class AnalyseIAView implements Observer, UserInterface {
         aiLevel2 = parseAIDifficulty(args[1]);
         if(aiLevel2 == null) return false;
 
-        if(parseGameCount(args[2]) == false) return false;
+        if(!parseGameCount(args[2])) return false;
 
         try {
             String analyseFileDir = "analyses/";
@@ -124,19 +124,19 @@ public class AnalyseIAView implements Observer, UserInterface {
 
     /**
      * Lis le nombre de parties qui doivent être jouées dans le mode analyseIA.
-     * @param gameCountArg La String contenant le nombre de parties.
+     * @param gameCountArg Le String contenant le nombre de parties.
      * @return Le nombre de parties
      */
     private boolean parseGameCount(String gameCountArg){
-        if(isNumeric(gameCountArg) == false) return false;
+        if(!isNumeric(gameCountArg)) return false;
         numberOfGames = Integer.parseInt(gameCountArg);
         return numberOfGames > 1 && numberOfGames <= 1000;
     }
 
     /**
-     * Vérifie si une String représente bien un nombre entier.
-     * @param str la String à tester.
-     * @return true si la string donnée représente un entier, false sinon.
+     * Vérifie si un String représente bien un nombre entier.
+     * @param str le String à tester.
+     * @return true si le string donné représente un entier, false sinon.
      */
     public boolean isNumeric(String str) {
         if (str == null || str.isEmpty()) {
@@ -156,7 +156,7 @@ public class AnalyseIAView implements Observer, UserInterface {
     private static void showUsage() {
         System.out.println();
         System.out.println("=== MODE D'EMPLOI ===");
-        System.out.println("Usage : java AnaylyseIA <Difficulté IA 1> <Difficulté IA 2> <Nombre de parties> <Chemin fichier de sortie> <options>");
+        System.out.println("Usage : java AnalyseIA <Difficulté IA 1> <Difficulté IA 2> <Nombre de parties> <Chemin fichier de sortie> <options>");
         System.out.println();
         System.out.println("Arguments attendus :");
         System.out.println("  <Difficulté IA 1>             : La difficulté de la première IA. Choisir entre 'F' 'M' et 'D' pour \"Facile\", \"Moyen\" et \"Difficile\"");

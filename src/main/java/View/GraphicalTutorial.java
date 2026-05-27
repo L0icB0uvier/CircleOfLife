@@ -19,7 +19,7 @@ public class GraphicalTutorial extends JComponent {
     JPanel textPanel;
     BufferedImage[] imagesTuto = new BufferedImage[4];
     ImagePanel image;
-    ImageButton buttonNext, buttonPrev, buttonQuit, buttonPrevDisabled;
+    ImageButton buttonNext, buttonPrev, buttonQuit;
 
     public GraphicalTutorial(GraphicalUserInterface userInterface) {
         MigLayout layout = new MigLayout("fill, insets 10 10 20 10, debug", "[grow, align center]", "[15%][25%][45%][15%]");

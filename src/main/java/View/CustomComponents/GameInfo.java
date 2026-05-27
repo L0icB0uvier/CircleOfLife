@@ -119,7 +119,7 @@ public class GameInfo extends JPanel {
     }
 
     private void updateWinMessage() {
-        if(game.isGameOver() && game.isReviewModeActive() && game.canRedo() == false){
+        if(game.isGameOver() && game.isReviewModeActive() && !game.canRedo()){
             switch (game.getMatch().winType){
                 case SCORE ->
                     winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
@@ -133,7 +133,7 @@ public class GameInfo extends JPanel {
                     }
                 }
                 case GIVE_UP ->{
-                    if(game.canUndo() == false){
+                    if(!game.canUndo()){
                         winMessage.setText(String.format(" et perd %s", getWinTypeString()));
                     }
                     else{
