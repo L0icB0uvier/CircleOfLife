@@ -32,21 +32,7 @@ public class FontScaler extends ComponentAdapter {
     public void componentResized(ComponentEvent e) {
         Graphics g = e.getComponent().getGraphics();
         FontMetrics fontMetricsStart = g.getFontMetrics(jComponents[0].getFont());
-        float size = e.getComponent().getHeight() * RATIO;
-        float maxSize = 0.0f;
-        for (JComponent comp : jComponents) {
-            int lineNb = 1;
-            if (comp instanceof JLabel) {
-                lineNb = 0;
-                String text = ((JLabel) comp).getText();
-                String[] lines = text.split("<br>");
-                for (String line: lines) {
-                    lineNb++;
-                }
-            }
-            if (size/lineNb > maxSize) maxSize = size/lineNb;
-        }
-
+        float maxSize = getMaxSize(e);
 
         String maxText = "";
         for(JComponent comp: jComponents) {
@@ -97,5 +83,23 @@ public class FontScaler extends ComponentAdapter {
             comp.setFont(maxFont);
         }
         e.getComponent().revalidate();
+    }
+
+    private float getMaxSize(ComponentEvent e) {
+        float size = e.getComponent().getHeight() * RATIO;
+        float maxSize = 0.0f;
+        for (JComponent comp : jComponents) {
+            int lineNb = 1;
+            if (comp instanceof JLabel) {
+                lineNb = 0;
+                String text = ((JLabel) comp).getText();
+                String[] lines = text.split("<br>");
+                for (String line: lines) {
+                    lineNb++;
+                }
+            }
+            if (size/lineNb > maxSize) maxSize = size/lineNb;
+        }
+        return maxSize;
     }
 }

@@ -876,10 +876,9 @@ public class GamePanel extends JComponent implements Observer {
         int y = (int) pixels.getY();
         int c = (int) (Math.round(((double) (x - x0) / distance) + ((1 / Math.sqrt(3) * ((double) (y - y0) / distance)))));
         int l = (int) (Math.round((2 * (y - y0) / (distance * Math.sqrt(3)))));
-        Set<Coordinate> tiles = new HashSet<>(Set.of(new Coordinate(c,l), new Coordinate(c-1, l), new Coordinate(c+1, l),
+        return new HashSet<>(Set.of(new Coordinate(c,l), new Coordinate(c-1, l), new Coordinate(c+1, l),
                 new Coordinate(c, l-1), new Coordinate(c, l+1),
                 new Coordinate(c-1, l-1), new Coordinate(c+1, l+1)));
-        return tiles;
     }
 
     public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {

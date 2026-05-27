@@ -1,17 +1,13 @@
 package View.CustomComponents;
 
-import Model.Game;
-
 import javax.swing.*;
 import java.awt.*;
 
 
 public class GameControlBar extends JPanel {
-    private final Game game;
-    public ImageButton saveBt, forfeitBt, quitGameButton;
+    public ImageButton saveBt, quitGameButton;
 
-    public GameControlBar(Game game){
-        this.game = game;
+    public GameControlBar(){
         init();
     }
 

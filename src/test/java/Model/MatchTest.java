@@ -44,10 +44,6 @@ class MatchTest {
         assertEquals(1, match.getNumberOfCritters());
     }
 
-    @Test
-    void feed() {
-
-    }
 
     @Test
     void resetScore(){
@@ -85,11 +81,6 @@ class MatchTest {
         assertFalse(match.winByScore());
         match.updatePlayerScore(currentPlayer, 16);
         assertTrue(match.winByScore());
-    }
-
-    @Test
-    void gameOverByFillUp(){
-
     }
 
     @Test

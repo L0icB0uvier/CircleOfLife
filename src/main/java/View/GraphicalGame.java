@@ -128,7 +128,7 @@ public class GraphicalGame extends JPanel {
         playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[1].getName(),1));
         PlayerInfo player2Info = playerInfos.get(1);
 
-        gameControlBar = new GameControlBar(game);
+        gameControlBar = new GameControlBar();
         gameControlBar.setBackground(UIColor.BACKGROUND);
 
         reviewPanel.setMinimumSize(new Dimension(0, 0));

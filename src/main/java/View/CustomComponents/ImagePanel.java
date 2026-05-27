@@ -33,7 +33,7 @@ public class ImagePanel extends JComponent {
             imageHeight = alpha * height;
         }
         else{
-            boardX0 = ((1 - alpha) / 2) * width;
+            boardX0 = 0;
             boardY0 = (height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2;
             imageWidth = alpha * width;
             imageHeight = (alpha * width * imgSrcHeight) / imgSrcWidth;

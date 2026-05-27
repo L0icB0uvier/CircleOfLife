@@ -9,7 +9,6 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
     private final Image icon;
 
-    private final float sizeRatio = 0.07f;
     private final int MARGIN = 20;
 
     private Rectangle buttonBounds = new Rectangle(20, 20, 20, 20);
@@ -45,10 +44,10 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
     }
 
     private Rectangle getButtonBounds(JComponent container) {
+        float sizeRatio = 0.07f;
         int buttonSize = Math.round(container.getHeight() * sizeRatio);
         int x = container.getWidth() - buttonSize - MARGIN;
-        int y = MARGIN;
-        buttonBounds = new Rectangle(x, y, buttonSize, buttonSize);
+        buttonBounds = new Rectangle(x, MARGIN, buttonSize, buttonSize);
 
         return buttonBounds;
     }
@@ -201,22 +200,6 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
             super.processMouseEvent(e, l);
         }
     }
-
-//    @Override
-//    protected void processMouseMotionEvent(java.awt.event.MouseEvent e, JLayer<? extends GamePanel> l) {
-//        if (e.getID() == java.awt.event.MouseEvent.MOUSE_MOVED) {
-//            if (isMenuOpen && !menuBounds.contains(e.getPoint())) {
-//                isMenuOpen = false;
-//                l.repaint();
-//            }
-//        }
-//
-//        if (isMenuOpen) {
-//            e.consume();
-//        } else {
-//            super.processMouseMotionEvent(e, l);
-//        }
-//    }
 
     private void drawToggleSwitch(Graphics2D g2, Rectangle bounds, boolean isOn) {
 
