@@ -67,29 +67,19 @@ public class Configuration {
     }
 
     /**
-     * Charge les propriétées depuis un fichier cfg
-     * @param p Variable dans laquelle charger les propriétées.
-     * @param in InputStream à partir duquel charger les propriétées.
+     * Charge les propriétés depuis un fichier cfg
+     * @param p Variable dans laquelle charger les proprieties.
+     * @param in InputStream à partir duquel charger les proprieties.
      * @param fileName Nom du fichier cfg que l'on cherche à charger.
      */
     public static void loadProperties(Properties p, InputStream in, String fileName) {
         try {
             p.load(in);
         } catch (IOException e) {
-            // Le logger n'est pas encore en place à ce moment là
+            // Le logger n'est pas encore en place à ce moment-là
             System.err.println("Impossible de charger " + fileName);
             System.exit(1);
         }
-    }
-
-
-    /**
-     * Lit un string dans les Properties.
-     * @param propertyName Nom de la propriété à lire dans Properties
-     * @return La chaîne de caractère correspondant à la propriété.
-     */
-    public static String readString(String propertyName) {
-        return instance().read(propertyName);
     }
 
     /**
@@ -99,24 +89,6 @@ public class Configuration {
      */
     public static int readInt(String propertyName) {
         return Integer.parseInt(instance().read(propertyName));
-    }
-
-    /**
-     * Lit un Double dans les Properties.
-     * @param propertyName Nom de la propriété à lire dans Properties
-     * @return La valeur décimale correspondant à la propriété.
-     */
-    public static double readDouble(String propertyName) {
-        return Double.parseDouble(instance().read(propertyName));
-    }
-
-    /**
-     * Lit un booléen dans les Properties.
-     * @param propertyName Nom de la propriété à lire dans Properties
-     * @return La valeur booléenne correspondant à la propriété.
-     */
-    public static boolean readBool(String propertyName) {
-        return Boolean.parseBoolean(instance().read(propertyName));
     }
 
     /**
@@ -166,10 +138,6 @@ public class Configuration {
             System.out.println("Niveau du Handler : " + logger.getHandlers()[0].getLevel());
         }
         return logger;
-    }
-
-    public static void setLoggerLevel(Level loggerLevel){
-        instance().logger().setLevel(loggerLevel);
     }
 
     /**

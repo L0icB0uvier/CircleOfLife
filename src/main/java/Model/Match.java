@@ -215,7 +215,6 @@ public class Match extends History<Move> implements Cloneable {
         // on met la case à jour
         boardState[l][c] = (byte) (currentPlayerIndex + 1); // playerOne <-> 1 ; playerTwo <-> 2
         Coordinate newStoneCoordinate = new Coordinate(c, l);
-//        Configuration.info(String.format("Joueur %d joue sur la case %d:%d", currentPlayerIndex + 1, c, l));
 
         // update Critters : evolve or reproduce
         var newCritter = updateCritters(newStoneCoordinate);
@@ -232,8 +231,6 @@ public class Match extends History<Move> implements Cloneable {
         // mise à jour de l'état du plateau
         updateBoard(newCritter, eatenCritters);
 
-        //Configuration.info("Nombre de critters de taille 4 du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.countPlayerCritterSize(this, currentPlayerIndex, 4));
-        //Configuration.info("Distance moyenne entre critters du joueur " + (currentPlayerIndex+1) + ": " + MatchUtils.meanPlayerCritterDistance(this, currentPlayerIndex));
     }
 
     /**
@@ -625,24 +622,10 @@ public class Match extends History<Move> implements Cloneable {
     }
 
     /**
-     * Retourne la liste des critters de l'adversaire étant adjacents à un critter donné.
-     * @param playerCritter Le Critter pour lequel on recherche les critters adjacent de l'adversaire.
-     * @return La liste des Critters adjacents de l'adversaire.
-     */
-    public Set<Critter> getOpponentAdjacentCritters(Critter playerCritter){
-        Set<Critter> result = new HashSet<>();
-        Set<Coordinate> neighborTiles = getStonesNeighborTiles(playerCritter.stonesCoordinates());
-        for (Coordinate neighborTile : neighborTiles) {
-            result.addAll(getPlayerNeighborsCritters(MatchUtils.getOtherPlayerIndex(playerCritter.player()), neighborTile));
-        }
-        return result;
-    }
-
-    /**
-     * Donne la liste des coordonnées jouable par le joueur autour d'un ensemble de position donné.
+     * Donne la liste des coordonnées jouables par le joueur autour d'un ensemble de position donné.
      * @param stones Les pierres autour desquelles on cherche des positions jouables.
      * @param player L'indice de joueur pour lequel on cherche des positions jouables.
-     * @return La liste des coordonnées jouable par le joueur autour du critter donné. Retourne un EmptySet si aucune position est jouable.
+     * @return La liste des coordonnées jouables par le joueur autour du critter donné. Retourne un EmptySet si aucune position n'est jouable.
      */
     public Set<Coordinate> getPlayerPlayableMovesAroundStones(Set<Coordinate> stones, int player){
         Set<Coordinate> result = new HashSet<>();
@@ -654,101 +637,9 @@ public class Match extends History<Move> implements Cloneable {
         return result;
     }
 
-    /**
-     * Donne la liste des coordonnées jouable par le joueur autour d'un ensemble de position et à une distance donnée.
-     * @param stones Les pierres autour desquelles on cherche des positions jouables.
-     * @param player L'indice de joueur pour lequel on cherche des positions jouables.
-     * @param distance La distance à laquelle chercher des positions jouable depuis les pierres de départ.
-     * @return Retourne tous les coups jouable par le joueur autour d'un ensemble de position et à une distance donnée.
-     */
-    public Set<Coordinate> getPlayerPlayableMovesAroundStonesAtDistance(Set<Coordinate> stones, int player, int distance){
-        if (distance <= 0) {
-            return Collections.emptySet();
-        }
-
-        Set<Coordinate> result = new HashSet<>();
-        Set<Coordinate> visited = new HashSet<>(stones);
-        Set<Coordinate> currentLevel = stones;
-        for (int i = 0; i < distance; i++) {
-            Set<Coordinate> neighbors = getPlayerPlayableMovesAroundStones(currentLevel, player);
-            neighbors.removeAll(visited);
-            currentLevel = neighbors;
-            visited.addAll(currentLevel);
-            result.addAll(currentLevel);
-        }
-        return result;
-    }
-
-    /**
-     * Indique si un critter sur le board a la possibilité d'évoluer en un autre en une pose de pierre.
-     * @param critter Le Critter à évoluer.
-     * @param evolutionTarget Le type de critter dans lesquels évoluer.
-     * @return true s'il a la possibilité d'évoluer dans le critter cible, false sinon.
-     */
-    public boolean canEvolveIn1Move(Critter critter, int evolutionTarget){
-        Set<Coordinate> playableCoordinates = getPlayerPlayableMovesAroundStones(critter.stonesCoordinates(), critter.player());
-        for (Coordinate playableCoordinate : playableCoordinates) {
-            Set<Coordinate> evolutionCoordinate = critter.stonesCoordinates();
-            evolutionCoordinate.add(playableCoordinate);
-            int critterID = CritterUtils.getCritterId(evolutionCoordinate);
-            if(critterID == evolutionTarget)
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * Retourne la liste de tous les critters de l'adversaire dans une distance donnée.
-     * @param originCritter Le critter pour lequel on cherche des critters adverse.
-     * @param maxDistance LA distance autour du critter à laquelle chercher.
-     * @return La liste des critters adverse.
-     */
-    public Set<Critter> getOpponentsCrittersWithinDistance(Critter originCritter, int maxDistance) {
-        Set<Critter> foundCritters = new HashSet<>();
-
-        Queue<Node> queue = new LinkedList<>();
-        Set<Coordinate> visited = new HashSet<>();
-
-        for (Coordinate c : originCritter.stonesCoordinates()) {
-            queue.add(new Node(c, 0));
-            visited.add(c);
-        }
-
-        while (!queue.isEmpty()) {
-            Node current = queue.poll();
-
-            if (current.distance >= maxDistance) {
-                continue;
-            }
-
-            Set<Coordinate> neighbors =  GetNeighborTiles(current.coord);
-
-            for (Coordinate neighbor : neighbors) {
-                if (!visited.contains(neighbor)) {
-                    visited.add(neighbor);
-
-                    if (getContentAt(neighbor.line(), neighbor.col()) == originCritter.player() + 1) {
-                        Critter critterFound = getCritterAtCoord(neighbor);
-                        foundCritters.add(critterFound);
-
-                        visited.addAll(critterFound.stonesCoordinates());
-                    }
-
-                    else {
-                        queue.add(new Node(neighbor, current.distance + 1));
-                    }
-                }
-            }
-        }
-
-        return foundCritters;
-    }
-
     public void startPlaying() {
         playing = true;
     }
-
-    private record Node(Coordinate coord, int distance) {}
 
     public boolean isGameOver(){
         return gameOver;
@@ -760,10 +651,6 @@ public class Match extends History<Move> implements Cloneable {
 
     public boolean isReviewModeActive() {
         return reviewModeActive;
-    }
-
-    public int getRedoNumber(){
-        return future.size();
     }
 
     public boolean isPlaying() {
@@ -805,7 +692,7 @@ public class Match extends History<Move> implements Cloneable {
 
             return clone;
         } catch (CloneNotSupportedException e) {
-            throw new AssertionError(); // Ne devrait jamais arriver puisque Match implémente Cloneable
+            throw new AssertionError(); // Ne doit jamais arriver puisque Match implémente Cloneable
         }
     }
 }

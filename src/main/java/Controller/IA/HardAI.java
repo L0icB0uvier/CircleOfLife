@@ -66,22 +66,6 @@ public class HardAI extends AI {
             int critterScore = crittersBaseScore.get(playerCritter.type()).get(gamePhase);
             int freedoms = match.getPlayerPlayableMovesAroundStones(playerCritter.stonesCoordinates(), otherPlayer).size();
             critterScore += freedomBonus.get(currentPhase) * freedoms;
-
-//            // Il s'agit d'un critter de taille 4, on doit regarder s'il peut se faire manger facilement
-//            if(playerCritter.type() > 0 && playerCritter.type() < 8){
-//                var evolutionTarget = CritterUtils.getEatingCritterType(playerCritter.type());
-//
-//                // On regarde d'abord les critters adjacents
-//                var adjacentOpponentCritters = match.getOpponentAdjacentCritters(playerCritter);
-//                for (Critter adjacentOpponentCritter : adjacentOpponentCritters) {
-//                    if(match.canEvolveIn1Move(adjacentOpponentCritter, evolutionTarget)){
-//                        critterScore -= predatorEvolutionMalus;
-//                    }
-//                }
-
-                // Par la suite on peut regarder plus loin
-//            }
-
             score += critterScore;
         }
 
@@ -97,11 +81,7 @@ public class HardAI extends AI {
         //Configuration.info("Début de recherche de coup.");
         updatePhase( match.getCurrentPlayerIndex());
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
-        //Collections.shuffle(possibleMoves);
         sortPossibleMoves(match, possibleMoves);
-//        if (possibleMoves.size()!= 1) {
-//            depth = Math.max(4, (int) Math.floor(Math.log(maxStateNumber) / Math.log(possibleMoves.size())));
-//        }
         double maxEval = -Double.MAX_VALUE;
         double eval;
         List<Move> bests = new ArrayList<>();

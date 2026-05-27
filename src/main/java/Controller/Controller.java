@@ -32,7 +32,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     }
 
     /**
-     * Transmet le clique reçu de la vue au joueur actif.
+     * Transmet le clic reçu de la vue au joueur actif.
      * @param l La ligne du plateau sur laquelle le joueur a cliqué.
      * @param c La colonne du plateau sur laquelle le joueur a cliqué.
      */
@@ -77,14 +77,14 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     }
 
     /**
-     * Demande au modèle de Undo tous l'historique.
+     * Demande au modèle de Undo tout l'historique.
      */
     private void handleUndoAll(){
         game.undoAll();
     }
 
     /**
-     * Demande au modèle de Redo tous l'historique.
+     * Demande au modèle de Redo tout l'historique.
      */
     private void handleRedoAll(){
         game.redoAll();
@@ -103,8 +103,8 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     }
 
     /**
-     * Charge la derniere partie à partir des données sauvegardées du joueur.
-     * @return true si la partie a été chargée avec succes, false sinon
+     * Charge la dernière partie à partir des données sauvegardées du joueur.
+     * @return true si la partie a été chargée avec succès, false sinon
      */
     public boolean continueGame(){
         if (!GameDataManager.hasSaveFile()) return false;
@@ -124,7 +124,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     /**
      * Charge une partie à partir des données sauvegardées du joueur.
      * @param gameFile le nom du fichier de la partie à charger
-     * @return true si la partie a été chargée avec succes, false sinon
+     * @return true si la partie a été chargée avec succès, false sinon
      */
     public boolean loadGame(String gameFile){
         try {

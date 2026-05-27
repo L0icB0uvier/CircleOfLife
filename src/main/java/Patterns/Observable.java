@@ -28,13 +28,6 @@ public class Observable {
         this.scoreEventObserver.add(scoreEventObserver);
     }
 
-    /**
-     * Retire un observateur.
-     * @param observer Observateur à retirer.
-     */
-    public void removeUpdateObserver(Observer observer) {
-        updateObserver.remove(observer);
-    }
 
     /**
      * Appel update sur tous les observateurs enregistrés.
