@@ -13,6 +13,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -119,10 +120,11 @@ public class GraphicalGame extends JPanel {
         gamePanel.setBorder(new RoundedBorder(15, Color.BLACK, 5));
         gamePanel.setBackground(new Color(0, 0, 0, 0));
 
-        GamePanelOverlayUI overlayUI = new GamePanelOverlayUI(controller, overlayIcon);
+        GamePanelOverlayUI overlayUI = new GamePanelOverlayUI(gamePanel, overlayIcon);
         gameLayer = new JLayer<>(gamePanel, overlayUI);
 
-        gameLayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK);
+        gameLayer.setLayerEventMask(AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+        gameLayer.addMouseMotionListener(new MouseMotionAdapter() {});
         gameLayer.setMinimumSize(new Dimension(0, 0));
 
         playerInfos.add(new PlayerInfo(game.getMatch().getPlayerData()[0].getName(),0));

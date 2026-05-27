@@ -51,12 +51,11 @@ public class GamePanel extends JComponent implements Observer {
     float boardHexagonInnerRadius, boardHexagonOuterRadius;
     float circleHexagonInnerRadius, circleHexagonOuterRadius;
 
-    private boolean showCircleHoverHighlight = true;
-    private boolean showBoardHoverHighlight = true;
-    private boolean showBoardHighlightEffect = true;
-    private boolean showCircleShape = true;
+    private boolean showHoverHighlight = true;
+    private boolean showFeedforwardHighlight = true;
     private boolean showBlockingCrittersHighlight = true;
     private boolean showEatenCrittersFeedback = true;
+    private boolean showScoreAnimation = true;
 
     float dotedLineDashPatternRatio = 0.0085f;
     float dotedLineSpaceRatio = 0.5f;
@@ -370,13 +369,12 @@ public class GamePanel extends JComponent implements Observer {
             if(contentType > 0){
                 Critter critter = match.getCritterAtCoord(selectedCoordinate);
 
-                if(showBoardHoverHighlight)
-                    drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
-
                 Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(critter.type(), circleShapeTypeIds.get(critter.type()));
                 drawCircleShape(g2d, critter.type(), getPlayerImage(critter.player()));
 
-                if(showCircleHoverHighlight){
+                if(showHoverHighlight){
+                    drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.HOVER_COLOR, boardHighlightStroke);
+
                     drawHighlight(g2d, coords, shapeOriginPoints[critter.type()], circleHexagonInnerRadius, circleHexagonOuterRadius, 0, UIColor.HOVER_COLOR, circleHighlightStroke);
                 }
             }
@@ -455,21 +453,20 @@ public class GamePanel extends JComponent implements Observer {
             if(!opponentsNeighbors.isEmpty()){
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
-                        if(showBoardHighlightEffect)
+                        if(showFeedforwardHighlight)
                             drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, boardHighlightStroke);
                         eatenShape = critter.type();
                     }
                 }
             }
-            if(showCircleShape && eatenShape >= 0)
+            if(eatenShape >= 0)
                 drawCircleShapeWithHighlight(g2d, eatenShape, UIColor.EATEN_COLOR, getPlayerImage(match.getOpponentPlayerIndex()));
         }
 
-        if(showBoardHighlightEffect)
+        if(showFeedforwardHighlight)
             drawBoardCoordinatesHighlight(g2d, evolveCoords, UIColor.EVOLVE_COLOR, boardHighlightStroke);
 
-        if(showCircleShape)
-            drawCircleShapeWithHighlight(g2d, evolveInto, UIColor.EVOLVE_COLOR, getPlayerImage(match.getCurrentPlayerIndex()));
+        drawCircleShapeWithHighlight(g2d, evolveInto, UIColor.EVOLVE_COLOR, getPlayerImage(match.getCurrentPlayerIndex()));
     }
 
     /**
@@ -482,7 +479,8 @@ public class GamePanel extends JComponent implements Observer {
     private void drawCircleShapeWithHighlight(Graphics2D g2d, int shapeType, Color color, Image img){
         drawCircleShape(g2d, shapeType, img);
         Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(shapeType, circleShapeTypeIds.get(shapeType));
-        drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleHighlightStroke);
+        if(showFeedforwardHighlight)
+            drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleHighlightStroke);
     }
 
     /**
@@ -709,7 +707,7 @@ public class GamePanel extends JComponent implements Observer {
      * @param g2d Le composant Graphic à utiliser pour dessiner.
      */
     private void drawScoreAnimations(Graphics2D g2d) {
-        if(scoreAnimations.isEmpty())
+        if(showScoreAnimation == false || scoreAnimations.isEmpty())
             return;
 
         Font prevFont = g2d.getFont();
@@ -898,51 +896,43 @@ public class GamePanel extends JComponent implements Observer {
         return mSelected;
     }
 
-    public boolean isShowCircleHoverHighlight() {
-        return showCircleHoverHighlight;
+    public boolean getShowHoverHighlight() {
+        return showHoverHighlight;
     }
 
-    public boolean isShowBoardHoverHighlight() {
-        return showBoardHoverHighlight;
-    }
-
-    public boolean isShowCircleShape() {
-        return showCircleShape;
-    }
-
-    public boolean isShowBlockingCrittersHighlight() {
+    public boolean getShowBlockingCrittersHighlight() {
         return showBlockingCrittersHighlight;
     }
 
-    public boolean isShowBoardHighlightEffect() {
-        return showBoardHighlightEffect;
+    public boolean getShowFeedforwardHighlight() {
+        return showFeedforwardHighlight;
     }
 
-    public boolean isShowEatenCrittersFeedback() {
+    public boolean getShowEatenCrittersFeedback() {
         return showEatenCrittersFeedback;
+    }
+
+    public boolean getShowScoreAnimation() {
+        return showScoreAnimation;
     }
 
     public void setShowEatenCrittersFeedback(boolean showEatenCrittersFeedback) {
         this.showEatenCrittersFeedback = showEatenCrittersFeedback;
     }
 
-    public void setShowCircleHoverHighlight(boolean showCircleHoverHighlight) {
-        this.showCircleHoverHighlight = showCircleHoverHighlight;
+    public void setShowHoverHighlight(boolean showHoverHighlight) {
+        this.showHoverHighlight = showHoverHighlight;
     }
 
-    public void setShowBoardHoverHighlight(boolean showBoardHoverHighlight) {
-        this.showBoardHoverHighlight = showBoardHoverHighlight;
-    }
-
-    public void setShowBoardHighlightEffect(boolean showBoardHighlightEffect) {
-        this.showBoardHighlightEffect = showBoardHighlightEffect;
-    }
-
-    public void setShowCircleShape(boolean showCircleShape) {
-        this.showCircleShape = showCircleShape;
+    public void setShowFeedforwardHighlight(boolean showFeedforwardHighlight) {
+        this.showFeedforwardHighlight = showFeedforwardHighlight;
     }
 
     public void setShowBlockingCrittersHighlight(boolean showBlockingCrittersHighlight) {
         this.showBlockingCrittersHighlight = showBlockingCrittersHighlight;
+    }
+
+    public void setShowScoreAnimation(boolean showScoreAnimation) {
+        this.showScoreAnimation = showScoreAnimation;
     }
 }

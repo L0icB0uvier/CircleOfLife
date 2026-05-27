@@ -1,27 +1,47 @@
 package View.CustomComponents;
 
-import View.EventCollector;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
-    private final Image icon;
-    private final EventCollector controller;
+    GamePanel gamePanel;
 
-    private final float sizeRatio = 0.05f;
+    private final Image icon;
+
+    private final float sizeRatio = 0.07f;
     private final int MARGIN = 20;
 
     private Rectangle buttonBounds = new Rectangle(20, 20, 20, 20);
 
-    // --- NOUVELLES VARIABLES POUR LE MENU ---
     private boolean isMenuOpen = false;
-    private Rectangle resumeButtonBounds = new Rectangle();
-    private Rectangle restartButtonBounds = new Rectangle();
 
-    public GamePanelOverlayUI(EventCollector controller, Image icon) {
-        this.controller = controller;
+    private boolean showHoverHighlight;
+    private boolean showFeedforwardHighlight;
+    private boolean showBlockingCrittersHighlight;
+    private boolean showEatenCrittersFeedback;
+    private boolean showAnimations;
+
+    private Rectangle menuBounds = new Rectangle();
+
+    private Rectangle showHoverHighlightBounds = new Rectangle();
+    private Rectangle showFeedforwardHighlightBounds = new Rectangle();
+    private Rectangle showBlockingCrittersHighlightBounds = new Rectangle();
+    private Rectangle showEatenCrittersFeedbackBounds = new Rectangle();
+    private Rectangle showAnimationBounds = new Rectangle();
+
+    Font categoryFont = new Font("Arial", Font.BOLD, 18);
+    Font toggleLabelFont = new Font("Arial", Font.BOLD, 15);
+
+    public GamePanelOverlayUI(GamePanel gamePanel, Image icon) {
+        this.gamePanel = gamePanel;
         this.icon = icon;
+
+        showHoverHighlight = gamePanel.getShowHoverHighlight();
+        showFeedforwardHighlight =  gamePanel.getShowFeedforwardHighlight();
+        showBlockingCrittersHighlight = gamePanel.getShowBlockingCrittersHighlight();
+        showEatenCrittersFeedback = gamePanel.getShowEatenCrittersFeedback();
+        showAnimations = gamePanel.getShowScoreAnimation();
     }
 
     private Rectangle getButtonBounds(JComponent container) {
@@ -35,25 +55,32 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
     @Override
     public void paint(Graphics g, JComponent c) {
-        super.paint(g, c); // Dessine le plateau de jeu (GamePanel) en fond
+        super.paint(g, c);
 
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (!isMenuOpen) {
-            // --- MODE NORMAL : On affiche uniquement l'icône ---
             Rectangle bounds = getButtonBounds(c);
             if (icon != null) {
-                g2.drawImage(icon, bounds.x, bounds.y, bounds.width, bounds.height, c);
+                g2.setColor(new Color(0, 0, 0, 130));
+                g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, 10, 10);
+
+                int padding = 6;
+
+                g2.drawImage(icon, bounds.x + padding, bounds.y + padding, bounds.width - (padding * 2), bounds.height - (padding * 2), c);
             }
         } else {
-            // --- MODE MENU : Voile sombre et options ---
-
-            // 2. Dimensions du panneau central adaptées à l'écran
-            int menuWidth = 260;
-            int menuHeight = 220;
+            int menuWidth = 280;
+            int menuHeight = 360;
             int menuX = (c.getWidth() - menuWidth) - MARGIN;
             int menuY = MARGIN;
+            int itemX = menuX + 20;
+            int switchWidth = 50;
+            int switchHeight = 26;
+            int switchX = menuX + menuWidth - switchWidth - 20;
+
+            menuBounds = new Rectangle(menuX, menuY, menuWidth, menuHeight);
 
             // Dessin du cadre du menu
             g2.setColor(new Color(45, 45, 45));
@@ -65,28 +92,54 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
             // Titre du menu
             g2.setFont(new Font("SansSerif", Font.BOLD, 22));
             FontMetrics fm = g2.getFontMetrics();
-            String title = "PAUSE";
+            String title = "Options d'affichage";
             g2.drawString(title, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 45);
 
-            // 3. Boutons d'options du menu
-            g2.setFont(new Font("SansSerif", Font.PLAIN, 16));
-            fm = g2.getFontMetrics();
+            g2.setFont(categoryFont);
+            String contours = "Contours des pierres";
+            g2.drawString(contours, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 90);
 
-            // Option 1 : Reprendre
-            resumeButtonBounds = new Rectangle(menuX + 30, menuY + 80, menuWidth - 60, 40);
-            g2.setColor(new Color(70, 70, 70));
-            g2.fillRoundRect(resumeButtonBounds.x, resumeButtonBounds.y, resumeButtonBounds.width, resumeButtonBounds.height, 10, 10);
-            g2.setColor(Color.WHITE);
-            String textResume = "Reprendre";
-            g2.drawString(textResume, resumeButtonBounds.x + (resumeButtonBounds.width - fm.stringWidth(textResume)) / 2, resumeButtonBounds.y + 25);
+            g2.setFont(toggleLabelFont);
 
-            // Option 2 : Recommencer (ou une action de votre EventCollector)
-            restartButtonBounds = new Rectangle(menuX + 30, menuY + 140, menuWidth - 60, 40);
-            g2.setColor(new Color(220, 53, 69)); // Rouge
-            g2.fillRoundRect(restartButtonBounds.x, restartButtonBounds.y, restartButtonBounds.width, restartButtonBounds.height, 10, 10);
+            int yShowHoverHighlight = menuY + 100;
             g2.setColor(Color.WHITE);
-            String textRestart = "Recommencer";
-            g2.drawString(textRestart, restartButtonBounds.x + (restartButtonBounds.width - fm.stringWidth(textRestart)) / 2, restartButtonBounds.y + 25);
+            g2.drawString("Survol", itemX, yShowHoverHighlight + 18);
+            showHoverHighlightBounds = new Rectangle(switchX, yShowHoverHighlight, switchWidth, switchHeight);
+            drawToggleSwitch(g2, showHoverHighlightBounds, showHoverHighlight);
+
+            int yShowFeedforwardHighlight = menuY + 140;
+            g2.setColor(Color.WHITE);
+            g2.drawString("Evolution/prédation", itemX, yShowFeedforwardHighlight + 18);
+            showFeedforwardHighlightBounds = new Rectangle(switchX, yShowFeedforwardHighlight, switchWidth, switchHeight);
+            drawToggleSwitch(g2, showFeedforwardHighlightBounds, showFeedforwardHighlight);
+
+            g2.setFont(categoryFont);
+            String feedback = "Feedback";
+            g2.drawString(feedback, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 200);
+            g2.setFont(toggleLabelFont);
+
+            int yBlockingCrittersHighlight = menuY + 210;
+            g2.setColor(Color.WHITE);
+            g2.drawString("Critters bloquants", itemX, yBlockingCrittersHighlight + 18);
+            showBlockingCrittersHighlightBounds = new Rectangle(switchX, yBlockingCrittersHighlight, switchWidth, switchHeight);
+            drawToggleSwitch(g2, showBlockingCrittersHighlightBounds, showBlockingCrittersHighlight);
+
+            int yShowEatenCrittersFeedback = menuY + 250;
+            g2.setColor(Color.WHITE);
+            g2.drawString("Critters mangés", itemX, yShowEatenCrittersFeedback + 18);
+            showEatenCrittersFeedbackBounds = new Rectangle(switchX, yShowEatenCrittersFeedback, switchWidth, switchHeight);
+            drawToggleSwitch(g2, showEatenCrittersFeedbackBounds, showEatenCrittersFeedback);
+
+            g2.setFont(categoryFont);
+            String animation = "Animation";
+            g2.drawString(animation, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 310);
+            g2.setFont(toggleLabelFont);
+
+            int yShowAnimation = menuY + 320;
+            g2.setColor(Color.WHITE);
+            g2.drawString("Scores", itemX, yShowAnimation + 18);
+            showAnimationBounds = new Rectangle(switchX, yShowAnimation, switchWidth, switchHeight);
+            drawToggleSwitch(g2, showAnimationBounds, showAnimations);
         }
 
         g2.dispose();
@@ -98,37 +151,93 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
             Point clickPoint = e.getPoint();
 
             if (!isMenuOpen) {
-                // Si le menu est fermé, on met à jour et vérifie le bouton icône de pause
                 getButtonBounds(l);
                 if (buttonBounds.contains(clickPoint)) {
                     isMenuOpen = true;
-                    l.repaint(); // Force le dessin du voile noir
-                    e.consume(); // Bloque le clic pour ne pas jouer sur le plateau sous l'icône
+                    l.repaint();
+                    e.consume();
                 }
             } else {
-                // Si le menu est ouvert, on consomme TOUS les clics pour protéger le jeu en dessous
                 e.consume();
 
-                // Clic sur "Reprendre"
-                if (resumeButtonBounds.contains(clickPoint)) {
-                    isMenuOpen = false;
+                if (showHoverHighlightBounds.contains(clickPoint)) {
+                    showHoverHighlight = !showHoverHighlight;
+                    gamePanel.setShowHoverHighlight(showHoverHighlight);
                     l.repaint();
                 }
-                // Clic sur "Recommencer"
-                else if (restartButtonBounds.contains(clickPoint)) {
+
+                if(showFeedforwardHighlightBounds.contains(clickPoint)){
+                    showFeedforwardHighlight = !showFeedforwardHighlight;
+                    gamePanel.setShowFeedforwardHighlight(showFeedforwardHighlight);
+                    l.repaint();
+                }
+
+                if(showBlockingCrittersHighlightBounds.contains(clickPoint)){
+                    showBlockingCrittersHighlight = !showBlockingCrittersHighlight;
+                    gamePanel.setShowBlockingCrittersHighlight(showBlockingCrittersHighlight);
+                    l.repaint();
+                }
+
+                if(showEatenCrittersFeedbackBounds.contains(clickPoint)){
+                    showEatenCrittersFeedback = !showEatenCrittersFeedback;
+                    gamePanel.setShowEatenCrittersFeedback(showEatenCrittersFeedback);
+                    l.repaint();
+                }
+
+                if(showAnimationBounds.contains(clickPoint)){
+                    showAnimations = !showAnimations;
+                    gamePanel.setShowScoreAnimation(showAnimations);
+                    l.repaint();
+                }
+
+                if(!menuBounds.contains(clickPoint)){
                     isMenuOpen = false;
                     l.repaint();
-
-                    // Exemple d'action : vous pouvez déclencher un événement via votre contrôleur
-                    // controller.action("Restart");
-                    System.out.println("Déclenchement : Recommencer la partie");
                 }
             }
         }
 
-        // On ne laisse passer l'événement vers le plateau de jeu QUE si le menu est fermé
         if (!isMenuOpen) {
             super.processMouseEvent(e, l);
         }
+    }
+
+//    @Override
+//    protected void processMouseMotionEvent(java.awt.event.MouseEvent e, JLayer<? extends GamePanel> l) {
+//        if (e.getID() == java.awt.event.MouseEvent.MOUSE_MOVED) {
+//            if (isMenuOpen && !menuBounds.contains(e.getPoint())) {
+//                isMenuOpen = false;
+//                l.repaint();
+//            }
+//        }
+//
+//        if (isMenuOpen) {
+//            e.consume();
+//        } else {
+//            super.processMouseMotionEvent(e, l);
+//        }
+//    }
+
+    private void drawToggleSwitch(Graphics2D g2, Rectangle bounds, boolean isOn) {
+
+        if (isOn) {
+            g2.setColor(new Color(40, 167, 69));
+        } else {
+            g2.setColor(new Color(100, 100, 100));
+        }
+        g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, bounds.height, bounds.height);
+
+        g2.setColor(Color.WHITE);
+        int padding = 3;
+        int circleSize = bounds.height - (padding * 2);
+        int circleX;
+
+        if (isOn) {
+            circleX = bounds.x + bounds.width - circleSize - padding;
+        } else {
+            circleX = bounds.x + padding;
+        }
+
+        g2.fillOval(circleX, bounds.y + padding, circleSize, circleSize);
     }
 }
