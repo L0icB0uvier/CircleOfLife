@@ -24,15 +24,12 @@ public class CustomButton extends JButton  {
         this.setContentAreaFilled(false);
         this.border = new RoundedBorder(15,true, this.text);
         this.setBorder(border);
-        this.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                CustomButton button =  (CustomButton)e.getSource();
-                if(button.isEnabled()){
-                    button.setBackground(bgColor);
-                }else{
-                    button.setBackground(Color.LIGHT_GRAY);
-                }
+        this.addChangeListener(e -> {
+            CustomButton button =  (CustomButton)e.getSource();
+            if(button.isEnabled()){
+                button.setBackground(bgColor);
+            }else{
+                button.setBackground(Color.LIGHT_GRAY);
             }
         });
         addMouseListener(new MouseAdapter() {
