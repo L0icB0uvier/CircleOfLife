@@ -113,12 +113,25 @@ public class GameInfo extends JPanel {
                 case SCORE -> {
                     winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
                 }
-                case FILL, GIVE_UP -> {
-                    if(game.getWinningPlayer() != game.getCurrentPlayerIndex()){
+                case FILL -> {
+                    if(game.getWinningPlayer() != game.getOpponentPlayerIndex()){
                         winMessage.setText(String.format(" et perd %s", getWinTypeString()));
                     }
                     else{
                         winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
+                    }
+                }
+                case GIVE_UP ->{
+                    if(game.canUndo() == false){
+                        winMessage.setText(String.format(" et perd %s", getWinTypeString()));
+                    }
+                    else{
+                        if(game.getWinningPlayer() != game.getOpponentPlayerIndex()){
+                            winMessage.setText(String.format(" et perd %s", getWinTypeString()));
+                        }
+                        else{
+                            winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
+                        }
                     }
                 }
             }
