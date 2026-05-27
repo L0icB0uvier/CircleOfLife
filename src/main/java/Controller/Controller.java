@@ -173,6 +173,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
      * Lance la partie.
      */
     private void startGame(){
+        game.startPlaying();
         updateCurrentPlayer();
         currentPlayer.startTurn();
     }

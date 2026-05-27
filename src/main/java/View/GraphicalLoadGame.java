@@ -103,8 +103,6 @@ public class GraphicalLoadGame extends JPanel {
 
             }
         });
-
-
     }
 
     private void loadGame() {

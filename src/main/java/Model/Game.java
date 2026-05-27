@@ -94,6 +94,7 @@ public class Game extends Observable {
     }
 
     private void checkScoreChange() {
+        if(match.isPlaying() == false) return;
         if(match.previouslyEatenCritters.isEmpty() == false){
             Map<Set<Coordinate>, Integer> eatenData = new HashMap<>();
             for (Critter previouslyEatenCritter : match.previouslyEatenCritters) {
@@ -151,10 +152,10 @@ public class Game extends Observable {
         }
         else{
             match.redo();
-            checkScoreChange();
             match.toggleCurrentPlayer();
             Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
         }
+        checkScoreChange();
         update();
     }
 
@@ -231,5 +232,9 @@ public class Game extends Observable {
      */
     public int getNumberOfMovePlayed(){
         return match.getPastCount();
+    }
+
+    public void startPlaying() {
+        match.startPlaying();
     }
 }

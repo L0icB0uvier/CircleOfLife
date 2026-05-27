@@ -92,8 +92,7 @@ public class GameInfo extends JPanel {
             if(game.isReviewModeActive()){
                 if(game.canUndo()){
                     Move lastMove = game.getMatch().getLastMove();
-                    String and = game.canRedo()? "" : " et ";
-                    mainMessage.setText(String.format(" joue en %s%s", new Coordinate(lastMove.getColumn(), lastMove.getLine()), and));
+                    mainMessage.setText(String.format(" joue en %s", new Coordinate(lastMove.getColumn(), lastMove.getLine())));
                 }
                 else
                     mainMessage.setText(" a commencé");
@@ -110,12 +109,20 @@ public class GameInfo extends JPanel {
 
     private void updateWinMessage() {
         if(game.isGameOver() && game.isReviewModeActive() && game.canRedo() == false){
-            if(game.getWinningPlayer() != game.getOpponentPlayerIndex()){
-                winMessage.setText(String.format("perd %s", getWinTypeString()));
+            switch (game.getMatch().winType){
+                case SCORE -> {
+                    winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
+                }
+                case FILL, GIVE_UP -> {
+                    if(game.getWinningPlayer() != game.getCurrentPlayerIndex()){
+                        winMessage.setText(String.format(" et perd %s", getWinTypeString()));
+                    }
+                    else{
+                        winMessage.setText(String.format(" et gagne %s", getWinTypeString()));
+                    }
+                }
             }
-            else{
-                winMessage.setText(String.format("gagne %s", getWinTypeString()));
-            }
+
             this.add(winMessage);
         }
         else{

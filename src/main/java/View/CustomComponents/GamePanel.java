@@ -689,7 +689,22 @@ public class GamePanel extends JComponent implements Observer {
     private void drawEaten(Graphics2D g2d){
         List<Coordinate> coordinates = match.getPreviouslyEatenCrittersCoordinates();
         if(coordinates.isEmpty()) return;
-        drawBoardCoordinatesHighlight(g2d, new HashSet<>(coordinates), match.getOpponentPlayerIndex() == 0? UIColor.RED : UIColor.BLUE, lastMoveStroke);
+        Color col = getEatenStonesColor();
+        drawBoardCoordinatesHighlight(g2d, new HashSet<>(coordinates), col, lastMoveStroke);
+    }
+
+    /**
+     * Récupère la bonne couleur pour l'affichage du contour des pierres mangées.
+     * @return La couleur correspondant à l'état du jeu.
+     */
+    private Color getEatenStonesColor() {
+        Color col;
+        if(match.isReviewModeActive()){
+            col = match.getOpponentPlayerIndex() == 0? UIColor.BLUE : UIColor.RED;
+        }
+        else
+            col = match.getOpponentPlayerIndex() == 0? UIColor.RED : UIColor.BLUE;
+        return col;
     }
 
     /**
@@ -860,6 +875,7 @@ public class GamePanel extends JComponent implements Observer {
     }
 
     public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
+        if(match.isPlaying() == false) return;
         if(scoreAnimations.containsKey(groupCoords)){
             if(progress >= 1){
                 Configuration.info("Removing animation in GamePanel");
