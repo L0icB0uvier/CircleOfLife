@@ -82,7 +82,6 @@ public class GraphicalGame extends JPanel {
         forfeitPanel.add(forfeitBt);
         forfeitPanel.setBackground(UIColor.WHITE);
         forfeitBt.setVisible(true);
-        forfeitBt.addActionListener(new ControlButtonAdapter(controller, "GiveUp"));
         forfeitBt.setToolTipText("<html><b>Abandonner la partie.<b></html>");
 
         replayBt = new CustomButton("Rejouer",UIColor.WHITE, true);
@@ -258,13 +257,20 @@ public class GraphicalGame extends JPanel {
         super.paint(g);
 
         if(game.isGameOver() && crown != null){
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
             PlayerInfo player = playerInfos.get(game.getWinningPlayer());
             int min_size = Math.min((int)(this.getWidth()*0.03),(int)(this.getHeight()*0.03));
             int x = player.getWidth() + player.getX()  - min_size;
             int y = player.getY()  - min_size;
             int size = 2*min_size;
-            g.drawImage(crown, x ,y, size, size, this);
+            g2d.drawImage(crown, x ,y, size, size, this);
+            g2d.dispose();
         }
+
     }
 
     public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {

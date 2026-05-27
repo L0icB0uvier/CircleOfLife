@@ -17,7 +17,7 @@ public class UIColor {
 
     static public Color EVOLVE_COLOR = Color.GREEN;
     static public Color EATEN_COLOR = Color.YELLOW;
-    static public Color HOVER_COLOR = Color.CYAN;
-    static public Color LAST_MOVE_COLOR = Color.MAGENTA;
-    static public Color BLOCKING_CRITTER_COLOR = Color.WHITE;
+    static public Color HOVER_COLOR = Color.WHITE;
+    static public Color LAST_MOVE_COLOR = null;
+    static public Color BLOCKING_CRITTER_COLOR = Color.LIGHT_GRAY;
 }

@@ -131,6 +131,14 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setButtonLabel(2, "Quitter");
         pua.setButtonVisibility(1, false);
 
+        pua = new PopUpAdapter(frame, controller, 3, "Voulez-vous abandonner la partie en cours ?","");
+        graphicalGame.forfeitBt.addActionListener(pua);
+        pua.setActionButton(0, "Annuler", true);
+        pua.setButtonLabel(0, "Annuler");
+        pua.setActionButton(2,"GiveUp", true);
+        pua.setButtonLabel(2, "Abandonner");
+        pua.setButtonVisibility(1, false);
+
         MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);
         graphicalGame.gamePanel.addMouseMotionListener(mouseAdapter);
