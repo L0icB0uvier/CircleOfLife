@@ -30,7 +30,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
     private Rectangle showAnimationBounds = new Rectangle();
 
     Font categoryFont = new Font("Arial", Font.BOLD, 18);
-    Font toggleLabelFont = new Font("Arial", Font.BOLD, 15);
+    Font toggleLabelFont = new Font("Arial", Font.BOLD, 16);
 
     public GamePanelOverlayUI(GamePanel gamePanel, Image icon) {
         this.gamePanel = gamePanel;
@@ -74,7 +74,8 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
             int menuHeight = 360;
             int menuX = (c.getWidth() - menuWidth) - MARGIN;
             int menuY = MARGIN;
-            int itemX = menuX + 20;
+            int categoryX = menuX + 15;
+            int itemX = menuX + 25;
             int switchWidth = 50;
             int switchHeight = 26;
             int switchX = menuX + menuWidth - switchWidth - 20;
@@ -96,7 +97,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
             g2.setFont(categoryFont);
             String contours = "Contours des pierres";
-            g2.drawString(contours, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 90);
+            g2.drawString(contours, categoryX, menuY + 90);
 
             g2.setFont(toggleLabelFont);
 
@@ -114,7 +115,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
             g2.setFont(categoryFont);
             String feedback = "Feedback";
-            g2.drawString(feedback, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 200);
+            g2.drawString(feedback, categoryX, menuY + 200);
             g2.setFont(toggleLabelFont);
 
             int yBlockingCrittersHighlight = menuY + 210;
@@ -131,7 +132,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
             g2.setFont(categoryFont);
             String animation = "Animation";
-            g2.drawString(animation, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 310);
+            g2.drawString(animation, categoryX, menuY + 310);
             g2.setFont(toggleLabelFont);
 
             int yShowAnimation = menuY + 320;

@@ -12,6 +12,7 @@ import java.util.Set;
  */
 public class Game extends Observable {
     private Match match;
+    private boolean skipAnimations = false;
 
     /**
      * Crée un nouveau match.
@@ -94,7 +95,7 @@ public class Game extends Observable {
     }
 
     private void checkScoreChange() {
-        if(!match.isPlaying()) return;
+        if(!match.isPlaying() || skipAnimations) return;
         if(!match.previouslyEatenCritters.isEmpty()){
             Map<Set<Coordinate>, Integer> eatenData = new HashMap<>();
             for (Critter previouslyEatenCritter : match.previouslyEatenCritters) {
@@ -177,8 +178,10 @@ public class Game extends Observable {
      */
     public void redoAll(){
         Configuration.info("Game received Redo all");
+        skipAnimations = true;
         while (match.canRedo())
             redo();
+        skipAnimations = false;
     }
 
     /**

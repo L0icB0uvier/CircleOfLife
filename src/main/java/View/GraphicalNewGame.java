@@ -20,7 +20,7 @@ public class GraphicalNewGame extends JPanel {
     public GraphicalNewGame(JFrame parent){
         super(new BorderLayout());
         this.parent = parent;
-        MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10, debug", "[center]","[20%][20%, align top][20%, align top][20%, align top][20%]" );
+        MigLayout layoutPage = new MigLayout("fillx, insets 10 10 10 10", "[center]","[20%][20%, align top][20%, align top][20%, align top][20%]" );
         this.setLayout(layoutPage);
         JPanel titleLabelPanel = new JPanel();
         titleLabelPanel.setLayout(new GridLayout());
@@ -50,7 +50,7 @@ public class GraphicalNewGame extends JPanel {
         startingPlayerChoice = new ChoiceBox("Aléatoire", "Joueur 1", "Joueur 2");
 
         
-        String playerLayout = "fill, insets 0 10 0 10, hidemode 1, debug";
+        String playerLayout = "fill, insets 0 10 0 10, hidemode 1";
         String playerLayoutCol = "[20%, align right][25%][30%, align right][25%]";
         String playerLayoutRow = "[align center, fill]";
         JComponent player1Comp = new JPanel(new MigLayout(playerLayout, playerLayoutCol, playerLayoutRow));
