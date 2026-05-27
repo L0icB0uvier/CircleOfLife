@@ -3,12 +3,9 @@ package Model;
 import Global.Configuration;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,33 +23,33 @@ public class GameDataManagerTest {
     void testParserCorrectInput1() {
         String filename = "2026_05_20_10-33-38_20_J-komacchin_17_J-Desperis";
         String[] res = GameDataManager.parseFileName(filename);
-        assertEquals(res[0], "2026 05 20 10:33:38");
-        assertEquals(res[1], "komacchin");
-        assertEquals(res[2], "Desperis");
-        assertEquals(res[3], "20 - 17");
-        assertEquals(res[4], "");
+        assertEquals("2026 05 20 10:33:38", res[0]);
+        assertEquals("komacchin", res[1]);
+        assertEquals("Desperis", res[2]);
+        assertEquals("20 - 17", res[3]);
+        assertEquals("", res[4]);
     }
 
     @Test
     void testParserCorrectInput2() {
         String filename = "match-du-siecle_2026_05_20_10-33-38_0_J-komacchin_0_J-Desperis";
         String[] res = GameDataManager.parseFileName(filename);
-        assertEquals(res[0], "2026 05 20 10:33:38");
-        assertEquals(res[1], "komacchin");
-        assertEquals(res[2], "Desperis");
-        assertEquals(res[3], "0 - 0");
-        assertEquals(res[4], "match du siecle");
+        assertEquals("2026 05 20 10:33:38", res[0]);
+        assertEquals("komacchin", res[1]);
+        assertEquals("Desperis", res[2]);
+        assertEquals("0 - 0", res[3]);
+        assertEquals("match du siecle", res[4]);
     }
 
     @Test
     void testParserCorrectInput3() {
         String filename = "robot-wars_2026_05_20_10-33-38_0_M_0_H";
         String[] res = GameDataManager.parseFileName(filename);
-        assertEquals(res[0], "2026 05 20 10:33:38");
-        assertEquals(res[1], "Joueur 1 (IA moyenne)");
-        assertEquals(res[2], "Joueur 2 (IA difficile)");
-        assertEquals(res[3], "0 - 0");
-        assertEquals(res[4], "robot wars");
+        assertEquals("2026 05 20 10:33:38", res[0]);
+        assertEquals("Joueur 1 (IA moyenne)", res[1]);
+        assertEquals("Joueur 2 (IA difficile)", res[2]);
+        assertEquals("0 - 0", res[3]);
+        assertEquals("robot wars", res[4]);
     }
 
     @Test
@@ -115,11 +112,11 @@ public class GameDataManagerTest {
     void testParserNameContainingNumbers() {
         String filename = "match-du-2026_2026_05_20_10-33-38_0_J-komacchin_0_J-Desperis";
         String[] res = GameDataManager.parseFileName(filename);
-        assertEquals(res[0], "2026 05 20 10:33:38");
-        assertEquals(res[1], "komacchin");
-        assertEquals(res[2], "Desperis");
-        assertEquals(res[3], "0 - 0");
-        assertEquals(res[4], "match du 2026");
+        assertEquals("2026 05 20 10:33:38", res[0]);
+        assertEquals("komacchin", res[1]);
+        assertEquals("Desperis", res[2]);
+        assertEquals("0 - 0", res[3]);
+        assertEquals("match du 2026", res[4]);
     }
 
     // parse incorrect dates
@@ -179,6 +176,7 @@ public class GameDataManagerTest {
             assertFalse(GameDataManager.loadMatch(g, "fichier_vide"));
 
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -192,6 +190,7 @@ public class GameDataManagerTest {
             assertFalse(GameDataManager.loadMatch(null, s));
 
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -204,6 +203,7 @@ public class GameDataManagerTest {
             assertFalse(GameDataManager.loadMatch(g, "type_joueur2_manquante"));
 
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -220,6 +220,7 @@ public class GameDataManagerTest {
             assertFalse(GameDataManager.loadMatch(g, "nom_donné_a_ia2"));
 
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -231,6 +232,7 @@ public class GameDataManagerTest {
             assertFalse(GameDataManager.loadMatch(g, "indice_joueur_debutant_manquante"));
 
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -247,6 +249,7 @@ public class GameDataManagerTest {
             assertFalse(GameDataManager.loadMatch(g, "plus_de_move_que_len_futur"));
 
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -257,6 +260,7 @@ public class GameDataManagerTest {
             assertTrue(GameDataManager.loadMatch(g, "sauvegarde_correcte"));
 
         } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

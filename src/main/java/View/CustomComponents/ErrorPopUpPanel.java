@@ -1,7 +1,6 @@
 package View.CustomComponents;
 
 import javax.swing.JDialog;
-import javax.swing.JPanel;
 
 import java.awt.Component;
 import java.awt.event.ActionListener;

@@ -1,16 +1,13 @@
 package View;
 
 import View.Adapter.OptionalVisibilityAdapter;
-import View.CustomComponents.PopUpPanel;
 import View.CustomComponents.ChoiceBox;
-import View.CustomComponents.ErrorPopUpPanel;
 import View.Utils.FontScaler;
 import View.Utils.UIColor;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 

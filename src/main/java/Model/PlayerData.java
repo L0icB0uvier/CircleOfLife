@@ -16,7 +16,7 @@ public class PlayerData implements Cloneable {
 
     /**
      * Augmenter le score de increaseAmount.
-     * @param increaseAmount Le quantité à ajouter au score.
+     * @param increaseAmount La quantité à ajouter au score.
      */
     public void increaseScore(int increaseAmount){
         score += increaseAmount;

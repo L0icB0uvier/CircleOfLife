@@ -25,7 +25,6 @@ public class ImagePanel extends JComponent {
         int height = this.getHeight();
         int boardX0, boardY0, imageWidth, imageHeight;
         int alpha = 1;
-        int oneMinusAlpha = 1 - alpha;
 
         if(width > height){
             boardX0 = (width - ((alpha * height * imgSrcWidth) / imgSrcHeight)) / 2;
@@ -34,7 +33,7 @@ public class ImagePanel extends JComponent {
             imageHeight = alpha * height;
         }
         else{
-            boardX0 = ((oneMinusAlpha) / 2) * width;
+            boardX0 = ((1 - alpha) / 2) * width;
             boardY0 = (height - ((alpha * width * imgSrcHeight) / imgSrcWidth)) / 2;
             imageWidth = alpha * width;
             imageHeight = (alpha * width * imgSrcHeight) / imgSrcWidth;

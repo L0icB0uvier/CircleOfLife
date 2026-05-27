@@ -3,8 +3,7 @@ package Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,7 +139,7 @@ class MatchTest {
     void getPlayerPlayableMovesAroundStones_1(){
         int playerIndex = match.getCurrentPlayerIndex();
 
-        for (Coordinate stonesCoordinate : CritterUtils.critterFromId(1, 0, playerIndex).stonesCoordinates()) {
+        for (Coordinate stonesCoordinate : Objects.requireNonNull(CritterUtils.critterFromId(1, 0, playerIndex)).stonesCoordinates()) {
             match.playMove(4 + stonesCoordinate.line(), 4 + stonesCoordinate.col());
         }
 

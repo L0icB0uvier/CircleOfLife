@@ -1,7 +1,6 @@
 package View.CustomComponents;
 
 import View.Adapter.ChoiceButtonAdapter;
-import View.CustomComponents.ImageButton;
 import View.Utils.FontScaler;
 import net.miginfocom.swing.MigLayout;
 

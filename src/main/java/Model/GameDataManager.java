@@ -52,7 +52,7 @@ public class GameDataManager {
         // écrit le joueur qui a commencé la partie
         writer.write(match.startingPlayer + sep);
 
-        // écrit le nombre de coup joué dans le passé et le futur
+        // écrit le nombre de coups joué dans le passé et le futur
         writer.write(match.past.size() + sep);
         writer.write(match.future.size() + sep);
 
@@ -116,7 +116,7 @@ public class GameDataManager {
 
     /**
      * Converti le format du type d'IA lu dans le fichier vers le format attendu par
-     * updateAISettings dans configuration.
+     * updateAISettings dans Configuration.
      * 
      * @param ai Le format du type d'IA lu dans le fichier.
      * @return Le format du type d'IA converti.
@@ -138,7 +138,7 @@ public class GameDataManager {
      * @param filename Le nom du fichier à partir duquel charger (sans extension
      *                 .save).
      * @return true si la fonction a réussi du load, false sinon
-     * @throws FileNotFoundException Exception retourné si le fichier n'est pas
+     * @throws FileNotFoundException Exception retournée si le fichier n'est pas
      *                               trouvé.
      */
     public static boolean loadMatch(Game game, String filename) throws FileNotFoundException {
@@ -217,7 +217,7 @@ public class GameDataManager {
         if (scanner.hasNextInt())
             startingPlayerIndex = scanner.nextInt();
         else {
-            Configuration.warning("Impossible de lire le joueur commencant la partie dans le fichier " + filename);
+            Configuration.warning("Impossible de lire le joueur commençant la partie dans le fichier " + filename);
             return false;
         }
 
@@ -320,7 +320,7 @@ public class GameDataManager {
 
     /**
      * Retourne un nom de fichier de format "<date_courant>_<infos_joueurs>.save"
-     * avec avec des traits de soulignement comme séparateurs.
+     * avec des traits de soulignement comme séparateurs.
      * 
      * @param m        Un Match.
      * @param settings Les settings du match.
@@ -418,7 +418,7 @@ public class GameDataManager {
      * 
      * @param filename nom du fichier.
      * 
-     * @return Un tableau de string en cas du succes, null sinon.
+     * @return Un tableau de string en cas du succès, null sinon.
      */
     public static String[] parseFileName(String filename) {
         if (filename == null)
@@ -442,7 +442,7 @@ public class GameDataManager {
             return null;
         }
 
-        if (date.length != 4) { // annee, mois, jour, temps
+        if (date.length != 4) { // année, mois, jour, temps
             Configuration.warning("Détails concernant le date manquants");
             return null;
         }
@@ -474,10 +474,10 @@ public class GameDataManager {
     }
 
     /**
-     * Vérifie si un fichier existe dans la répertoire des saves
+     * Vérifie si un fichier existe dans le répertoire des saves
      * 
      * @param filename nom du fichier
-     * @return true si le fichier existe dans la répertoire des saves, false sinon
+     * @return true si le fichier existe dans le répertoire des saves, false sinon
      */
     public static boolean saveFileExists(String filename) {
         filename = filename.replaceAll(".save", "");
@@ -488,10 +488,10 @@ public class GameDataManager {
     }
 
     /**
-     * Supprime un fichier de save dans la répertoire des saves
+     * Supprime un fichier de save dans le répertoire des saves
      * 
      * @param fileName nom du fichier
-     * @return true si le fichier a été supprimé avec succes, false sinon
+     * @return true si le fichier a été supprimé avec succès, false sinon
      */
     public static boolean deleteMatch(String fileName) {
         File fileToDelete = new File(savePath + fileName + ".save");
@@ -538,10 +538,10 @@ public class GameDataManager {
     }
 
     /**
-     * Vérifie si le string donné contient des caracteres illegales (des separateurs des différents champs des nom cad underscore)
+     * Vérifie si le string donné contient des caractères illégaux (des séparateurs des différents champs des noms cad underscore)
      * 
      * @param newName string
-     * @return true si le fichier contient des caracteres illegales, false sinon
+     * @return true si le fichier contient des caractères illégaux, false sinon
      */
     public static boolean newNameContainsSeparator(String newName) {
         String sep = "_";
@@ -555,7 +555,7 @@ public class GameDataManager {
      * 
      * @param filename nom du fichier de sauvegarde
      * @param newName nouvel nom candidat pour ce fichier
-     * @return le nouvel nom du fichier du sauvegarde en cas du succes (sans extension .save), chaine vide sinon
+     * @return le nouvel nom du fichier de la sauvegarde en cas de succès (sans extension .save), chaine vide sinon
      */
     public static String renameMatch(String filename, String newName) {
         if (!saveFileExists(filename))
@@ -570,7 +570,7 @@ public class GameDataManager {
             Files.move(source,
                     source.resolveSibling(newNameRes));
         } catch (IOException e) {
-            Configuration.warning("Erreur lors de rennomage du fichier");
+            Configuration.warning("Erreur lors de renommage du fichier");
             return filename;
         }
         return newNameRes.replaceAll(".save", "");

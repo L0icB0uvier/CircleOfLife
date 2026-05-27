@@ -64,7 +64,7 @@ public class GraphicalGame extends JPanel {
         allUndoPanel.setOpaque(false);
         allUndoPanel.setLayout(new GridLayout());
         allUndoPanel.add(allUndoBt);
-        allUndoBt.setToolTipText("<html><b>Renvenir au début de la partie</b></html>");
+        allUndoBt.setToolTipText("<html><b>Revenir au début de la partie</b></html>");
 
         allRedoBt = new ImageButton("redoAllIcon.png");
         allRedoBt.addActionListener(new ControlButtonAdapter(controller, "RedoAll"));

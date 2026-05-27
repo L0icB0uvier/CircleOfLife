@@ -241,7 +241,7 @@ public class AnalyseIAView implements Observer, UserInterface {
 
     /**
      * Écrit les gameStats dans le Writer donné en argument.
-     * @param writer Le wirter où écrire les statistiques de parties.
+     * @param writer Le writer où écrire les statistiques de parties.
      * @throws IOException Si erreur IO quelconque.
      */
     private void printTableToDestination(java.io.Writer writer) throws IOException {

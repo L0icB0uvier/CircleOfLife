@@ -6,9 +6,7 @@ import Model.GameDataManager;
 import View.Adapter.PopUpAdapter;
 import View.Adapter.SelectGameMouseAdapter;
 import View.CustomComponents.CustomButton;
-import View.CustomComponents.ErrorPopUpPanel;
 import View.CustomComponents.ImageButton;
-import View.CustomComponents.PopUpPanel;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
 import View.Utils.UIColor;
@@ -126,19 +124,17 @@ public class GraphicalLoadGame extends JPanel {
         renameMenu.setLocationRelativeTo(userInterface.frame);
         renameMenu.setSize(new Dimension(500, 150));
 
-        JLabel renameLabel = new JLabel("Nouveau nom : (sans '_')\t ");
+        JLabel renameLabel = new JLabel("Nouveau nom : ('_' interdit)\t ");
         renameLabel.setFocusable(true);
         JTextField renameTextField = createJTextField(gameLabel.getText());
 
         JButton cancelButton = createBorderedButton("Annuler");
-        cancelButton.addActionListener(e-> {
-            renameMenu.dispose();
-        });
+        cancelButton.addActionListener(e-> renameMenu.dispose());
         JButton confirmButton = createBorderedButton("Renommer");
         confirmButton.addActionListener(e -> {
-            if(!renameTextField.getText().equals(gameLabel.getText())) { //on recupere et mets a jour l'ancien nom du jeu avec le nouvel
+            if(!renameTextField.getText().equals(gameLabel.getText())) { //on récupère et met à jour l'ancien nom du jeu avec le nouveau
                 if (GameDataManager.newNameContainsSeparator(renameTextField.getText())) {
-                    renameLabel.setText("Supprimer des caracteres '_'\t");
+                    renameLabel.setText("Caractère '_' interdit !\t");
                     renameLabel.requestFocusInWindow();
                     return;
                 }

@@ -45,7 +45,7 @@ public class Game extends Observable {
     /**
      * Vérifie si le coup est valide dans le match en cours.
      * @param coordinate Coordonnées du coup.
-     * @return true si les coordonnées sont valide, false sinon.
+     * @return true si les coordonnées sont valides, false sinon.
      */
     public boolean isMoveValid(Coordinate coordinate){
         return match.isMoveValid(getCurrentPlayerIndex(), coordinate.line(), coordinate.col());
@@ -190,7 +190,7 @@ public class Game extends Observable {
     }
 
     /**
-     * Toogle le mode analyse.
+     * Toggle le mode analyse.
      */
     public void toggleReviewMode(){
         if(match.isReviewModeActive()){

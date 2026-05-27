@@ -38,7 +38,7 @@ public class Settings {
 
     /**
      * Mise à jour du joueur commençant la partie.
-     * @param startingPlayer
+     * @param startingPlayer L'index du nouveau premier joueur.
      */
     public void setStartingPlayer(int startingPlayer){
         this.startingPlayer = startingPlayer;

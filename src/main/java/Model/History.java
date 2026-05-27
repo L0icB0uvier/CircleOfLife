@@ -31,7 +31,7 @@ public class History<E extends Command> {
 
     /**
      * Vérifie s'il est possible de refaire une action annulée.
-     * @return true s'il existe des actions refaisable, false sinon.
+     * @return true s'il existe des actions re-faisable, false sinon.
      */
     public boolean canRedo() {
         return future.isEmpty() == false;
@@ -51,7 +51,7 @@ public class History<E extends Command> {
 
     /**
      * Annule la dernière commande.
-     * @return La commande annulé.
+     * @return La commande annulée.
      */
     public E undo() {
         var cmd = transfer(past, future);

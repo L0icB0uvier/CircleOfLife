@@ -64,7 +64,7 @@ public class MatchUtilsTest {
 
 
     /**
-     * Vérifie que isInsideBoard() suit sa spécification.
+     * Vérifie qu'isInsideBoard() suit sa spécification.
      */
     @Test
     void testIsInsideBoard() {

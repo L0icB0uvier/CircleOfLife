@@ -1,7 +1,6 @@
 package View;
 
 import Model.GameDataManager;
-import View.CustomComponents.ErrorPopUpPanel;
 import View.Utils.FontScaler;
 import net.miginfocom.swing.MigLayout;
 
