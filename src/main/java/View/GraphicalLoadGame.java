@@ -119,19 +119,22 @@ public class GraphicalLoadGame extends JPanel {
     }
 
     private void renameGame() {
-        JLabel gameLabel = (JLabel) currentGamePanel.getComponent(0);
+        Box namePanel = (Box) currentGamePanel.getComponent(0);
+        JLabel gameLabel = (JLabel) namePanel.getComponent(0);
 
         Configuration.info("Renommage du fichier " + gameLabel.getText());
-
-        MigLayout layoutPopup = new MigLayout("fill, insets 10", "[20%]push[20%]", "[50%][50%]");
+        JPanel jPanel = new JPanel();
+        MigLayout layoutPopup = new MigLayout("fill, insets 10", "[40%]push[40%]", "[50%][50%]");
         JDialog renameMenu = new JDialog(userInterface.frame, "", true);
         renameMenu.setLayout(layoutPopup);
         renameMenu.setResizable(false);
         renameMenu.setLocationRelativeTo(userInterface.frame);
         renameMenu.setSize(new Dimension(500, 150));
 
+
         JLabel renameLabel = new JLabel("Nouveau nom : ('_' interdit)\t ");
         renameLabel.setFocusable(true);
+        jPanel.add(renameLabel);
         JTextField renameTextField = createJTextField(gameLabel.getText());
 
         JButton cancelButton = createBorderedButton("Annuler");
@@ -152,13 +155,14 @@ public class GraphicalLoadGame extends JPanel {
             renameMenu.dispose();
         });
 
-        renameMenu.add(renameLabel, "cell 0 0, span 2 1");
-        renameMenu.add(renameTextField, "cell 0 0, span 2 1, grow");
+        renameMenu.add(jPanel, "cell 0 0, grow");
+        renameMenu.add(renameTextField, "cell 1 0, grow");
         renameMenu.add(cancelButton, "cell 0 1, grow");
         renameMenu.add(confirmButton, "cell 1 1, grow");
 
-        renameTextField.addComponentListener(new FontScaler(0.3f, renameLabel, renameTextField));
+        renameTextField.addComponentListener(new FontScaler(0.3f, renameTextField));
         cancelButton.addComponentListener(new FontScaler(cancelButton, confirmButton));
+        jPanel.addComponentListener(new FontScaler(renameLabel));
 
         renameMenu.setVisible(true);
         renameLabel.requestFocusInWindow();
