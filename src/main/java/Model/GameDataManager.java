@@ -373,7 +373,7 @@ public class GameDataManager {
                     })
                     .forEach(filename -> res.add(filename.replaceAll(".save", "")));
         } catch (IOException e) {
-            Configuration.info("Pas de fichiers de sauvegardes trouvées");
+             
             return new ArrayList<>();
         }
         return res;

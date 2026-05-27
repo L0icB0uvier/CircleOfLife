@@ -15,7 +15,7 @@ public class LoadGamesAdapter implements java.awt.event.ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Configuration.info("Changement de page vers GraphicalLoadGame");
+         
         userInterface.startLoadPage();
     }
 }

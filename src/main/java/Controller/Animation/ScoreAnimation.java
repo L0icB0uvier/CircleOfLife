@@ -20,7 +20,7 @@ public class ScoreAnimation extends Animation {
         this.startLocation = eatenGroupOrigin;
         this.animationSpeed = animationSpeed;
         progress = 0;
-        Configuration.info("Score animation créée");
+         
     }
 
     @Override

@@ -78,7 +78,7 @@ public class HardAI extends AI {
      */
     @Override
     public Move findMove() {
-        //Configuration.info("Début de recherche de coup.");
+        // 
         updatePhase( match.getCurrentPlayerIndex());
         List<Coordinate> possibleMoves = match.getCurrentPlayerPlayableMoves();
         sortPossibleMoves(match, possibleMoves);
@@ -103,7 +103,7 @@ public class HardAI extends AI {
                 bests.add(new Move(match, move.line(), move.col()));
             }
         }
-        //Configuration.info("Fin de recherche de coup.");
+        // 
         Random RNG = new Random();
         return bests.get(RNG.nextInt(bests.size()));
     }
@@ -119,20 +119,20 @@ public class HardAI extends AI {
                     }
                 }
                 if (count >= startPhase2){
-                    Configuration.info("Changement de phase en phase 2");
+                     
                     currentPhase = GamePhase.Middle;
                 }
             }
             case Middle -> {
                 if(getMoveRemainingFactor(playerID) < startPhase3){
-                    Configuration.info("Changement de phase en phase 3");
+                     
                     currentPhase = GamePhase.End;
                     depth = 8;
                 }
             }
             case End -> {
                 if(getMoveRemainingFactor(playerID) >= startPhase3){
-                    Configuration.info("Changement de phase en phase 2");
+                     
                     currentPhase = GamePhase.Middle;
                     depth = 4;
                 }

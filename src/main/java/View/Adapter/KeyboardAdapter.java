@@ -15,7 +15,7 @@ public class KeyboardAdapter extends KeyAdapter {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        Configuration.info("Keyboard pressed");
+//         
         switch (e.getKeyCode()){
             case KeyEvent.VK_LEFT -> control.performAction("Undo");
             case KeyEvent.VK_RIGHT -> control.performAction("Redo");

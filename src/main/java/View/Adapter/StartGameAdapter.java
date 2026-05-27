@@ -21,7 +21,7 @@ public class StartGameAdapter implements java.awt.event.ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Configuration.info("Starting a new game");
+         
         String[] res = graphicalNewGame.getTextFields();
         for (int i = 0; i < res.length; i++) {
             if (GameDataManager.newNameContainsSeparator(res[i])) {

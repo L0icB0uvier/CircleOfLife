@@ -73,7 +73,7 @@ public class Match extends History<Move> implements Cloneable {
      * Initialise le match en supprimant l'historique, en initialisant le plateau de jeu et en choisissant un nouveau joueur de manière aléatoire.
      */
     public void initMatch() {
-        Configuration.info("Initialisation du match");
+         
         reset();
         InitializeBoard();
         resetScores();
@@ -141,7 +141,7 @@ public class Match extends History<Move> implements Cloneable {
      * Active le mode Analyse.
      */
     void enterReviewMode(){
-        Configuration.info("Début du mode review");
+         
         reviewModeActive = true;
     }
 
@@ -149,7 +149,7 @@ public class Match extends History<Move> implements Cloneable {
      * Désactive le mode Analyse.
      */
     void exitReviewMode(){
-        Configuration.info("Fin du mode review");
+         
         reviewModeActive = false;
     }
 
@@ -257,15 +257,15 @@ public class Match extends History<Move> implements Cloneable {
 
         if(neighbors.isEmpty()){
             newCritter = new Critter(Set.of(coord), currentPlayerIndex);
-            Configuration.info(String.format("Création d'un nouveau critter de type() %d", newCritter.type()));
+             
         }
         else{
             newCritter = evolve(neighbors, coord);
             if(neighbors.size() == 1){
-                Configuration.info(String.format("Evolution d'un critter de type() %d en critter de type() %d", neighbors.iterator().next().type(), newCritter.type()));
+                 
             }
             else{
-                Configuration.info(String.format("Evolution de plusieurs critters en critter de type() %d", newCritter.type()));
+                 
             }
         }
 
@@ -328,7 +328,7 @@ public class Match extends History<Move> implements Cloneable {
      * @param c Le Critter à effacer.
      */
     private void eatCritter(Critter c) {
-//        Configuration.info(String.format("Player %d eats critter of type() %d", currentPlayerIndex + 1, c.type()));
+//         
         for (Coordinate coord : c.stonesCoordinates()){
             boardState[coord.line()][coord.col()] = 0;
         }

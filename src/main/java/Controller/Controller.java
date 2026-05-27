@@ -64,7 +64,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
      * Demande au modèle de faire un Undo.
      */
     private void handleUndo(){
-        Configuration.info("Controller received Undo");
+         
         game.undo();
     }
 
@@ -72,7 +72,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
      * Demande au modèle de faire un Redo
      */
     private void handleRedo(){
-        Configuration.info("Controller received Redo");
+         
         game.redo();
     }
 
@@ -165,7 +165,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     private void handleSave() {
         try {
             GameDataManager.saveMatch(game.getMatch(), Configuration.getSettings());
-            Configuration.info("Match successfully saved");
+             
         } catch (Exception e) {
             Configuration.warning("Error while saving match");
             throw new RuntimeException(e);
@@ -238,7 +238,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
             Animation anim = it.next();
             anim.tictac();
             if (anim.isOver()) {
-                Configuration.info("Removing animation");
+                 
                 it.remove();
             }
         }
@@ -266,7 +266,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     @Override
     public void onScoreUpdated(Map<Set<Coordinate>, Integer> eatenInfo, int player) {
         for (Map.Entry<Set<Coordinate>, Integer> entry : eatenInfo.entrySet()) {
-            Configuration.info("Creating score animation");
+             
             animations.add(new ScoreAnimation(0.015f, entry.getKey(), entry.getValue(), player, this));
         }
     }

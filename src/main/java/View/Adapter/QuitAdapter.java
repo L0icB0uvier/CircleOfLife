@@ -11,7 +11,7 @@ public class QuitAdapter implements java.awt.event.ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Configuration.info("Fermeture de l'application");
+         
         System.exit(0);
     }
 }

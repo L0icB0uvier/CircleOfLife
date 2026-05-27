@@ -82,14 +82,14 @@ public class Game extends Observable {
      */
     public void playMove(Move move){
         if(match.isGameOver()){
-            Configuration.info(String.format("Player %d won!", match.winner + 1));
+             
             return;
         }
         match.apply(move);
         checkScoreChange();
         match.endTurn();
         if(match.isGameOver()){
-            Configuration.info(String.format("Player %d won!", match.winner + 1));
+             
         }
         update();
     }
@@ -109,14 +109,14 @@ public class Game extends Observable {
      * Annule le dernier Move puis appel update pour notifier les observateurs.
      */
     public void undo(){
-        Configuration.info("Game received Undo.");
+         
         if (match.isGameOver() && !match.isReviewModeActive())
             return;
         if(!canUndo()) return;
 
         match.undo();
         match.toggleCurrentPlayer();
-        Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+         
         update();
     }
 
@@ -132,7 +132,7 @@ public class Game extends Observable {
      * Refait le dernier Move annulé puis appel update pour notifier les observateurs.
      */
     public void redo(){
-        Configuration.info("Game received Redo.");
+         
         if (match.isGameOver() && !match.isReviewModeActive())
             return;
         if(!canRedo()) return;
@@ -141,20 +141,20 @@ public class Game extends Observable {
             switch (match.winType){
                 case SCORE -> {
                     match.toggleCurrentPlayer();
-                    Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+                     
                     match.redo();
                 }
                 case FILL, GIVE_UP -> {
                     match.redo();
                     match.toggleCurrentPlayer();
-                    Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+                     
                 }
             }
         }
         else{
             match.redo();
             match.toggleCurrentPlayer();
-            Configuration.info("Player " + (match.currentPlayerIndex + 1) + " turn");
+             
         }
         checkScoreChange();
         update();
@@ -168,7 +168,7 @@ public class Game extends Observable {
      * Annuler tous les coups jusqu'au début de l'historique.
      */
     public void undoAll(){
-        Configuration.info("Game received Undo all.");
+         
         while (canUndo())
             undo();
     }
@@ -177,7 +177,7 @@ public class Game extends Observable {
      * Refaire tous les coups jusqu'à la fin de l'historique.
      */
     public void redoAll(){
-        Configuration.info("Game received Redo all");
+         
         skipAnimations = true;
         while (match.canRedo())
             redo();

@@ -18,7 +18,7 @@ public class ChangePageAdapter implements java.awt.event.ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Configuration.info("Changement de page vers " + newPage.getClass());
+         
 
         if(newPage.getClass() != GraphicalGame.class)
             userInterface.stopGameAnimationTimer();

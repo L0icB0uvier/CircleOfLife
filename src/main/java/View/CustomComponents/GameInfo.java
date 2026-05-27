@@ -93,9 +93,10 @@ public class GameInfo extends JPanel {
             updatePlayerTurn(playerName, game.getCurrentPlayerIndex());
             textLabel.setText(turn.getText() + playerName.getText() + mainMessage.getText());
         }
-        Configuration.info(textLabel.getText());
+        if (this.getGraphics() != null) {
+            Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(this, ComponentEvent.COMPONENT_RESIZED));
+        }
         repaint();
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(this, ComponentEvent.COMPONENT_RESIZED));
     }
 
     private void updateMessage(){

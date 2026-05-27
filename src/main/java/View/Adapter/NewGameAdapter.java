@@ -14,7 +14,7 @@ public class NewGameAdapter implements java.awt.event.ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Configuration.info("Creating a new game");
+         
         controller.performAction("NewGame");
     }
 }

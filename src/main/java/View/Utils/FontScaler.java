@@ -63,9 +63,9 @@ public class FontScaler extends ComponentAdapter {
             }
             if (text.length() > maxText.length()) maxText = text;
         }
-        if(e.getComponent() instanceof  ChoiceBox) Configuration.info(maxText);
         Font maxFont = new Font(null, Font.PLAIN, 0);
         for(JComponent comp: jComponents) {
+            Font heightFont = comp.getFont().deriveFont(maxSize);
             comp.setFont(comp.getFont().deriveFont(maxSize));
             JComponent tempComp = new JPanel();
             tempComp.setFont(comp.getFont());
@@ -77,6 +77,7 @@ public class FontScaler extends ComponentAdapter {
                 tempComp.setFont(comp.getFont().deriveFont(current * 0.9f));
                 fontMetrics = g.getFontMetrics(tempComp.getFont());
             }
+            tempComp.setFont(tempComp.getFont().getSize2D() > heightFont.getSize2D() ? heightFont : tempComp.getFont());
             if (tempComp.getFont().getSize2D() > maxFont.getSize2D()) maxFont = tempComp.getFont();
         }
         for(JComponent comp: jComponents) {

@@ -911,7 +911,7 @@ public class GamePanel extends JComponent implements Observer {
         if(!match.isPlaying()) return;
         if(scoreAnimations.containsKey(groupCoords)){
             if(progress >= 1){
-                Configuration.info("Removing animation in GamePanel");
+                 
                 scoreAnimations.remove(groupCoords);
             }
             else

@@ -54,7 +54,7 @@ public abstract class AI {
         futureMove = new CompletableFuture<>();
 
         long randomWait = ThreadLocalRandom.current().nextLong(minWait, maxWait + 1);
-        //Configuration.info("AI waiting " + randomWait + " milliseconds");
+        // 
 
         scheduledTask = scheduler.schedule(() -> {
             try {
@@ -71,7 +71,7 @@ public abstract class AI {
         futureMove.whenComplete((result, exception) -> {
             if (futureMove.isCancelled() && scheduledTask != null) {
                 scheduledTask.cancel(true);
-                Configuration.info("AI Task and Timer cancelled.");
+                 
             }
         });
 

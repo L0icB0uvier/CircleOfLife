@@ -99,13 +99,13 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     }
 
     public void startGameAnimationTimer() {
-        Configuration.info("Starting Game Animation Timer");
+
         gameAnimationTimer.start();
     }
 
     public void stopGameAnimationTimer() {
         if(gameAnimationTimer.isRunning()) {
-            Configuration.info("Stopping Game Animation Timer");
+             
             gameAnimationTimer.stop();
         }
     }
@@ -143,7 +143,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);
         graphicalGame.gamePanel.addMouseMotionListener(mouseAdapter);
 
-        Configuration.info("Changement de page vers " + graphicalGame.getClass());
+         
         frame.setContentPane(graphicalGame);
         frame.revalidate();
 

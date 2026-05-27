@@ -122,7 +122,7 @@ public class GraphicalLoadGame extends JPanel {
         Box namePanel = (Box) currentGamePanel.getComponent(0);
         JLabel gameLabel = (JLabel) namePanel.getComponent(0);
 
-        Configuration.info("Renommage du fichier " + gameLabel.getText());
+
         JPanel jPanel = new JPanel();
         MigLayout layoutPopup = new MigLayout("fill, insets 10", "[40%]push[40%]", "[50%][50%]");
         JDialog renameMenu = new JDialog(userInterface.frame, "", true);

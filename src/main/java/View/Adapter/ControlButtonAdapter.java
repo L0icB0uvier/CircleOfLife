@@ -17,7 +17,7 @@ public class ControlButtonAdapter implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Configuration.info(action);
+         
         controller.performAction(action);
     }
 }
