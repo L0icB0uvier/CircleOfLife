@@ -4,14 +4,16 @@ import Controller.Controller;
 import Global.Configuration;
 import Model.Coordinate;
 
+import java.util.Set;
+
 public class ScoreAnimation extends Animation {
     int player;
     int scoreGained;
-    Coordinate startLocation;
-    double progress;
-    double animationSpeed;
+    Set<Coordinate> startLocation;
+    float progress;
+    float animationSpeed;
 
-    public ScoreAnimation(double animationSpeed, Coordinate eatenGroupOrigin, int scoreGained, int player, Controller c) {
+    public ScoreAnimation(float animationSpeed, Set<Coordinate> eatenGroupOrigin, int scoreGained, int player, Controller c) {
         super(1, c);
         this.player = player;
         this.scoreGained = scoreGained;

@@ -79,6 +79,10 @@ public class GamePanel extends JComponent implements Observer {
 
     private final Set<Coordinate> coordinatesHighlighted = new HashSet<>();
 
+    private final Map<Set<Coordinate>, ScoreAnimation> scoreAnimations;
+    private float animationOffset = 0;
+    private Font scoreAnimationFont;
+
     private final imageRatio[] shapePositionRatios = new imageRatio[]{
             new imageRatio(0.48825f, 0.07045f), // 0
             new imageRatio(0.68074f, 0.07300f), // 1
@@ -108,9 +112,6 @@ public class GamePanel extends JComponent implements Observer {
             entry(10, 3),
             entry(11, 1)
     );
-
-    private final Map<Coordinate, ScoreAnimation> scoreAnimations;
-    Font scoreAnimationFont;
 
     public GamePanel(Game game) {
         this.game = game;
@@ -187,45 +188,6 @@ public class GamePanel extends JComponent implements Observer {
         super.paintBorder(g2d);
 
         g2d.dispose();
-    }
-
-    private void drawScoreAnimations(Graphics2D g2d) {
-        if(scoreAnimations.isEmpty())
-            return;
-
-        Font prevFont = g2d.getFont();
-        g2d.setFont(scoreAnimationFont);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-        for (Map.Entry<Coordinate, ScoreAnimation> entry : scoreAnimations.entrySet()) {
-
-            String text = String.format("+%d", entry.getValue().scoreGained);
-
-            Point pixelPos = tileToPixel(entry.getKey());
-            int yPos = (int) Math.round(pixelPos.getY() - (entry.getValue().progress * animationTravelDistance));
-            pixelPos.setLocation(pixelPos.x, yPos);
-
-            FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
-            int x = (pixelPos.x - (metrics.stringWidth(text) / 2));
-            int y = (int) Math.round(pixelPos.y - (entry.getValue().progress * animationTravelDistance));
-            printScoreGainedText(g2d, text, x, y, entry.getValue().player == 0 ? UIColor.BLUE : UIColor.RED ,1 - (float) entry.getValue().progress);
-        }
-
-        g2d.setFont(prevFont);
-    }
-
-    private void printScoreGainedText(Graphics2D g2d, String scoreGained, int x, int y, Color textColor, float alpha){
-        Color prevCol = g2d.getColor();
-        Color color = new Color(textColor.getRed(), textColor.getGreen(), textColor.getBlue(), Math.round(255 * alpha));
-        g2d.setColor(color);
-
-        g2d.drawString(scoreGained, x, y);
-
-        g2d.setColor(prevCol);
-    }
-
-    private void drawBoardBackground(Graphics2D g2d) {
-        g2d.drawImage(imgBackgroundPlateau,3,3, this.getWidth()-6, this.getHeight()-6, null);
     }
 
     /**
@@ -309,8 +271,13 @@ public class GamePanel extends JComponent implements Observer {
 
         animationTravelDistance = height * animationTravelRatio;
         scoreAnimationFont = new Font("Arial", Font.BOLD, (int) (0.05 * getHeight()));
+        animationOffset = (float)boardStoneImageSize / 2;
 
         requireCalculation = false;
+    }
+
+    private void drawBoardBackground(Graphics2D g2d) {
+        g2d.drawImage(imgBackgroundPlateau,3,3, this.getWidth()-6, this.getHeight()-6, null);
     }
 
     /**
@@ -752,6 +719,75 @@ public class GamePanel extends JComponent implements Observer {
         g2d.drawImage(img, x, y, size, size, null);
     }
 
+    /**
+     * Dessine les animations de score.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     */
+    private void drawScoreAnimations(Graphics2D g2d) {
+        if(scoreAnimations.isEmpty())
+            return;
+
+        Font prevFont = g2d.getFont();
+        g2d.setFont(scoreAnimationFont);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        for (Map.Entry<Set<Coordinate>, ScoreAnimation> entry : scoreAnimations.entrySet()) {
+
+            String text = String.format("+%d", entry.getValue().scoreGained);
+
+            Point pixelPos = calculateAverageStonePosition(entry.getKey());
+            int yPos = Math.round(pixelPos.y - animationOffset - (entry.getValue().progress * animationTravelDistance));
+            pixelPos.setLocation(pixelPos.x, yPos);
+
+            FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+            int x = pixelPos.x - (metrics.stringWidth(text) / 2);
+            int y = Math.round(pixelPos.y - (entry.getValue().progress * animationTravelDistance));
+            printScoreGainedText(g2d, text, x, y, entry.getValue().player == 0 ? UIColor.BLUE : UIColor.RED ,1 - (float) entry.getValue().progress);
+        }
+
+        g2d.setFont(prevFont);
+    }
+
+    /**
+     * Calcule la position moyenne en pixel d'un ensemble de pierre du plateau.
+     * @param coords Les coordonnées des pierres sur plateau.
+     * @return La position moyenne en pixels.
+     */
+    private Point calculateAverageStonePosition(Set<Coordinate> coords){
+        int sumX = 0;
+        int sumY = 0;
+
+        for (Coordinate coord : coords) {
+            Point position = tileToPixel(coord);
+            sumX += position.x;
+            sumY += position.y;
+        }
+
+        int averageX = sumX / coords.size();
+        int averageY = sumY / coords.size();
+
+        return new Point(averageX, averageY);
+    }
+
+    /**
+     * Dessine un texte aux positions données.
+     * @param g2d Le composant Graphic à utiliser pour dessiner.
+     * @param text Le texte à dessiner.
+     * @param x La position x où dessiner dans le référentiel Swing.
+     * @param y La position y où dessiner dans le référentiel Swing.
+     * @param textColor La couleur à utiliser pour dessiner.
+     * @param alpha L'alpha à appliquer à la couleur.
+     */
+    private void printScoreGainedText(Graphics2D g2d, String text, int x, int y, Color textColor, float alpha){
+        Color prevCol = g2d.getColor();
+        Color color = new Color(textColor.getRed(), textColor.getGreen(), textColor.getBlue(), Math.round(255 * alpha));
+        g2d.setColor(color);
+
+        g2d.drawString(text, x, y);
+
+        g2d.setColor(prevCol);
+    }
+
     @Override
     public void update() {
         repaint();
@@ -846,7 +882,7 @@ public class GamePanel extends JComponent implements Observer {
         return mSelected;
     }
 
-    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress) {
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
         if(scoreAnimations.containsKey(groupCoords)){
             if(progress >= 1){
                 Configuration.info("Removing animation in GamePanel");
@@ -864,15 +900,15 @@ public class GamePanel extends JComponent implements Observer {
     static class ScoreAnimation {
         int scoreGained;
         int player;
-        double progress;
+        float progress;
 
-        public ScoreAnimation(int scoreGained, int player, double progress){
+        public ScoreAnimation(int scoreGained, int player, float progress){
             this.scoreGained = scoreGained;
             this.player = player;
             this.progress = progress;
         }
 
-        public void updateProgress(double newProgress){
+        public void updateProgress(float newProgress){
             progress = newProgress;
         }
     }

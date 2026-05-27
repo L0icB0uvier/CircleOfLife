@@ -11,10 +11,7 @@ import Global.Settings;
 import View.UserInterface;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Fait l'interface entre la vue et le modèle.
@@ -48,6 +45,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     @Override
     public void performAction(String actionName) {
         switch (actionName) {
+            case "FullScreen" -> view.toggleFullscreen();
             case "NewGame" -> createNewGame();
             case "StartGame" -> startGame();
             case "ContinueGame" -> continueGame();
@@ -242,7 +240,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
         }
     }
 
-    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress){
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress){
         view.animateScore(groupCoords, scoreGained, player, progress);
     }
 
@@ -262,10 +260,10 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
     }
 
     @Override
-    public void onScoreUpdated(Map<Coordinate, Integer> eatenInfo, int player) {
-        for (Map.Entry<Coordinate, Integer> entry : eatenInfo.entrySet()) {
+    public void onScoreUpdated(Map<Set<Coordinate>, Integer> eatenInfo, int player) {
+        for (Map.Entry<Set<Coordinate>, Integer> entry : eatenInfo.entrySet()) {
             Configuration.info("Creating score animation");
-            animations.add(new ScoreAnimation(0.015, entry.getKey(), entry.getValue(), player, this));
+            animations.add(new ScoreAnimation(0.015f, entry.getKey(), entry.getValue(), player, this));
         }
     }
 }

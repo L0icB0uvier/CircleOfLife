@@ -5,6 +5,7 @@ import Model.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Observable {
     List<Observer> updateObserver;
@@ -47,7 +48,7 @@ public class Observable {
         }
     }
 
-    public void updateScore(Map<Coordinate, Integer> crittersEaten, int player){
+    public void updateScore(Map<Set<Coordinate>, Integer> crittersEaten, int player){
         var it = scoreEventObserver.iterator();
 
         while (it.hasNext()) {

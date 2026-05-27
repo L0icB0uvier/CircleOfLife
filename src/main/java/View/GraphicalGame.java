@@ -14,6 +14,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class GraphicalGame extends JPanel {
     Game game;
@@ -265,7 +266,7 @@ public class GraphicalGame extends JPanel {
         }
     }
 
-    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress) {
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
         gamePanel.animateScore(groupCoords, scoreGained, player, progress);
     }
 }

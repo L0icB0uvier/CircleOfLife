@@ -10,6 +10,7 @@ import View.Adapter.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Set;
 
 public class GraphicalUserInterface implements Runnable, UserInterface, Observer {
     Game game;
@@ -77,7 +78,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
     }
 
     @Override
-    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress) {
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
         graphicalGame.animateScore(groupCoords, scoreGained, player, progress);
     }
 
@@ -177,6 +178,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalNewGame.cancelButton.addActionListener(new ChangePageAdapter(this, graphicalMainMenu));
 
         gameAnimationTimer = new Timer(16, new AnimationAdapter(controller));
+        gameAnimationTimer.setCoalesce(true);
 
         frame.addKeyListener(new KeyboardAdapter(controller));
 

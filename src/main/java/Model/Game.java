@@ -4,7 +4,6 @@ import Global.Configuration;
 import Patterns.Observable;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -96,9 +95,9 @@ public class Game extends Observable {
 
     private void checkScoreChange() {
         if(match.previouslyEatenCritters.isEmpty() == false){
-            Map<Coordinate, Integer> eatenData = new HashMap<>();
+            Map<Set<Coordinate>, Integer> eatenData = new HashMap<>();
             for (Critter previouslyEatenCritter : match.previouslyEatenCritters) {
-                eatenData.put(CritterUtils.getAverageCoordinate(previouslyEatenCritter.stonesCoordinates()), MatchUtils.calculatePointEarned(Set.of(previouslyEatenCritter)));
+                eatenData.put(previouslyEatenCritter.stonesCoordinates(), MatchUtils.calculatePointEarned(Set.of(previouslyEatenCritter)));
             }
             updateScore(eatenData, match.getCurrentPlayerIndex());
         }

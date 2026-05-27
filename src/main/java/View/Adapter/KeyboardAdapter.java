@@ -22,6 +22,7 @@ public class KeyboardAdapter extends KeyAdapter {
             case KeyEvent.VK_S -> control.performAction("Save");
             case KeyEvent.VK_O -> control.performAction("UndoAll");
             case KeyEvent.VK_P -> control.performAction("RedoAll");
+            case KeyEvent.VK_ENTER -> control.performAction("FullScreen");
         }
     }
 }

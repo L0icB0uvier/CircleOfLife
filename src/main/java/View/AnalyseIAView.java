@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Set;
 
 public class AnalyseIAView implements Observer, UserInterface {
 
@@ -302,7 +303,7 @@ public class AnalyseIAView implements Observer, UserInterface {
     }
 
     @Override
-    public void animateScore(Coordinate groupCoords, int scoreGained, int player, double progress) {
+    public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
 
     }
 
