@@ -5,7 +5,6 @@ import Model.PlayerData;
 import View.Utils.FontScaler;
 import View.Utils.RoundedBorder;
 import View.Utils.UIColor;
-import View.Utils.UIFont;
 
 import javax.swing.*;
 import javax.swing.border.Border;
