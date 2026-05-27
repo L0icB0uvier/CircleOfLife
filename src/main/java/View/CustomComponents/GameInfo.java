@@ -67,7 +67,7 @@ public class GameInfo extends JPanel {
         this.add(textLabel);
         textLabel.setVisible(false);
 
-        this.addComponentListener(new FontScaler(0.5f, 0.9f, turn, mainMessage, playerName, winMessage, textLabel));
+        this.addComponentListener(new FontScaler(0.4f, turn, mainMessage, playerName, winMessage, textLabel));
     }
 
     public void update(){

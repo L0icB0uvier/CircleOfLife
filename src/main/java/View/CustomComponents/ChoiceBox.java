@@ -18,10 +18,14 @@ public class ChoiceBox extends JComponent {
     public ChoiceBox(String... values) {
         this.values = values;
 
-        MigLayout layout = new MigLayout("fill", "[15%][70%][15%]", "[align center, grow]");
+        MigLayout layout = new MigLayout("fill", "[20%][60%][20%]", "[align center, grow]");
         this.setLayout(layout);
+        JPanel leftPanel = new JPanel(new GridLayout());
         leftBtn = createButton("undoIcon.png");
+        leftPanel.add(leftBtn);
+        JPanel rightPanel = new JPanel(new GridLayout());
         rightBtn = createButton("redoIcon.png");
+        rightPanel.add(rightBtn);
         this.labelPanel = Box.createHorizontalBox();
         labelPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
         this.label = createLabel(values[0]);
@@ -31,10 +35,10 @@ public class ChoiceBox extends JComponent {
         leftBtn.addActionListener(new ChoiceButtonAdapter(this, -1));
         rightBtn.addActionListener(new ChoiceButtonAdapter(this, 1));
 
-        this.add(leftBtn, "grow");
+        this.add(leftPanel, "grow");
         this.add(labelPanel, "grow");
-        this.add(rightBtn, "grow");
-        leftBtn.addComponentListener(new FontScaler(leftBtn, rightBtn));
+        this.add(rightPanel, "grow");
+        leftPanel.addComponentListener(new FontScaler(0.75f, 0.95f, leftBtn, rightBtn));
     }
 
     public String getValue() {
