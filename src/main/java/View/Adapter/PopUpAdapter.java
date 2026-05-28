@@ -41,6 +41,7 @@ public class PopUpAdapter implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        dialog.setLocation((parent.getWidth() - dialog.getWidth()) / 2, (parent.getHeight() - dialog.getHeight()) / 2);
         dialog.setVisible(true);
     }
 

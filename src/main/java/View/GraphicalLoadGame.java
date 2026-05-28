@@ -124,8 +124,7 @@ public class GraphicalLoadGame extends JPanel {
         JLabel gameLabel = (JLabel) namePanel.getComponent(0);
 
         Configuration.info("Renommage du fichier " + gameLabel.getText());
-        JPanel jPanel = new JPanel();
-        MigLayout layoutPopup = new MigLayout("fill, insets 10", "[40%]push[40%]", "[50%][50%]");
+        MigLayout layoutPopup = new MigLayout("fill, insets 10", "[40%, align center][20%, align center][40%]", "[40%]push[30%]");
         JDialog renameMenu = new JDialog(userInterface.frame, "", true);
         renameMenu.setLayout(layoutPopup);
         renameMenu.setResizable(false);
@@ -133,7 +132,9 @@ public class GraphicalLoadGame extends JPanel {
         renameMenu.setSize(new Dimension(500, 150));
 
 
-        JLabel renameLabel = new JLabel("Nouveau nom : ('_' interdit)\t ");
+        JPanel jPanel = new JPanel(new GridLayout());
+        JLabel renameLabel = new JLabel("Nouveau nom ('_' interdit) :");
+        renameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         renameLabel.setFocusable(true);
         jPanel.add(renameLabel);
         JTextField renameTextField = createJTextField(gameLabel.getText());
@@ -156,14 +157,14 @@ public class GraphicalLoadGame extends JPanel {
             renameMenu.dispose();
         });
 
-        renameMenu.add(jPanel, "cell 0 0, grow");
-        renameMenu.add(renameTextField, "cell 1 0, grow");
+        renameMenu.add(jPanel, "cell 0 0, span 2 1, grow");
+        renameMenu.add(renameTextField, "cell 2 0, grow");
         renameMenu.add(cancelButton, "cell 0 1, grow");
-        renameMenu.add(confirmButton, "cell 1 1, grow");
+        renameMenu.add(confirmButton, "cell 2 1, grow");
 
-        renameTextField.addComponentListener(new FontScaler(0.3f, renameTextField));
-        cancelButton.addComponentListener(new FontScaler(cancelButton, confirmButton));
-        jPanel.addComponentListener(new FontScaler(renameLabel));
+        renameTextField.addComponentListener(new FontScaler(0.7f, renameTextField));
+        cancelButton.addComponentListener(new FontScaler(0.5f, cancelButton, confirmButton));
+        jPanel.addComponentListener(new FontScaler(0.7f, renameLabel));
 
         renameMenu.setVisible(true);
         renameLabel.requestFocusInWindow();
