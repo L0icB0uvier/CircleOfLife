@@ -87,6 +87,11 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalGame.animateScore(groupCoords, scoreGained, player, progress);
     }
 
+    @Override
+    public void animateImpossibleMove(String id, int l, int c, float progress) {
+        graphicalGame.animateImpossibleMove(id, l, c, progress);
+    }
+
     public void startLoadPage() {
         graphicalLoadGame = new GraphicalLoadGame((Controller) controller, this);
 
@@ -139,7 +144,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         pua.setButtonLabel(2, "Abandonner");
         pua.setButtonVisibility(1, false);
 
-        MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame);
+        MouseAdapter mouseAdapter = new MouseAdapter(controller, graphicalGame.gamePanel);
         graphicalGame.gamePanel.addMouseListener(mouseAdapter);
         graphicalGame.gamePanel.addMouseMotionListener(mouseAdapter);
 

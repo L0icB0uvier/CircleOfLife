@@ -63,7 +63,6 @@ public class GamePanel extends JComponent implements Observer {
 
     float circleDotedLineDashPatternRatio = 0.006f;
 
-
     float dotedLineSpaceRatio = 0.5f;
     float circleDotedLineSpaceRatio = 0.35f;
 
@@ -72,10 +71,14 @@ public class GamePanel extends JComponent implements Observer {
     float dotedLineMitterLimit = 1f;
     float dotedLinePhase = 0.5f;
 
-    float animationTravelRatio = 0.2f;
     float animationTextHighlightRatio = 0.01f;
-    float animationTravelDistance;
     float animationTextHighlightStroke;
+
+    float scoreAnimationTravelRatio = 0.2f;
+    float scoreAnimationTravelDistance;
+
+    float moveImpossibleAnimationTravelRatio = 0.1f;
+    float moveImpossibleAnimationTravelDistance;
 
     BasicStroke dotedStroke,circleDotedStroke ;
     BasicStroke boardHighlightStroke;
@@ -89,6 +92,7 @@ public class GamePanel extends JComponent implements Observer {
     private final Map<Set<Coordinate>, ScoreAnimation> scoreAnimations;
     private float animationOffset = 0;
     private Font scoreAnimationFont;
+    private final Map<String, ImpossibleMoveAnimation> impossibleMoveAnimations;
 
     private final imageRatio[] shapePositionRatios = new imageRatio[]{
             new imageRatio(0.48825f, 0.07045f), // 0
@@ -134,6 +138,7 @@ public class GamePanel extends JComponent implements Observer {
         match = game.getMatch();
 
         scoreAnimations = new HashMap<>();
+        impossibleMoveAnimations = new HashMap<>();
 
         shapeOriginPoints = new Point2D.Float[12];
 
@@ -190,6 +195,7 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         drawScoreAnimations(g2d);
+        drawImpossibleMoveAnimation(g2d);
 
         super.paintBorder(g2d);
 
@@ -288,7 +294,8 @@ public class GamePanel extends JComponent implements Observer {
         boardHighlightStroke = new BasicStroke(boardHighlightThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         circleHighlightStroke = new BasicStroke(circleHighlightThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-        animationTravelDistance = height * animationTravelRatio;
+        scoreAnimationTravelDistance = height * scoreAnimationTravelRatio;
+        moveImpossibleAnimationTravelDistance = height * moveImpossibleAnimationTravelRatio;
         scoreAnimationFont = new Font("Arial", Font.BOLD, (int) (0.05 * getHeight()));
         animationOffset = (float)boardStoneImageSize / 2;
         animationTextHighlightStroke = imageWidth * animationTextHighlightRatio;
@@ -747,6 +754,30 @@ public class GamePanel extends JComponent implements Observer {
         g2d.drawImage(img, x, y, size, size, null);
     }
 
+    private void drawImpossibleMoveAnimation(Graphics2D g2d) {
+        if(impossibleMoveAnimations.isEmpty())
+            return;
+
+        Font prevFont = g2d.getFont();
+        g2d.setFont(scoreAnimationFont);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        for (var entry : impossibleMoveAnimations.entrySet()) {
+            Point pixel = tileToPixel(new Coordinate(entry.getValue().c, entry.getValue().l));
+            int yPos = Math.round(pixel.y - animationOffset - (entry.getValue().progress * moveImpossibleAnimationTravelDistance));
+            pixel.setLocation(pixel.x, yPos);
+
+            String text = "Impossible de jouer ici";
+            FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+            int x = pixel.x - (metrics.stringWidth(text) / 2);
+            int y = Math.round(pixel.y - (entry.getValue().progress * moveImpossibleAnimationTravelDistance));
+
+            printScoreGainedText(g2d, text, x, y, Color.BLACK ,1 - entry.getValue().progress);
+        }
+        g2d.setFont(prevFont);
+    }
+
+
     /**
      * Dessine les animations de score.
      * @param g2d Le composant Graphic à utiliser pour dessiner.
@@ -764,12 +795,12 @@ public class GamePanel extends JComponent implements Observer {
             String text = String.format("+%d", entry.getValue().scoreGained);
 
             Point pixelPos = calculateAverageStonePosition(entry.getKey());
-            int yPos = Math.round(pixelPos.y - animationOffset - (entry.getValue().progress * animationTravelDistance));
+            int yPos = Math.round(pixelPos.y - animationOffset - (entry.getValue().progress * scoreAnimationTravelDistance));
             pixelPos.setLocation(pixelPos.x, yPos);
 
             FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
             int x = pixelPos.x - (metrics.stringWidth(text) / 2);
-            int y = Math.round(pixelPos.y - (entry.getValue().progress * animationTravelDistance));
+            int y = Math.round(pixelPos.y - (entry.getValue().progress * scoreAnimationTravelDistance));
             printScoreGainedText(g2d, text, x, y, entry.getValue().player == 0 ? UIColor.BLUE : UIColor.RED ,1 - entry.getValue().progress);
         }
 
@@ -948,19 +979,52 @@ public class GamePanel extends JComponent implements Observer {
         repaint();
     }
 
-    static class ScoreAnimation {
-        int scoreGained;
-        int player;
+    public void animateImpossibleMove(String id, int l, int c, float progress) {
+        if(!match.isPlaying()) return;
+        if(impossibleMoveAnimations.containsKey(id)){
+            if(progress >= 1){
+                Configuration.info("Removing Impossible move animation in GamePanel");
+                impossibleMoveAnimations.remove(id);
+            }
+            else
+                impossibleMoveAnimations.get(id).updateProgress(progress);
+        }
+        else{
+            impossibleMoveAnimations.put(id, new ImpossibleMoveAnimation(progress, c, l));
+        }
+        repaint();
+    }
+
+    static abstract class ViewAnimation {
         float progress;
 
-        public ScoreAnimation(int scoreGained, int player, float progress){
-            this.scoreGained = scoreGained;
-            this.player = player;
+        public ViewAnimation(float progress) {
             this.progress = progress;
         }
 
         public void updateProgress(float newProgress){
             progress = newProgress;
+        }
+    }
+
+    static class ScoreAnimation extends ViewAnimation {
+        int scoreGained;
+        int player;
+
+        public ScoreAnimation(int scoreGained, int player, float progress){
+            super(progress);
+            this.scoreGained = scoreGained;
+            this.player = player;
+        }
+    }
+
+    static class ImpossibleMoveAnimation extends ViewAnimation{
+        int l, c;
+
+        public ImpossibleMoveAnimation(float progress, int c, int l) {
+            super(progress);
+            this.c = c;
+            this.l = l;
         }
     }
 
@@ -970,6 +1034,10 @@ public class GamePanel extends JComponent implements Observer {
 
     public int getMSelected() {
         return mSelected;
+    }
+
+    public boolean isMovePlayable(int m, int n){
+        return match.isBoardTilePlayableForPlayer(match.getCurrentPlayerIndex(), m, n);
     }
 
     public boolean getShowHoverHighlight() {

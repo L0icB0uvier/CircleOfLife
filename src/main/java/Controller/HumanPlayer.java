@@ -3,14 +3,16 @@ package Controller;
 import Global.Configuration;
 import Model.Coordinate;
 import Model.Game;
+import Model.MatchUtils;
 import Model.Move;
 
 public class HumanPlayer extends Player {
 
-    public HumanPlayer(Game game, String name){
+    public HumanPlayer(Controller controller, Game game, String name){
         this.game = game;
-        isAI = false;
         this.name = name;
+        this.controller = controller;
+        isAI = false;
     }
 
     /**
@@ -22,6 +24,9 @@ public class HumanPlayer extends Player {
     public void handleClick(int l, int c) {
         if(!game.isMoveValid(new Coordinate(c, l))){
             Configuration.warning(String.format("Move Invalide - %d:%d", c, l));
+            if(MatchUtils.isInsideBoard(new Coordinate(l, c))){
+                controller.createImpossibleMoveAnimation(l, c);
+            }
             return;
         }
         game.playMove(new Move(game.getMatch(), l, c));
