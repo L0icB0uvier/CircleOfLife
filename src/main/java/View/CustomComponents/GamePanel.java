@@ -978,6 +978,10 @@ public class GamePanel extends JComponent implements Observer {
         return showHoverHighlight;
     }
 
+    public boolean getShowUnplayableMoves() {
+        return showUnplayableMoves;
+    }
+
     public boolean getShowBlockingCrittersHighlight() {
         return showBlockingCrittersHighlight;
     }
@@ -992,6 +996,10 @@ public class GamePanel extends JComponent implements Observer {
 
     public boolean getShowScoreAnimation() {
         return showScoreAnimation;
+    }
+
+    public void setShowUnplayableMoves(boolean showUnplayableMoves) {
+        this.showUnplayableMoves = showUnplayableMoves;
     }
 
     public void setShowEatenCrittersFeedback(boolean showEatenCrittersFeedback) {

@@ -19,6 +19,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
     private boolean showHoverHighlight;
     private boolean showFeedforwardHighlight;
+    private boolean showUnplayableMoveFeedback;
     private boolean showBlockingCrittersHighlight;
     private boolean showEatenCrittersFeedback;
     private boolean showAnimations;
@@ -27,6 +28,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
     private final Rectangle showHoverHighlightBounds = new Rectangle();
     private final Rectangle showFeedforwardHighlightBounds = new Rectangle();
+    private final Rectangle showUnplayableMoveFeedbackBounds = new Rectangle();
     private final Rectangle showBlockingCrittersHighlightBounds = new Rectangle();
     private final Rectangle showEatenCrittersFeedbackBounds = new Rectangle();
     private final Rectangle showAnimationBounds = new Rectangle();
@@ -50,6 +52,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
         showHoverHighlight = gamePanel.getShowHoverHighlight();
         showFeedforwardHighlight =  gamePanel.getShowFeedforwardHighlight();
+        showUnplayableMoveFeedback =gamePanel.getShowUnplayableMoves();
         showBlockingCrittersHighlight = gamePanel.getShowBlockingCrittersHighlight();
         showEatenCrittersFeedback = gamePanel.getShowEatenCrittersFeedback();
         showAnimations = gamePanel.getShowScoreAnimation();
@@ -105,17 +108,18 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
         // Options feedbacks
         drawCategory(g2, "Feedback", 200);
-        drawLabelledToggle(g2, 210, "Critters bloquants", showBlockingCrittersHighlight, showBlockingCrittersHighlightBounds);
-        drawLabelledToggle(g2, 250, "Critters mangés", showEatenCrittersFeedback, showEatenCrittersFeedbackBounds);
+        drawLabelledToggle(g2, 210, "Coups impossibles", showUnplayableMoveFeedback, showUnplayableMoveFeedbackBounds);
+        drawLabelledToggle(g2, 250, "Critters bloquants", showBlockingCrittersHighlight, showBlockingCrittersHighlightBounds);
+        drawLabelledToggle(g2, 290, "Critters mangés", showEatenCrittersFeedback, showEatenCrittersFeedbackBounds);
 
         // Options Animations
-        drawCategory(g2, "Animation", 310);
-        drawLabelledToggle(g2, 320, "Scores", showAnimations, showAnimationBounds);
+        drawCategory(g2, "Animation", 350);
+        drawLabelledToggle(g2, 360, "Scores", showAnimations, showAnimationBounds);
     }
 
     private void recalculate(JComponent c) {
         menuWidth = 280;
-        menuHeight = 360;
+        menuHeight = 390;
         menuX = (c.getWidth() - menuWidth) - MARGIN;
         menuY = MARGIN;
         categoryX = menuX + 15;
@@ -208,6 +212,12 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
                 if(showFeedforwardHighlightBounds.contains(clickPoint)){
                     showFeedforwardHighlight = !showFeedforwardHighlight;
                     gamePanel.setShowFeedforwardHighlight(showFeedforwardHighlight);
+                    l.repaint();
+                }
+
+                if(showUnplayableMoveFeedbackBounds.contains(clickPoint)){
+                    showUnplayableMoveFeedback = !showUnplayableMoveFeedback;
+                    gamePanel.setShowUnplayableMoves(showUnplayableMoveFeedback);
                     l.repaint();
                 }
 
