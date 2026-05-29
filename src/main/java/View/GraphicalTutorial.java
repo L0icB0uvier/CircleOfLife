@@ -64,7 +64,7 @@ public class GraphicalTutorial extends JComponent {
         this.add(buttonsComp, "cell 0 3, grow");
 
         titlePanel.addComponentListener(new FontScaler(0.4f, titleLabel));
-        textPanel.addComponentListener(new FontScaler(0.5f, 0.95f, textLabel));
+        textPanel.addComponentListener(new FontScaler(0.65f, 0.95f, textLabel));
 
     }
 
@@ -78,9 +78,6 @@ public class GraphicalTutorial extends JComponent {
         textLabel.setText("<html>" + TutorialPages.pages[pageNumber].getText() + "</html>");
         image.setImage(imagesTuto[pageNumber]);
 
-        // On force la mise à jour du FontScaler et de l'affichage
-        revalidate();
-        repaint();
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
@@ -91,7 +88,6 @@ public class GraphicalTutorial extends JComponent {
         buttonQuit.setVisible(isLastPage);
         buttonPrev.setEnabled(true);
         updatePageContent();
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
     public void previousPage() {
@@ -100,7 +96,6 @@ public class GraphicalTutorial extends JComponent {
         buttonQuit.setVisible(false);
         buttonPrev.setEnabled(pageNumber != 0);
         updatePageContent();
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
     public void resetPage() {
@@ -109,6 +104,5 @@ public class GraphicalTutorial extends JComponent {
         buttonQuit.setVisible(false);
         buttonPrev.setEnabled(false);
         updatePageContent();
-        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 }
