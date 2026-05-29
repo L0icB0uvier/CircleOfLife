@@ -10,6 +10,9 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
     private final int MARGIN = 20;
 
+    private final int MIN_MENU_WIDTH = 200;
+    private final int MAX_MENU_WIDTH = 500;
+
     private Rectangle buttonBounds = new Rectangle(20, 20, 20, 20);
 
     private boolean isMenuOpen = false;

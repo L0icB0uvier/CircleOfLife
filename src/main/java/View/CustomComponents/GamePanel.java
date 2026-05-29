@@ -55,6 +55,7 @@ public class GamePanel extends JComponent implements Observer {
 
     private boolean showHoverHighlight = true;
     private boolean showFeedforwardHighlight = true;
+    private boolean showUnplayableMoves = true;
     private boolean showBlockingCrittersHighlight = true;
     private boolean showEatenCrittersFeedback = true;
     private boolean showScoreAnimation = true;
@@ -171,7 +172,6 @@ public class GamePanel extends JComponent implements Observer {
 
         g2d.setColor(this.getBackground());
         g2d.fillRoundRect(5, 5, getWidth()-10, getHeight()-10, 15, 15);
-
 
         if(requireCalculation)
             recalculate();
@@ -335,16 +335,18 @@ public class GamePanel extends JComponent implements Observer {
                         drawStone(g2d, isLastMove(n, m)? imgStonePlayer2LastMove : imgStonePlayer2, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -1:
-                        if(match.getCurrentPlayerIndex() == 1)
+                        if(match.isGameOver() || showUnplayableMoves == false || match.getCurrentPlayerIndex() == 1)
                             continue;
                         drawStone(g2d, imgDisabledStone, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -2:
-                        if(match.getCurrentPlayerIndex() == 0)
+                        if(match.isGameOver() || showUnplayableMoves == false || match.getCurrentPlayerIndex() == 0)
                             continue;
                         drawStone(g2d, imgDisabledStone, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -3:
+                        if(match.isGameOver() || showUnplayableMoves == false)
+                            continue;
                         drawStone(g2d, imgDisabledStone, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                 }
