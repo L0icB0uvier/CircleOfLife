@@ -22,7 +22,7 @@ public class GraphicalTutorial extends JComponent {
     ImageButton buttonNext, buttonPrev, buttonQuit;
 
     public GraphicalTutorial(GraphicalUserInterface userInterface) {
-        MigLayout layout = new MigLayout("fill, insets 10 10 20 10, debug", "[grow, align center]", "[15%][25%][45%][15%]");
+        MigLayout layout = new MigLayout("fill, insets 10 10 20 10", "[grow, align center]", "[15%][25%][45%][15%]");
         this.setLayout(layout);
 
         for(int i = 0; i < 4; i++) {
@@ -71,10 +71,17 @@ public class GraphicalTutorial extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+    }
 
+    private void updatePageContent() {
         titleLabel.setText(TutorialPages.pages[pageNumber].getTitle());
         textLabel.setText("<html>" + TutorialPages.pages[pageNumber].getText() + "</html>");
         image.setImage(imagesTuto[pageNumber]);
+
+        // On force la mise à jour du FontScaler et de l'affichage
+        revalidate();
+        repaint();
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
     public void nextPage() {
@@ -83,7 +90,7 @@ public class GraphicalTutorial extends JComponent {
         buttonNext.setVisible(!isLastPage);
         buttonQuit.setVisible(isLastPage);
         buttonPrev.setEnabled(true);
-        repaint();
+        updatePageContent();
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
@@ -92,7 +99,7 @@ public class GraphicalTutorial extends JComponent {
         buttonNext.setVisible(true);
         buttonQuit.setVisible(false);
         buttonPrev.setEnabled(pageNumber != 0);
-        repaint();
+        updatePageContent();
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 
@@ -101,7 +108,7 @@ public class GraphicalTutorial extends JComponent {
         buttonNext.setVisible(true);
         buttonQuit.setVisible(false);
         buttonPrev.setEnabled(false);
-        repaint();
+        updatePageContent();
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ComponentEvent(textPanel, ComponentEvent.COMPONENT_RESIZED));
     }
 }
