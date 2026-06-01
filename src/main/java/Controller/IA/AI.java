@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 public abstract class AI {
     protected final Match match;
-    int minWait = 100, maxWait = 100;
+    int minWait = 1000, maxWait = 1500;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
