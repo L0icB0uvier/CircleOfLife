@@ -533,6 +533,27 @@ public class GameDataManager {
         }
     }
 
+
+    public static boolean nameTooLongPlayer(String name) {
+        return name.length()>10;
+    }
+
+    public static boolean nameTooLongMatch(String name) {
+        return name.length()>20;
+    }
+
+    private static boolean invalidFileName(String newName) {
+        if (newName==null || newName.equals(""))
+            return false;
+        try {
+            Files.createFile(Paths.get(newName));
+            Files.delete(Paths.get(newName));
+        } catch (IOException e) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Vérifie si le string donné contient des caractères illégaux (des séparateurs des différents champs des noms c.-à-d. underscore)
      * 
@@ -541,7 +562,7 @@ public class GameDataManager {
      */
     public static boolean newNameContainsSeparator(String newName) {
         String sep = "_";
-        return newName.contains(sep);
+        return newName.contains(sep) || invalidFileName(newName);
     }
 
     /**

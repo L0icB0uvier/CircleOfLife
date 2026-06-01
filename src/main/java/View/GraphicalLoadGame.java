@@ -145,10 +145,15 @@ public class GraphicalLoadGame extends JPanel {
         confirmButton.addActionListener(e -> {
             if(!renameTextField.getText().equals(gameLabel.getText())) { //on récupère et met à jour l'ancien nom du jeu avec le nouveau
                 if (GameDataManager.newNameContainsSeparator(renameTextField.getText())) {
-                    renameLabel.setText("Caractère '_' interdit !\t");
+                    renameLabel.setText("Contient caractère interdit !\t");
+                    renameLabel.requestFocusInWindow();
+                    return;
+                } else if (GameDataManager.nameTooLongMatch(renameTextField.getText())) {
+                    renameLabel.setText("Max 20 caractères! " + renameTextField.getText().length() + "\t" );
                     renameLabel.requestFocusInWindow();
                     return;
                 }
+
                  currentGame = controller.renameGame(currentGame, renameTextField.getText());
                 SelectGameMouseAdapter selectMouseAdapter = (SelectGameMouseAdapter) currentGamePanel.getMouseListeners()[0];
                 selectMouseAdapter.updateGame(currentGame);
