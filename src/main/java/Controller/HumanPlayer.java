@@ -13,6 +13,7 @@ public class HumanPlayer extends Player {
         this.name = name;
         this.controller = controller;
         isAI = false;
+        this.canPlay = true;
     }
 
     /**

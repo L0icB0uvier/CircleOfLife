@@ -117,6 +117,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
      */
     public boolean continueGame(){
         if (!GameDataManager.hasSaveFile()) return false;
+        blockAi();
         try {
             if (!GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0)))
                 return false;
@@ -130,12 +131,20 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
         return true;
     }
 
+    private void blockAi() {
+        for (Player player : players) {
+            if (player.isAI())
+                player.canPlay = false;
+        }
+    }
+
     /**
      * Charge une partie à partir des données sauvegardées du joueur.
      * @param gameFile le nom du fichier de la partie à charger
      * @return true si la partie a été chargée avec succès, false sinon
      */
     public boolean loadGame(String gameFile){
+        blockAi();
         try {
             if(!GameDataManager.loadMatch(game, gameFile))
                 return false;

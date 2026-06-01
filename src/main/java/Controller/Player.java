@@ -12,6 +12,7 @@ public class Player {
     Controller controller;
     boolean isAI;
     String name;
+    boolean canPlay;
 
     /**
      * Indique si le joueur est une intelligence artificielle.

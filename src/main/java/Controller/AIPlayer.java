@@ -12,11 +12,12 @@ public class AIPlayer extends Player {
         this.ai = ai;
         this.game = game;
         this.name = name;
+        this.canPlay = true;
     }
 
     @Override
     public void startTurn() {
-        if (!game.getMatch().canRedo()) {
+        if (!game.getMatch().canRedo() && canPlay) {
             ai.play().thenAccept(move -> game.playMove(move));
         }
     }
