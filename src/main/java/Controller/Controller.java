@@ -133,7 +133,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
 
     private void blockAi() {
         for (Player player : players) {
-            if (player.isAI())
+            if (player != null && player.isAI())
                 player.canPlay = false;
         }
     }
