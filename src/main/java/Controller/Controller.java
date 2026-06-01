@@ -50,6 +50,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
             case "NewGame" -> createNewGame();
             case "StartGame" -> startGame();
             case "ContinueGame" -> continueGame();
+            case "QuitGame" -> quitGame();
             case "GiveUp" -> giveUp();
             case "Replay" -> replay();
             case "ToggleReviewMode" -> toggleReviewMode();
@@ -59,6 +60,13 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
             case "RedoAll" -> handleRedoAll();
             case "Save" -> handleSave();
         }
+    }
+
+    private void quitGame() {
+        if(currentPlayer != null)
+            currentPlayer.endTurn();
+
+        cleanAnimations();
     }
 
     /**

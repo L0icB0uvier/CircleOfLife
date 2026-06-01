@@ -119,7 +119,7 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
     private void recalculate(JComponent c) {
         menuWidth = 280;
-        menuHeight = 390;
+        menuHeight = 400;
         menuX = (c.getWidth() - menuWidth) - MARGIN;
         menuY = MARGIN;
         categoryX = menuX + 15;

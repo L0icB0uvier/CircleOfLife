@@ -31,6 +31,7 @@ public class FontScaler extends ComponentAdapter {
     @Override
     public void componentResized(ComponentEvent e) {
         Graphics g = e.getComponent().getGraphics();
+        if(g == null) return;
         FontMetrics fontMetricsStart = g.getFontMetrics(jComponents[0].getFont());
         float maxSize = getMaxSize(e);
 

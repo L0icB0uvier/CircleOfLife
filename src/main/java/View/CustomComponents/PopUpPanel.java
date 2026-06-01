@@ -124,6 +124,14 @@ public class PopUpPanel extends JPanel {
     }
 
 
+    public void setActionButton(int button, String action, GraphicalUserInterface gui, JComponent nPage){
+        this.listButton.get(button).addActionListener(e -> {
+                dialog.dispose();
+                controller.performAction(action);
+        });
+        this.listButton.get(button).addActionListener(new ChangePageAdapter(gui,nPage));
+        this.listButton.get(button).addActionListener(e -> dialog.dispose());
+    }
 
 
 }

@@ -132,7 +132,7 @@ public class GraphicalUserInterface implements Runnable, UserInterface, Observer
         graphicalGame.gameControlBar.quitGameButton.addActionListener(pua);
         pua.setActionButton(0, "Annuler", true);
         pua.setButtonLabel(0, "Annuler");
-        pua.setActionButton(2, this, graphicalMainMenu);
+        pua.setActionButton(2, "QuitGame",this, graphicalMainMenu);
         pua.setButtonLabel(2, "Quitter");
         pua.setButtonVisibility(1, false);
 

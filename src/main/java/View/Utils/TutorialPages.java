@@ -7,7 +7,7 @@ public class TutorialPages {
                         "soit ne plus pouvoir jouer à son tour.", "Tuto_1.png"),
         new TutorialPage("Déroulement d'un coup",
                 "Au début de la partie, le plateau est vide." +
-                    "Chaque joueur possède des pierres.<br>Un tour se déroule de cette manière :<br>" +
+                    "<br>Un tour se déroule de cette manière :<br>" +
                     "Un joueur pose une pierre de telle sorte à former un «organisme»,<br>"+
                     "c’est-à-dire une formation d’au maximum 4 pierres.", "Tuto_2.png"),
         new TutorialPage("Manger une pierre",
