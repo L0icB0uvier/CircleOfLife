@@ -147,17 +147,19 @@ public class Game extends Observable {
                 case FILL, GIVE_UP -> {
                     match.redo();
                     match.toggleCurrentPlayer();
-                     
+                              
                 }
             }
+            checkScoreChange();
+            update();  
         }
         else{
             match.redo();
+            checkScoreChange();
             match.toggleCurrentPlayer();
+            update();
              
         }
-        checkScoreChange();
-        update();
     }
 
     public boolean canRedo(){
