@@ -141,25 +141,25 @@ public class Game extends Observable {
             switch (match.winType){
                 case SCORE -> {
                     match.toggleCurrentPlayer();
-                     
                     match.redo();
+                    checkScoreChange();
                 }
                 case FILL, GIVE_UP -> {
                     match.redo();
+                    checkScoreChange();
                     match.toggleCurrentPlayer();
                               
                 }
             }
-            checkScoreChange();
-            update();  
+            
         }
         else{
             match.redo();
             checkScoreChange();
             match.toggleCurrentPlayer();
-            update();
              
         }
+        update();  
     }
 
     public boolean canRedo(){
