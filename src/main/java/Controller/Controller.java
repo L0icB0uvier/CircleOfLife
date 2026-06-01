@@ -1,6 +1,7 @@
 package Controller;
 
 import Controller.Animation.Animation;
+import Controller.Animation.ImpossibleMoveAnimation;
 import Controller.Animation.ScoreAnimation;
 import Global.Configuration;
 import Model.*;
@@ -49,6 +50,7 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
             case "NewGame" -> createNewGame();
             case "StartGame" -> startGame();
             case "ContinueGame" -> continueGame();
+            case "QuitGame" -> quitGame();
             case "GiveUp" -> giveUp();
             case "Replay" -> replay();
             case "ToggleReviewMode" -> toggleReviewMode();
@@ -58,6 +60,13 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
             case "RedoAll" -> handleRedoAll();
             case "Save" -> handleSave();
         }
+    }
+
+    private void quitGame() {
+        if(currentPlayer != null)
+            currentPlayer.endTurn();
+
+        cleanAnimations();
     }
 
     /**
@@ -97,8 +106,8 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
         view.updateSettings();
         Settings matchSettings = Configuration.getSettings();
         game.createMatch(matchSettings.getPlayer1Settings().getName(), matchSettings.getPlayer2Settings().getName(), matchSettings.getStartingPlayerSetting());
-        players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
-        players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
+        players[0] = Player.createPlayer(this, matchSettings.getPlayer1Settings(), game);
+        players[1] = Player.createPlayer(this, matchSettings.getPlayer2Settings(), game);
         startGame();
     }
 
@@ -112,8 +121,8 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
             if (!GameDataManager.loadMatch(game, GameDataManager.getSaveFiles().get(0)))
                 return false;
             Settings matchSettings = Configuration.getSettings();
-            players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
-            players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
+            players[0] = Player.createPlayer(this, matchSettings.getPlayer1Settings(), game);
+            players[1] = Player.createPlayer(this, matchSettings.getPlayer2Settings(), game);
             startGame();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -131,8 +140,8 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
             if(!GameDataManager.loadMatch(game, gameFile))
                 return false;
             Settings matchSettings = Configuration.getSettings();
-            players[0] = Player.createPlayer(matchSettings.getPlayer1Settings(), game);
-            players[1] = Player.createPlayer(matchSettings.getPlayer2Settings(), game);
+            players[0] = Player.createPlayer(this, matchSettings.getPlayer1Settings(), game);
+            players[1] = Player.createPlayer(this, matchSettings.getPlayer2Settings(), game);
             startGame();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -248,6 +257,10 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
         view.animateScore(groupCoords, scoreGained, player, progress);
     }
 
+    public void animateImpossibleMoveAnimation(String id, int l, int c, float progress){
+        view.animateImpossibleMove(id, l, c, progress);
+    }
+
     @Override
     public void update() {
         if(currentPlayer == null) return;
@@ -269,5 +282,9 @@ public class Controller implements EventCollector, Observer, ScoreEventObserver 
              
             animations.add(new ScoreAnimation(0.015f, entry.getKey(), entry.getValue(), player, this));
         }
+    }
+
+    public void createImpossibleMoveAnimation(int l, int c){
+        animations.add(new ImpossibleMoveAnimation(this, 0.015f, l, c, UUID.randomUUID().toString()));
     }
 }

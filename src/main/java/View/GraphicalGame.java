@@ -242,7 +242,6 @@ public class GraphicalGame extends JPanel {
         this.add(replayPanel,"cell 5 4, grow, sg top");
         this.revalidate();
         repaint();
-
     }
 
     public void hideEndGameButtons(){
@@ -286,5 +285,9 @@ public class GraphicalGame extends JPanel {
 
     public void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress) {
         gamePanel.animateScore(groupCoords, scoreGained, player, progress);
+    }
+
+    public void animateImpossibleMove(String id, int l, int c, float progress) {
+        gamePanel.animateImpossibleMove(id, l, c, progress);
     }
 }

@@ -14,7 +14,7 @@ public class PopUpPanel extends JPanel {
 
     private JLabel mainLabel;
     private JLabel secondaryLabel;
-    private final ArrayList<JButton> listButton;
+    private final ArrayList<CustomButton> listButton;
     private final EventCollector controller;
 
     private final Dialog dialog;
@@ -25,7 +25,7 @@ public class PopUpPanel extends JPanel {
         this.dialog = dialog;
         this.listButton = new ArrayList<>();
         for(int i = 0;i<nButtons;i++){
-            this.listButton.add(new JButton());
+            this.listButton.add(new CustomButton("",Color.WHITE,true));
         }
         init();
     }
@@ -40,7 +40,7 @@ public class PopUpPanel extends JPanel {
         secondaryLabel = new JLabel();
 
         mainLabel.setFont(getFont().deriveFont(30f));
-        secondaryLabel.setFont(getFont().deriveFont(30f));
+        secondaryLabel.setFont(getFont().deriveFont(20f));
 
 
         //Adding Buttons to the ButtonContainer
@@ -73,7 +73,7 @@ public class PopUpPanel extends JPanel {
     }
 
     public void setButtonLabel(int button,String text) {
-        this.listButton.get(button).setText(text);
+        this.listButton.get(button).updateText(text);
     }
 
 
@@ -124,6 +124,14 @@ public class PopUpPanel extends JPanel {
     }
 
 
+    public void setActionButton(int button, String action, GraphicalUserInterface gui, JComponent nPage){
+        this.listButton.get(button).addActionListener(e -> {
+                dialog.dispose();
+                controller.performAction(action);
+        });
+        this.listButton.get(button).addActionListener(new ChangePageAdapter(gui,nPage));
+        this.listButton.get(button).addActionListener(e -> dialog.dispose());
+    }
 
 
 }

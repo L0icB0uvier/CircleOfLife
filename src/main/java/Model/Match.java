@@ -165,6 +165,10 @@ public class Match extends History<Move> implements Cloneable {
             return false;
         }
 
+        return isBoardTilePlayableForPlayer(playerIndex, l, c);
+    }
+
+    public boolean isBoardTilePlayableForPlayer(int playerIndex, int l, int c){
         // Case occupée
         if(boardState[l][c] > 0){
             return false;

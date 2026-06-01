@@ -2,30 +2,32 @@ package View.Adapter;
 
 import Global.Configuration;
 import Model.Coordinate;
+import Model.MatchUtils;
+import View.CustomComponents.GamePanel;
 import View.EventCollector;
-import View.GraphicalGame;
 
 import java.awt.event.MouseEvent;
 
 public class MouseAdapter extends java.awt.event.MouseAdapter {
     EventCollector control;
-    GraphicalGame graphicalGame;
+    GamePanel gamePanel;
 
-    public MouseAdapter(EventCollector control, GraphicalGame graphicalGame){
+    public MouseAdapter(EventCollector control, GamePanel gamePanel){
         this.control = control;
-        this.graphicalGame = graphicalGame;
+        this.gamePanel = gamePanel;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        int n = graphicalGame.getGamePanel().getNSelected();
-        int m = graphicalGame.getGamePanel().getMSelected();
-         
+        int n = gamePanel.getNSelected();
+        int m = gamePanel.getMSelected();
+
+        Configuration.info(String.format("Clic souris aux coordonnées %d:%d - Correspond à la case %s du plateau", e.getX(), e.getY(), new Coordinate(n, m)));
         control.handleClick(m, n);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        graphicalGame.getGamePanel().updateMousePosition(e.getX(), e.getY());
+        gamePanel.updateMousePosition(e.getX(), e.getY());
     }
 }

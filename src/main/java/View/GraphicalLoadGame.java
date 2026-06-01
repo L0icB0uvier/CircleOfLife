@@ -35,7 +35,8 @@ public class GraphicalLoadGame extends JPanel {
         this.setBackground(UIColor.BACKGROUND);
 
         scrollPane = new JScrollPane();
-        scrollPane.setBorder(new RoundedBorder(15, UIColor.LIGHT_BLUE, 3));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
         contentPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(contentPanel, BoxLayout.Y_AXIS);
         contentPanel.setLayout(boxLayout);
@@ -122,9 +123,8 @@ public class GraphicalLoadGame extends JPanel {
         Box namePanel = (Box) currentGamePanel.getComponent(0);
         JLabel gameLabel = (JLabel) namePanel.getComponent(0);
 
-
-        JPanel jPanel = new JPanel();
-        MigLayout layoutPopup = new MigLayout("fill, insets 10", "[40%]push[40%]", "[50%][50%]");
+        Configuration.info("Renommage du fichier " + gameLabel.getText());
+        MigLayout layoutPopup = new MigLayout("fill, insets 10", "[40%, align center][20%, align center][40%]", "[40%]push[30%]");
         JDialog renameMenu = new JDialog(userInterface.frame, "", true);
         renameMenu.setLayout(layoutPopup);
         renameMenu.setResizable(false);
@@ -132,7 +132,9 @@ public class GraphicalLoadGame extends JPanel {
         renameMenu.setSize(new Dimension(500, 150));
 
 
-        JLabel renameLabel = new JLabel("Nouveau nom : ('_' interdit)\t ");
+        JPanel jPanel = new JPanel(new GridLayout());
+        JLabel renameLabel = new JLabel("Nouveau nom ('_' interdit) :");
+        renameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         renameLabel.setFocusable(true);
         jPanel.add(renameLabel);
         JTextField renameTextField = createJTextField(gameLabel.getText());
@@ -143,10 +145,15 @@ public class GraphicalLoadGame extends JPanel {
         confirmButton.addActionListener(e -> {
             if(!renameTextField.getText().equals(gameLabel.getText())) { //on récupère et met à jour l'ancien nom du jeu avec le nouveau
                 if (GameDataManager.newNameContainsSeparator(renameTextField.getText())) {
-                    renameLabel.setText("Caractère '_' interdit !\t");
+                    renameLabel.setText("Contient caractère interdit !\t");
+                    renameLabel.requestFocusInWindow();
+                    return;
+                } else if (GameDataManager.nameTooLongMatch(renameTextField.getText())) {
+                    renameLabel.setText("Max 20 caractères! " + renameTextField.getText().length() + "\t" );
                     renameLabel.requestFocusInWindow();
                     return;
                 }
+
                  currentGame = controller.renameGame(currentGame, renameTextField.getText());
                 SelectGameMouseAdapter selectMouseAdapter = (SelectGameMouseAdapter) currentGamePanel.getMouseListeners()[0];
                 selectMouseAdapter.updateGame(currentGame);
@@ -155,14 +162,14 @@ public class GraphicalLoadGame extends JPanel {
             renameMenu.dispose();
         });
 
-        renameMenu.add(jPanel, "cell 0 0, grow");
-        renameMenu.add(renameTextField, "cell 1 0, grow");
+        renameMenu.add(jPanel, "cell 0 0, span 2 1, grow");
+        renameMenu.add(renameTextField, "cell 2 0, grow");
         renameMenu.add(cancelButton, "cell 0 1, grow");
-        renameMenu.add(confirmButton, "cell 1 1, grow");
+        renameMenu.add(confirmButton, "cell 2 1, grow");
 
-        renameTextField.addComponentListener(new FontScaler(0.3f, renameTextField));
-        cancelButton.addComponentListener(new FontScaler(cancelButton, confirmButton));
-        jPanel.addComponentListener(new FontScaler(renameLabel));
+        renameTextField.addComponentListener(new FontScaler(0.7f, renameTextField));
+        cancelButton.addComponentListener(new FontScaler(0.5f, cancelButton, confirmButton));
+        jPanel.addComponentListener(new FontScaler(0.7f, renameLabel));
 
         renameMenu.setVisible(true);
         renameLabel.requestFocusInWindow();
@@ -203,18 +210,18 @@ public class GraphicalLoadGame extends JPanel {
     }
 
     public void selectGame(JPanel gamePanel, String gameFile) {
-        if(currentGame != null) currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
+        if(currentGame != null) currentGamePanel.setBackground(UIColor.WHITE);
         this.currentGame = gameFile;
         this.currentGamePanel = gamePanel;
         this.renameBtn.setEnabled(true);
         this.loadBtn.setEnabled(true);
-        gamePanel.setBorder(new RoundedBorder(15, UIColor.HOVER_COLOR, 5));
+        currentGamePanel.setBackground(Color.LIGHT_GRAY);
     }
 
     private void deselectGame() {
         if(currentGame == null) return;
         currentGame = null;
-        currentGamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
+        currentGamePanel.setBackground(UIColor.WHITE);
         currentGamePanel = null;
         this.renameBtn.setEnabled(false);
         this.loadBtn.setEnabled(false);
@@ -226,13 +233,15 @@ public class GraphicalLoadGame extends JPanel {
         if (gameData == null)
             return;
         contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        MigLayout layout = new MigLayout("fill, insets 0 10 0 10", "[80%, align left][20%, align right]", "[50%]push[40%]" );
+        MigLayout layout = new MigLayout("fill, insets 1%", "[90%]push[10%]", "[15%][40%][30%][15%]");
+
         JPanel gamePanel = new JPanel(layout);
         gamePanel.setPreferredSize(new Dimension(500,150));
         gamePanel.setMaximumSize(new Dimension(10000,150));
         gamePanel.setFocusable(true);
-        gamePanel.setBorder(new RoundedBorder(15, UIColor.BROWN, 5));
-        gamePanel.setBackground(UIColor.BACKGROUND);
+        gamePanel.setBackground(UIColor.WHITE);
+        gamePanel.setOpaque(false);
+        gamePanel.setBorder(new RoundedBorder(15, true));
         gamePanel.setName(game);
 
         String[] dates = gameData[0].split(" ");
@@ -269,9 +278,9 @@ public class GraphicalLoadGame extends JPanel {
         deleteButtonPanel.setOpaque(false);
         deleteButtonPanel.add(deleteBtn);
 
-        gamePanel.add(namePanel, "cell 0 0, grow");
-        gamePanel.add(gameDataPanel, "cell 0 1, grow");
-        gamePanel.add(deleteButtonPanel, "cell 1 0, span 1 2, grow");
+        gamePanel.add(namePanel, "cell 0 0, span 1 2, grow");
+        gamePanel.add(gameDataPanel, "cell 0 2,span 1 2, grow");
+        gamePanel.add(deleteButtonPanel, "cell 1 1, span 1 2, grow");
 
         namePanel.addComponentListener(new FontScaler(0.6f, nameLabel));
         gameDataPanel.addComponentListener(new FontScaler(0.6f, player1Label, sepLabel, player2Label));

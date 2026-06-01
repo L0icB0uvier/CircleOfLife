@@ -307,6 +307,11 @@ public class AnalyseIAView implements Observer, UserInterface {
 
     }
 
+    @Override
+    public void animateImpossibleMove(String id, int l, int c, float progress) {
+
+    }
+
     /**
      * Classe contenant les statistiques associées à une partie.
      */

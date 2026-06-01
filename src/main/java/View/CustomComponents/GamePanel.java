@@ -55,23 +55,33 @@ public class GamePanel extends JComponent implements Observer {
 
     private boolean showHoverHighlight = true;
     private boolean showFeedforwardHighlight = true;
+    private boolean showUnplayableMoves = true;
     private boolean showBlockingCrittersHighlight = true;
     private boolean showEatenCrittersFeedback = true;
     private boolean showScoreAnimation = true;
 
     float dotedLineDashPatternRatio = 0.0085f;
+
+    float circleDotedLineDashPatternRatio = 0.006f;
+
     float dotedLineSpaceRatio = 0.5f;
+    float circleDotedLineSpaceRatio = 0.35f;
+
     float dotedLinePhaseRatio = 1f;
 
     float dotedLineMitterLimit = 1f;
     float dotedLinePhase = 0.5f;
 
-    float animationTravelRatio = 0.2f;
     float animationTextHighlightRatio = 0.01f;
-    float animationTravelDistance;
     float animationTextHighlightStroke;
 
-    BasicStroke lastMoveStroke;
+    float scoreAnimationTravelRatio = 0.2f;
+    float scoreAnimationTravelDistance;
+
+    float moveImpossibleAnimationTravelRatio = 0.1f;
+    float moveImpossibleAnimationTravelDistance;
+
+    BasicStroke dotedStroke,circleDotedStroke ;
     BasicStroke boardHighlightStroke;
     BasicStroke circleHighlightStroke;
 
@@ -83,6 +93,7 @@ public class GamePanel extends JComponent implements Observer {
     private final Map<Set<Coordinate>, ScoreAnimation> scoreAnimations;
     private float animationOffset = 0;
     private Font scoreAnimationFont;
+    private final Map<String, ImpossibleMoveAnimation> impossibleMoveAnimations;
 
     private final imageRatio[] shapePositionRatios = new imageRatio[]{
             new imageRatio(0.48825f, 0.07045f), // 0
@@ -128,6 +139,7 @@ public class GamePanel extends JComponent implements Observer {
         match = game.getMatch();
 
         scoreAnimations = new HashMap<>();
+        impossibleMoveAnimations = new HashMap<>();
 
         shapeOriginPoints = new Point2D.Float[12];
 
@@ -166,7 +178,6 @@ public class GamePanel extends JComponent implements Observer {
         g2d.setColor(this.getBackground());
         g2d.fillRoundRect(5, 5, getWidth()-10, getHeight()-10, 15, 15);
 
-
         if(requireCalculation)
             recalculate();
 
@@ -184,6 +195,7 @@ public class GamePanel extends JComponent implements Observer {
         }
 
         drawScoreAnimations(g2d);
+        drawImpossibleMoveAnimation(g2d);
 
         super.paintBorder(g2d);
 
@@ -243,8 +255,8 @@ public class GamePanel extends JComponent implements Observer {
             shapeOriginPoints[i] = new Point2D.Float(boardX0 + imageWidth * ratio.xRatio(), boardY0 + imageHeight * ratio.yRatio());
         }
 
-        float lastMoveThicknessRatio = 0.005f;
-        float lastMoveHighlightThickness = imageWidth * lastMoveThicknessRatio;
+        float dotedThicknessRatio = 0.005f;
+        float dotedHighlightThickness = imageWidth * dotedThicknessRatio;
         float boardThicknessRatio = 0.005f;
         float boardHighlightThickness = imageWidth * boardThicknessRatio;
         float circleThicknessRatio = 0.0035f;
@@ -255,21 +267,35 @@ public class GamePanel extends JComponent implements Observer {
             dotedLigneDashPattern[0] = 10.0f;
             dotedLigneDashPattern[1] = 30.0f;
         }
+        float[] circleDotedLigneDashPattern = {imageWidth * circleDotedLineDashPatternRatio, imageWidth * circleDotedLineDashPatternRatio * circleDotedLineSpaceRatio};
+        if(circleDotedLigneDashPattern[0] == 0.0f && circleDotedLigneDashPattern[1] == 0.0f){
+            dotedLigneDashPattern[0] = 7.0f;
+            dotedLigneDashPattern[1] = 21.0f;
+        }
 
         dotedLinePhase = dotedLigneDashPattern[0] * dotedLinePhaseRatio;
 
-        lastMoveStroke = new BasicStroke(
-                lastMoveHighlightThickness,
+        dotedStroke = new BasicStroke(
+                dotedHighlightThickness,
                 BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER,
                 dotedLineMitterLimit,
                 dotedLigneDashPattern,
                 dotedLinePhase);
 
+        circleDotedStroke = new BasicStroke(
+                circleHighlightThickness,
+                BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER,
+                dotedLineMitterLimit,
+                circleDotedLigneDashPattern,
+                dotedLinePhase);
+
         boardHighlightStroke = new BasicStroke(boardHighlightThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         circleHighlightStroke = new BasicStroke(circleHighlightThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
-        animationTravelDistance = height * animationTravelRatio;
+        scoreAnimationTravelDistance = height * scoreAnimationTravelRatio;
+        moveImpossibleAnimationTravelDistance = height * moveImpossibleAnimationTravelRatio;
         scoreAnimationFont = new Font("Arial", Font.BOLD, (int) (0.05 * getHeight()));
         animationOffset = (float)boardStoneImageSize / 2;
         animationTextHighlightStroke = imageWidth * animationTextHighlightRatio;
@@ -316,16 +342,18 @@ public class GamePanel extends JComponent implements Observer {
                         drawStone(g2d, isLastMove(n, m)? imgStonePlayer2LastMove : imgStonePlayer2, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -1:
-                        if(match.getCurrentPlayerIndex() == 1)
+                        if(match.isGameOver() || showUnplayableMoves == false || match.getCurrentPlayerIndex() == 1)
                             continue;
                         drawStone(g2d, imgDisabledStone, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -2:
-                        if(match.getCurrentPlayerIndex() == 0)
+                        if(match.isGameOver() || showUnplayableMoves == false || match.getCurrentPlayerIndex() == 0)
                             continue;
                         drawStone(g2d, imgDisabledStone, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                     case -3:
+                        if(match.isGameOver() || showUnplayableMoves == false)
+                            continue;
                         drawStone(g2d, imgDisabledStone, drawPos.x, drawPos.y, boardStoneImageSize);
                         break;
                 }
@@ -459,7 +487,7 @@ public class GamePanel extends JComponent implements Observer {
                 for (Critter critter : opponentsNeighbors){
                     if(match.canEat(evolveInto, critter.type())) {
                         if(showFeedforwardHighlight)
-                            drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, boardHighlightStroke);
+                            drawBoardCoordinatesHighlight(g2d, critter.stonesCoordinates(), UIColor.EATEN_COLOR, dotedStroke);
                         eatenShape = critter.type();
                     }
                 }
@@ -485,7 +513,13 @@ public class GamePanel extends JComponent implements Observer {
         drawCircleShape(g2d, shapeType, img);
         Set<Coordinate> coords = CritterUtils.getCritterTypeCoordinates(shapeType, circleShapeTypeIds.get(shapeType));
         if(showFeedforwardHighlight)
-            drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleHighlightStroke);
+            if(color == UIColor.EATEN_COLOR) {
+                drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleDotedStroke);
+
+            }else {
+                drawHighlight(g2d, coords, shapeOriginPoints[shapeType], circleHexagonInnerRadius, circleHexagonOuterRadius,0, color, circleHighlightStroke);
+
+            }
     }
 
     /**
@@ -693,7 +727,7 @@ public class GamePanel extends JComponent implements Observer {
         List<Coordinate> coordinates = match.getPreviouslyEatenCrittersCoordinates();
         if(coordinates.isEmpty()) return;
         Color col = getEatenStonesColor();
-        drawBoardCoordinatesHighlight(g2d, new HashSet<>(coordinates), col, lastMoveStroke);
+        drawBoardCoordinatesHighlight(g2d, new HashSet<>(coordinates), col, dotedStroke);
     }
 
     /**
@@ -722,6 +756,30 @@ public class GamePanel extends JComponent implements Observer {
         g2d.drawImage(img, x, y, size, size, null);
     }
 
+    private void drawImpossibleMoveAnimation(Graphics2D g2d) {
+        if(impossibleMoveAnimations.isEmpty())
+            return;
+
+        Font prevFont = g2d.getFont();
+        g2d.setFont(scoreAnimationFont);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        for (var entry : impossibleMoveAnimations.entrySet()) {
+            Point pixel = tileToPixel(new Coordinate(entry.getValue().c, entry.getValue().l));
+            int yPos = Math.round(pixel.y - animationOffset - (entry.getValue().progress * moveImpossibleAnimationTravelDistance));
+            pixel.setLocation(pixel.x, yPos);
+
+            String text = "Impossible de jouer ici";
+            FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+            int x = pixel.x - (metrics.stringWidth(text) / 2);
+            int y = Math.round(pixel.y - (entry.getValue().progress * moveImpossibleAnimationTravelDistance));
+
+            printScoreGainedText(g2d, text, x, y, Color.BLACK ,1 - entry.getValue().progress);
+        }
+        g2d.setFont(prevFont);
+    }
+
+
     /**
      * Dessine les animations de score.
      * @param g2d Le composant Graphic à utiliser pour dessiner.
@@ -739,12 +797,12 @@ public class GamePanel extends JComponent implements Observer {
             String text = String.format("+%d", entry.getValue().scoreGained);
 
             Point pixelPos = calculateAverageStonePosition(entry.getKey());
-            int yPos = Math.round(pixelPos.y - animationOffset - (entry.getValue().progress * animationTravelDistance));
+            int yPos = Math.round(pixelPos.y - animationOffset - (entry.getValue().progress * scoreAnimationTravelDistance));
             pixelPos.setLocation(pixelPos.x, yPos);
 
             FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
             int x = pixelPos.x - (metrics.stringWidth(text) / 2);
-            int y = Math.round(pixelPos.y - (entry.getValue().progress * animationTravelDistance));
+            int y = Math.round(pixelPos.y - (entry.getValue().progress * scoreAnimationTravelDistance));
             printScoreGainedText(g2d, text, x, y, entry.getValue().player == 0 ? UIColor.BLUE : UIColor.RED ,1 - entry.getValue().progress);
         }
 
@@ -923,19 +981,52 @@ public class GamePanel extends JComponent implements Observer {
         repaint();
     }
 
-    static class ScoreAnimation {
-        int scoreGained;
-        int player;
+    public void animateImpossibleMove(String id, int l, int c, float progress) {
+        if(!match.isPlaying()) return;
+        if(impossibleMoveAnimations.containsKey(id)){
+            if(progress >= 1){
+                Configuration.info("Removing Impossible move animation in GamePanel");
+                impossibleMoveAnimations.remove(id);
+            }
+            else
+                impossibleMoveAnimations.get(id).updateProgress(progress);
+        }
+        else{
+            impossibleMoveAnimations.put(id, new ImpossibleMoveAnimation(progress, c, l));
+        }
+        repaint();
+    }
+
+    static abstract class ViewAnimation {
         float progress;
 
-        public ScoreAnimation(int scoreGained, int player, float progress){
-            this.scoreGained = scoreGained;
-            this.player = player;
+        public ViewAnimation(float progress) {
             this.progress = progress;
         }
 
         public void updateProgress(float newProgress){
             progress = newProgress;
+        }
+    }
+
+    static class ScoreAnimation extends ViewAnimation {
+        int scoreGained;
+        int player;
+
+        public ScoreAnimation(int scoreGained, int player, float progress){
+            super(progress);
+            this.scoreGained = scoreGained;
+            this.player = player;
+        }
+    }
+
+    static class ImpossibleMoveAnimation extends ViewAnimation{
+        int l, c;
+
+        public ImpossibleMoveAnimation(float progress, int c, int l) {
+            super(progress);
+            this.c = c;
+            this.l = l;
         }
     }
 
@@ -947,8 +1038,16 @@ public class GamePanel extends JComponent implements Observer {
         return mSelected;
     }
 
+    public boolean isMovePlayable(int m, int n){
+        return match.isBoardTilePlayableForPlayer(match.getCurrentPlayerIndex(), m, n);
+    }
+
     public boolean getShowHoverHighlight() {
         return showHoverHighlight;
+    }
+
+    public boolean getShowUnplayableMoves() {
+        return showUnplayableMoves;
     }
 
     public boolean getShowBlockingCrittersHighlight() {
@@ -965,6 +1064,10 @@ public class GamePanel extends JComponent implements Observer {
 
     public boolean getShowScoreAnimation() {
         return showScoreAnimation;
+    }
+
+    public void setShowUnplayableMoves(boolean showUnplayableMoves) {
+        this.showUnplayableMoves = showUnplayableMoves;
     }
 
     public void setShowEatenCrittersFeedback(boolean showEatenCrittersFeedback) {

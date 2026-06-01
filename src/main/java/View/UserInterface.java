@@ -23,4 +23,6 @@ public interface UserInterface {
      * @param progress Le stage de l'animation entre 0 et 1.
      */
     void animateScore(Set<Coordinate> groupCoords, int scoreGained, int player, float progress);
+
+    void animateImpossibleMove(String id, int l, int c, float progress);
 }

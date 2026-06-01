@@ -1,6 +1,5 @@
 package View.CustomComponents;
 
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -11,26 +10,41 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
     private final int MARGIN = 20;
 
+    private final int MIN_MENU_WIDTH = 200;
+    private final int MAX_MENU_WIDTH = 500;
+
     private Rectangle buttonBounds = new Rectangle(20, 20, 20, 20);
 
     private boolean isMenuOpen = false;
 
     private boolean showHoverHighlight;
     private boolean showFeedforwardHighlight;
+    private boolean showUnplayableMoveFeedback;
     private boolean showBlockingCrittersHighlight;
     private boolean showEatenCrittersFeedback;
     private boolean showAnimations;
 
     private Rectangle menuBounds = new Rectangle();
 
-    private Rectangle showHoverHighlightBounds = new Rectangle();
-    private Rectangle showFeedforwardHighlightBounds = new Rectangle();
-    private Rectangle showBlockingCrittersHighlightBounds = new Rectangle();
-    private Rectangle showEatenCrittersFeedbackBounds = new Rectangle();
-    private Rectangle showAnimationBounds = new Rectangle();
+    private final Rectangle showHoverHighlightBounds = new Rectangle();
+    private final Rectangle showFeedforwardHighlightBounds = new Rectangle();
+    private final Rectangle showUnplayableMoveFeedbackBounds = new Rectangle();
+    private final Rectangle showBlockingCrittersHighlightBounds = new Rectangle();
+    private final Rectangle showEatenCrittersFeedbackBounds = new Rectangle();
+    private final Rectangle showAnimationBounds = new Rectangle();
 
     Font categoryFont = new Font("Arial", Font.BOLD, 18);
     Font toggleLabelFont = new Font("Arial", Font.BOLD, 16);
+
+    int menuWidth;
+    int menuHeight;
+    int menuX;
+    int menuY;
+    int categoryX;
+    int itemX;
+    int switchWidth;
+    int switchHeight;
+    int switchX;
 
     public GamePanelOverlayUI(GamePanel gamePanel, Image icon) {
         this.gamePanel = gamePanel;
@@ -38,9 +52,38 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
 
         showHoverHighlight = gamePanel.getShowHoverHighlight();
         showFeedforwardHighlight =  gamePanel.getShowFeedforwardHighlight();
+        showUnplayableMoveFeedback =gamePanel.getShowUnplayableMoves();
         showBlockingCrittersHighlight = gamePanel.getShowBlockingCrittersHighlight();
         showEatenCrittersFeedback = gamePanel.getShowEatenCrittersFeedback();
         showAnimations = gamePanel.getShowScoreAnimation();
+    }
+
+    @Override
+    public void paint(Graphics g, JComponent c) {
+        super.paint(g, c);
+
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        if (!isMenuOpen) {
+            drawOpenMenuButton(c, g2);
+        } else {
+            drawOptionMenu(c, g2);
+        }
+
+        g2.dispose();
+    }
+
+    private void drawOpenMenuButton(JComponent c, Graphics2D g2) {
+        Rectangle bounds = getButtonBounds(c);
+        if (icon != null) {
+            g2.setColor(new Color(0, 0, 0, 130));
+            g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, 10, 10);
+
+            int padding = 6;
+
+            g2.drawImage(icon, bounds.x + padding, bounds.y + padding, bounds.width - (padding * 2), bounds.height - (padding * 2), c);
+        }
     }
 
     private Rectangle getButtonBounds(JComponent container) {
@@ -52,97 +95,97 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
         return buttonBounds;
     }
 
-    @Override
-    public void paint(Graphics g, JComponent c) {
-        super.paint(g, c);
+    private void drawOptionMenu(JComponent c, Graphics2D g2) {
+        recalculate(c);
 
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        drawOptionMenuFrame(g2);
+        DrawTitle(g2);
 
-        if (!isMenuOpen) {
-            Rectangle bounds = getButtonBounds(c);
-            if (icon != null) {
-                g2.setColor(new Color(0, 0, 0, 130));
-                g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, 10, 10);
+        // Options contouts
+        drawCategory(g2, "Contours des pierres", 90);
+        drawLabelledToggle(g2, 100, "Survol", showHoverHighlight, showHoverHighlightBounds);
+        drawLabelledToggle(g2, 140, "Evolution/prédation", showFeedforwardHighlight, showFeedforwardHighlightBounds);
 
-                int padding = 6;
+        // Options feedbacks
+        drawCategory(g2, "Feedback", 200);
+        drawLabelledToggle(g2, 210, "Coups impossibles", showUnplayableMoveFeedback, showUnplayableMoveFeedbackBounds);
+        drawLabelledToggle(g2, 250, "Critters bloquants", showBlockingCrittersHighlight, showBlockingCrittersHighlightBounds);
+        drawLabelledToggle(g2, 290, "Critters mangés", showEatenCrittersFeedback, showEatenCrittersFeedbackBounds);
 
-                g2.drawImage(icon, bounds.x + padding, bounds.y + padding, bounds.width - (padding * 2), bounds.height - (padding * 2), c);
-            }
+        // Options Animations
+        drawCategory(g2, "Animation", 350);
+        drawLabelledToggle(g2, 360, "Scores", showAnimations, showAnimationBounds);
+    }
+
+    private void recalculate(JComponent c) {
+        menuWidth = 280;
+        menuHeight = 400;
+        menuX = (c.getWidth() - menuWidth) - MARGIN;
+        menuY = MARGIN;
+        categoryX = menuX + 15;
+        itemX = menuX + 25;
+        switchWidth = 50;
+        switchHeight = 26;
+        switchX = menuX + menuWidth - switchWidth - 20;
+
+        menuBounds = new Rectangle(menuX, menuY, menuWidth, menuHeight);
+    }
+
+    private void drawOptionMenuFrame(Graphics2D g2) {
+        g2.setColor(new Color(45, 45, 45, 150));
+        g2.fillRoundRect(menuX, menuY, menuWidth, menuHeight, 20, 20);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(2));
+        g2.drawRoundRect(menuX, menuY, menuWidth, menuHeight, 20, 20);
+    }
+
+    private void DrawTitle(Graphics2D g2) {
+        g2.setFont(new Font("SansSerif", Font.BOLD, 22));
+        FontMetrics fm = g2.getFontMetrics();
+        String title = "Options d'affichage";
+        g2.drawString(title, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 45);
+    }
+
+    private void drawCategory(Graphics2D g2, String categoryName, int x) {
+        g2.setFont(categoryFont);
+        g2.drawString(categoryName, categoryX, menuY + x);
+    }
+
+    private void drawLabelledToggle(Graphics2D g2, int y, String labelText, boolean toggleValue, Rectangle toggleBounds) {
+        g2.setFont(toggleLabelFont);
+        g2.setColor(Color.WHITE);
+        int yShowHoverHighlight = menuY + y;
+        g2.drawString(labelText, itemX, yShowHoverHighlight + 18);
+        toggleBounds.setBounds(switchX, yShowHoverHighlight, switchWidth, switchHeight);
+        drawToggleSwitch(g2, toggleBounds, toggleValue);
+    }
+
+    private void drawToggleSwitch(Graphics2D g2, Rectangle bounds, boolean isOn) {
+
+        if (isOn) {
+            g2.setColor(new Color(40, 167, 69));
         } else {
-            int menuWidth = 280;
-            int menuHeight = 360;
-            int menuX = (c.getWidth() - menuWidth) - MARGIN;
-            int menuY = MARGIN;
-            int categoryX = menuX + 15;
-            int itemX = menuX + 25;
-            int switchWidth = 50;
-            int switchHeight = 26;
-            int switchX = menuX + menuWidth - switchWidth - 20;
+            g2.setColor(new Color(100, 100, 100));
+        }
+        g2.fillRoundRect(bounds.x,
+                bounds.y,
+                bounds.width,
+                bounds.height,
+                bounds.height,
+                bounds.height);
 
-            menuBounds = new Rectangle(menuX, menuY, menuWidth, menuHeight);
+        g2.setColor(Color.WHITE);
+        int padding = 3;
+        int circleSize = bounds.height - (padding * 2);
+        int circleX;
 
-            // Dessin du cadre du menu
-            g2.setColor(new Color(45, 45, 45));
-            g2.fillRoundRect(menuX, menuY, menuWidth, menuHeight, 20, 20);
-            g2.setColor(Color.WHITE);
-            g2.setStroke(new BasicStroke(2));
-            g2.drawRoundRect(menuX, menuY, menuWidth, menuHeight, 20, 20);
-
-            // Titre du menu
-            g2.setFont(new Font("SansSerif", Font.BOLD, 22));
-            FontMetrics fm = g2.getFontMetrics();
-            String title = "Options d'affichage";
-            g2.drawString(title, menuX + (menuWidth - fm.stringWidth(title)) / 2, menuY + 45);
-
-            g2.setFont(categoryFont);
-            String contours = "Contours des pierres";
-            g2.drawString(contours, categoryX, menuY + 90);
-
-            g2.setFont(toggleLabelFont);
-
-            int yShowHoverHighlight = menuY + 100;
-            g2.setColor(Color.WHITE);
-            g2.drawString("Survol", itemX, yShowHoverHighlight + 18);
-            showHoverHighlightBounds = new Rectangle(switchX, yShowHoverHighlight, switchWidth, switchHeight);
-            drawToggleSwitch(g2, showHoverHighlightBounds, showHoverHighlight);
-
-            int yShowFeedforwardHighlight = menuY + 140;
-            g2.setColor(Color.WHITE);
-            g2.drawString("Evolution/prédation", itemX, yShowFeedforwardHighlight + 18);
-            showFeedforwardHighlightBounds = new Rectangle(switchX, yShowFeedforwardHighlight, switchWidth, switchHeight);
-            drawToggleSwitch(g2, showFeedforwardHighlightBounds, showFeedforwardHighlight);
-
-            g2.setFont(categoryFont);
-            String feedback = "Feedback";
-            g2.drawString(feedback, categoryX, menuY + 200);
-            g2.setFont(toggleLabelFont);
-
-            int yBlockingCrittersHighlight = menuY + 210;
-            g2.setColor(Color.WHITE);
-            g2.drawString("Critters bloquants", itemX, yBlockingCrittersHighlight + 18);
-            showBlockingCrittersHighlightBounds = new Rectangle(switchX, yBlockingCrittersHighlight, switchWidth, switchHeight);
-            drawToggleSwitch(g2, showBlockingCrittersHighlightBounds, showBlockingCrittersHighlight);
-
-            int yShowEatenCrittersFeedback = menuY + 250;
-            g2.setColor(Color.WHITE);
-            g2.drawString("Critters mangés", itemX, yShowEatenCrittersFeedback + 18);
-            showEatenCrittersFeedbackBounds = new Rectangle(switchX, yShowEatenCrittersFeedback, switchWidth, switchHeight);
-            drawToggleSwitch(g2, showEatenCrittersFeedbackBounds, showEatenCrittersFeedback);
-
-            g2.setFont(categoryFont);
-            String animation = "Animation";
-            g2.drawString(animation, categoryX, menuY + 310);
-            g2.setFont(toggleLabelFont);
-
-            int yShowAnimation = menuY + 320;
-            g2.setColor(Color.WHITE);
-            g2.drawString("Scores", itemX, yShowAnimation + 18);
-            showAnimationBounds = new Rectangle(switchX, yShowAnimation, switchWidth, switchHeight);
-            drawToggleSwitch(g2, showAnimationBounds, showAnimations);
+        if (isOn) {
+            circleX = bounds.x + bounds.width - circleSize - padding;
+        } else {
+            circleX = bounds.x + padding;
         }
 
-        g2.dispose();
+        g2.fillOval(circleX, bounds.y + padding, circleSize, circleSize);
     }
 
     @Override
@@ -169,6 +212,12 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
                 if(showFeedforwardHighlightBounds.contains(clickPoint)){
                     showFeedforwardHighlight = !showFeedforwardHighlight;
                     gamePanel.setShowFeedforwardHighlight(showFeedforwardHighlight);
+                    l.repaint();
+                }
+
+                if(showUnplayableMoveFeedbackBounds.contains(clickPoint)){
+                    showUnplayableMoveFeedback = !showUnplayableMoveFeedback;
+                    gamePanel.setShowUnplayableMoves(showUnplayableMoveFeedback);
                     l.repaint();
                 }
 
@@ -200,28 +249,5 @@ public class GamePanelOverlayUI extends javax.swing.plaf.LayerUI<GamePanel> {
         if (!isMenuOpen) {
             super.processMouseEvent(e, l);
         }
-    }
-
-    private void drawToggleSwitch(Graphics2D g2, Rectangle bounds, boolean isOn) {
-
-        if (isOn) {
-            g2.setColor(new Color(40, 167, 69));
-        } else {
-            g2.setColor(new Color(100, 100, 100));
-        }
-        g2.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, bounds.height, bounds.height);
-
-        g2.setColor(Color.WHITE);
-        int padding = 3;
-        int circleSize = bounds.height - (padding * 2);
-        int circleX;
-
-        if (isOn) {
-            circleX = bounds.x + bounds.width - circleSize - padding;
-        } else {
-            circleX = bounds.x + padding;
-        }
-
-        g2.fillOval(circleX, bounds.y + padding, circleSize, circleSize);
     }
 }

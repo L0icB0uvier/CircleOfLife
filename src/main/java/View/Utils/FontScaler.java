@@ -31,6 +31,7 @@ public class FontScaler extends ComponentAdapter {
     @Override
     public void componentResized(ComponentEvent e) {
         Graphics g = e.getComponent().getGraphics();
+        if(g == null) return;
         FontMetrics fontMetricsStart = g.getFontMetrics(jComponents[0].getFont());
         float maxSize = getMaxSize(e);
 
@@ -69,12 +70,12 @@ public class FontScaler extends ComponentAdapter {
             comp.setFont(comp.getFont().deriveFont(maxSize));
             JComponent tempComp = new JPanel();
             tempComp.setFont(comp.getFont());
-            FontMetrics fontMetrics = fontMetricsStart;
+            FontMetrics fontMetrics = g.getFontMetrics(comp.getFont());
             int width = e.getComponent().getWidth();
             while (width * WIDTH_PADDING < fontMetrics.stringWidth(maxText)) {
 
                 float current = tempComp.getFont().getSize2D();
-                tempComp.setFont(comp.getFont().deriveFont(current * 0.9f));
+                tempComp.setFont(tempComp.getFont().deriveFont(current * 0.9f));
                 fontMetrics = g.getFontMetrics(tempComp.getFont());
             }
             tempComp.setFont(tempComp.getFont().getSize2D() > heightFont.getSize2D() ? heightFont : tempComp.getFont());

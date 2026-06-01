@@ -26,7 +26,12 @@ public class StartGameAdapter implements java.awt.event.ActionListener {
         for (int i = 0; i < res.length; i++) {
             if (GameDataManager.newNameContainsSeparator(res[i])) {
                 userInterface.errorPopup(
-                        "Nom incorrecte pour joueur " + (i + 1) + ", les underscores ('_') sont interdits",
+                        "Nom incorrecte pour joueur " + (i + 1) + ", contient un caractère interdit",
+                        graphicalNewGame);
+                return;
+            } else if (GameDataManager.nameTooLongPlayer(res[i])) {
+                userInterface.errorPopup(
+                        "Nom incorrecte pour joueur " + (i + 1) + ", le nom donné est trop long (maximum 10 caractères, actuellement " + res[i].length() + " caractères)",
                         graphicalNewGame);
                 return;
             }

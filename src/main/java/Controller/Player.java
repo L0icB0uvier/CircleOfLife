@@ -9,6 +9,7 @@ import Global.PlayerSettings;
  */
 public class Player {
     Game game;
+    Controller controller;
     boolean isAI;
     String name;
 
@@ -30,12 +31,12 @@ public class Player {
      * @param game Référence à la classe Game nécessaire aux IA.
      * @return Une instance de la sous classe de Player. Un HumanPlayer ou un AIPlayer en fonction des PlayerSettings.
      */
-    public static Player createPlayer(PlayerSettings playerSettings, Game game){
+    public static Player createPlayer(Controller controller, PlayerSettings playerSettings, Game game){
         if(playerSettings.isAI()){
             return new AIPlayer(game, AI.createAI(game.getMatch(), playerSettings.getAiLevel()), playerSettings.getName());
         }
         else{
-            return new HumanPlayer(game, playerSettings.getName());
+            return new HumanPlayer(controller, game, playerSettings.getName());
         }
     }
 
